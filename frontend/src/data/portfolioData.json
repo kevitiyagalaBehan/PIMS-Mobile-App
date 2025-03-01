@@ -1,0 +1,11 @@
+{
+    "portfolioSummary": [
+      { "category": "DEFENSIVE", "asset": "Cash", "amount": 1046194.97, "percentage": 29.52 },
+      { "category": "GROWTH", "asset": "Aust. Equities", "amount": 824614.78, "percentage": 23.27 },
+      { "category": "GROWTH", "asset": "Int. Equities", "amount": 410463.04, "percentage": 11.58 },
+      { "category": "GROWTH", "asset": "Property", "amount": 992700.00, "percentage": 28.02 },
+      { "category": "GROWTH", "asset": "Other", "amount": 269470.66, "percentage": 7.60 }
+    ],
+    "total": 3543443.45
+  }
+  
