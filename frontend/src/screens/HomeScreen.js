@@ -1,82 +1,102 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-} from "react-native";
-import { fetchAssetAllocation } from "../api/pimsApi";
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons";
 
-export default function HomeScreen({ userData }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+export default function HomeScreen() {
+  const navigation = useNavigation();
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const response = await fetchAssetAllocation(
-          userData.authToken,
-          userData.accountId
-        );
-        setData(response);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  if (loading) return <ActivityIndicator size="large" style={styles.loader} />;
-  if (error) return <Text style={styles.error}>{error}</Text>;
+  const handleLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to log out?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        onPress: () => {
+          // Clear authentication data (if stored in state/context)
+          navigation.replace("Login");
+        },
+      },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Asset Allocation Summary</Text>
-      <FlatList
-        data={data.assetCategories}
-        keyExtractor={(item) => item.assetCategory}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.category}>
-              {item.assetCategory} - {item.percentage}%
-            </Text>
-            {item.assetClasses.map((asset) => (
-              <Text key={asset.assetClass}>
-                {asset.assetClass}: ${asset.marketValue.toLocaleString()} (
-                {asset.percentage}%)
-              </Text>
-            ))}
-          </View>
-        )}
-      />
-      <Text style={styles.total}>
-        Total Market Value: ${data.totalMarketValue.toLocaleString()}
-      </Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <MaterialIcons name="logout" size={30} color="black" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("PortfolioSummary")}
+        >
+          <Text style={styles.buttonText}>Portfolio Summary</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("AssetAllocation")}
+        >
+          <Text style={styles.buttonText}>Asset Allocation</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, styles.largeButton]}
+          onPress={() => navigation.navigate("Portfolio")}
+        >
+          <Text style={styles.buttonText}>Portfolio</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
   },
-  card: { padding: 15, borderWidth: 1, borderRadius: 8, marginBottom: 10 },
-  category: { fontSize: 18, fontWeight: "bold" },
-  total: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
+  header: {
+    height: 150,
+    backgroundColor: "#001F5B",
+    padding: 20,
+    paddingTop: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 10,
   },
-  loader: { flex: 1, justifyContent: "center" },
-  error: { color: "red", textAlign: "center" },
+  headerText: {
+    color: "white",
+    fontSize: 35,
+    fontWeight: "bold",
+  },
+  logoutButton: {
+    paddingBottom: 35,
+  },
+  buttonContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  button: {
+    backgroundColor: "#001F5B",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    marginVertical: 10,
+    width: "80%",
+    alignItems: "center",
+  },
+  largeButton: {
+    width: "60%",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });

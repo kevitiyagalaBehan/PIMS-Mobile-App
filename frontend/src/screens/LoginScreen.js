@@ -1,18 +1,32 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
-import { loginUser } from "../api/pimsApi";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Image,
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { loginUser } from "../utils/pimsApi";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
 
-export default function LoginScreen({ setUserData }) {
+export default function LoginScreen() {
+  const { setUserData } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
   const navigation = useNavigation();
 
   const handleLogin = async () => {
     try {
-      const { auth_token, account_id } = await loginUser(username, password);
-      setUserData({ authToken: auth_token, accountId: account_id });
-      navigation.replace("Home"); // Navigate to Home after login
+      const authToken = await loginUser(username, password);
+      if (!authToken) throw new Error("Invalid login credentials");
+
+      setUserData({ authToken });
+      navigation.replace("Home");
     } catch (error) {
       Alert.alert("Login Error", error.message);
     }
@@ -20,32 +34,96 @@ export default function LoginScreen({ setUserData }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>PIMS Login</Text>
+      <Image
+        source={require("../../assets/PIMS_Logo.png")}
+        style={styles.logo}
+      />
+
       <TextInput
-        placeholder="Username"
-        value={username}
+        style={styles.input}
+        placeholder="Enter Username"
         onChangeText={setUsername}
-        style={styles.input}
+        value={username}
       />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={styles.input}
-      />
-      <Button title="Login" onPress={handleLogin} />
+
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Enter Password"
+          secureTextEntry={secureTextEntry}
+          onChangeText={setPassword}
+          value={password}
+        />
+        <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
+          <Text style={styles.eyeIcon}>{secureTextEntry ? "👁️" : "🙈"}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => console.log("Forgot Password Pressed")}>
+        <Text style={styles.forgotPassword}>Forgot Password?</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    padding: 20,
   },
-  input: { borderWidth: 1, padding: 10, marginVertical: 10, borderRadius: 5 },
+  logo: {
+    width: 250,
+    height: 60,
+    marginBottom: 30,
+  },
+  input: {
+    width: "100%",
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    marginBottom: 15,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    marginBottom: 15,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 12,
+  },
+  eyeIcon: {
+    padding: 10,
+    fontSize: 18,
+  },
+  loginButton: {
+    backgroundColor: "#001F5B",
+    padding: 12,
+    borderRadius: 5,
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  loginButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  forgotPassword: {
+    color: "#001F5B",
+    fontSize: 14,
+    textDecorationLine: "underline",
+  },
 });

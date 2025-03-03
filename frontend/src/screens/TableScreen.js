@@ -1,40 +1,59 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import portfolioData from "../data/portfolioData.json";
+import React, { useEffect, useState } from "react";
+import { View, ScrollView, ActivityIndicator } from "react-native";
+import { DataTable } from "react-native-paper";
+import { getAssetAllocationSummary } from "../utils/pimsApi";
 
-export default function TableScreen() {
-  const [data, setData] = useState([]);
+export default function TableScreen({ route }) {
+  const { authToken } = route.params;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setData(portfolioData.portfolioSummary);
-  }, []);
+    const fetchData = async () => {
+      const assetData = await getAssetAllocationSummary(
+        authToken,
+        "f99f33a5-6873-4735-a48e-2d5bc062ae9c"
+      );
+      if (assetData) {
+        setData(
+          assetData.assetCategories.flatMap((category) =>
+            category.assetClasses.map((cls) => ({
+              assetClass: cls.assetClass,
+              marketValue: cls.marketValue,
+              percentage: cls.percentage,
+            }))
+          )
+        );
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [authToken]);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Portfolio Summary</Text>
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.asset}
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <Text style={styles.cell}>{item.asset}</Text>
-            <Text style={styles.cell}>${item.amount.toLocaleString()}</Text>
-            <Text style={styles.cell}>{item.percentage}%</Text>
-          </View>
-        )}
-      />
-    </View>
+    <ScrollView>
+      <DataTable>
+        <DataTable.Header>
+          <DataTable.Title>Asset Class</DataTable.Title>
+          <DataTable.Title numeric>Market Value</DataTable.Title>
+          <DataTable.Title numeric>Percentage</DataTable.Title>
+        </DataTable.Header>
+
+        {data.map((row, index) => (
+          <DataTable.Row key={index}>
+            <DataTable.Cell>{row.assetClass}</DataTable.Cell>
+            <DataTable.Cell numeric>
+              {row.marketValue.toFixed(2)}
+            </DataTable.Cell>
+            <DataTable.Cell numeric>{row.percentage}%</DataTable.Cell>
+          </DataTable.Row>
+        ))}
+      </DataTable>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, backgroundColor: "#fff" },
-  title: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 10,
-    borderBottomWidth: 1,
-  },
-  cell: { fontSize: 16 },
-});
