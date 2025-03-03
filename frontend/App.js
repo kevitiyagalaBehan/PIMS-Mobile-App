@@ -1,6 +1,27 @@
-import React from "react";
-import AppNavigator from "./src/navigation/AppNavigator";
+import React, { useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import LoginScreen from "./src/screens/LoginScreen";
+import HomeScreen from "./src/screens/HomeScreen";
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  return <AppNavigator />;
+  const [userData, setUserData] = useState(null);
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        {userData ? (
+          <Stack.Screen name="Home">
+            {() => <HomeScreen userData={userData} />}
+          </Stack.Screen>
+        ) : (
+          <Stack.Screen name="Login">
+            {() => <LoginScreen setUserData={setUserData} />}
+          </Stack.Screen>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
