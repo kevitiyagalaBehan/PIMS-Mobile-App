@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   Image,
   Alert,
   StyleSheet,
@@ -11,6 +10,7 @@ import {
 } from "react-native";
 import { loginUser } from "../utils/pimsApi";
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginScreen() {
@@ -22,10 +22,11 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const authToken = await loginUser(username, password);
-      if (!authToken) throw new Error("Invalid login credentials");
+      const { authToken, accountId } = await loginUser(username, password);
+      if (!authToken || !accountId)
+        throw new Error("Invalid login credentials");
 
-      setUserData({ authToken });
+      setUserData({ authToken, accountId });
       navigation.replace("Home");
     } catch (error) {
       Alert.alert("Login Error", error.message);
@@ -55,7 +56,7 @@ export default function LoginScreen() {
           value={password}
         />
         <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
-          <Text style={styles.eyeIcon}>{secureTextEntry ? "👁️" : "🙈"}</Text>
+          <Text style={styles.eyeIcon}>{secureTextEntry ? <FontAwesome name="eye" size={24} color="black" /> : <FontAwesome name="eye-slash" size={24} color="black" />}</Text>
         </TouchableOpacity>
       </View>
 
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: 15,
   },
   passwordContainer: {
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: 15,
   },
   passwordInput: {

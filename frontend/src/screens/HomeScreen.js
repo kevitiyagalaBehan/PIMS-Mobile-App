@@ -1,10 +1,26 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Image,
+  ImageBackground,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const { userData } = useAuth();
+
+  if (!userData || !userData.authToken || !userData.accountId) {
+    console.error("Error: userData or required fields are missing");
+    return null;
+  }
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to log out?", [
@@ -12,91 +28,151 @@ export default function HomeScreen() {
       {
         text: "Logout",
         onPress: () => {
-          // Clear authentication data (if stored in state/context)
-          navigation.replace("Login");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Login" }],
+          });
         },
       },
     ]);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <MaterialIcons name="logout" size={30} color="black" />
-        </TouchableOpacity>
+    <ImageBackground
+      source={require("../../assets/background.jpg")}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={styles.container}>
+        <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
+          <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <MaterialIcons name="logout" size={32} color="white" />
+          </TouchableOpacity>
+        </LinearGradient>
+
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../../assets/PIMS.png")}
+            style={styles.image}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              navigation.navigate("PortfolioSummary", {
+                authToken: userData.authToken,
+                accountId: userData.accountId,
+              });
+            }}
+          >
+            <Text style={styles.buttonText}>Portfolio Summary</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              navigation.navigate("AssetAllocation", {
+                authToken: userData.authToken,
+                accountId: userData.accountId,
+              });
+            }}
+          >
+            <Text style={styles.buttonText}>Asset Allocation</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.largeButton]}
+            onPress={() => navigation.navigate("Portfolio")}
+          >
+            <Text style={styles.buttonText}>Portfolio</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("PortfolioSummary")}
-        >
-          <Text style={styles.buttonText}>Portfolio Summary</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("AssetAllocation")}
-        >
-          <Text style={styles.buttonText}>Asset Allocation</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, styles.largeButton]}
-          onPress={() => navigation.navigate("Portfolio")}
-        >
-          <Text style={styles.buttonText}>Portfolio</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
   },
   header: {
-    height: 150,
-    backgroundColor: "#001F5B",
+    height: 260,
     padding: 20,
-    paddingTop: 20,
+    paddingTop: 40,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderRadius: 10,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 8,
   },
   headerText: {
     color: "white",
-    fontSize: 35,
+    fontSize: 36,
     fontWeight: "bold",
+    paddingTop: 60,
+    letterSpacing: 0.5,
   },
   logoutButton: {
-    paddingBottom: 35,
+    paddingBottom: 150,
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginTop: -30,
+    marginBottom: 10,
+  },
+  image: {
+    width: 200,
+    height: 100,
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
   buttonContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: -150,
   },
   button: {
     backgroundColor: "#001F5B",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    marginVertical: 10,
-    width: "80%",
+    paddingVertical: 18,
+    paddingHorizontal: 35,
+    borderRadius: 12,
+    marginVertical: 8,
+    width: "75%",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6,
   },
   largeButton: {
-    width: "60%",
+    width: "65%",
   },
   buttonText: {
     color: "white",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
+    textTransform: "uppercase",
   },
 });
+

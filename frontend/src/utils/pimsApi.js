@@ -13,7 +13,7 @@ export const loginUser = async (username, password) => {
 
     const data = await response.json();
     if (data.success) {
-      return data.auth_token;
+      return { authToken: data.auth_token, accountId: data.account_id };
     } else {
       throw new Error(data.message);
     }
