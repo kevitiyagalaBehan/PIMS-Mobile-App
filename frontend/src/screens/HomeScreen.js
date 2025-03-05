@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Animated,
   StyleSheet,
   Alert,
   Image,
@@ -46,9 +47,9 @@ export default function HomeScreen() {
       <View style={styles.container}>
         <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
           <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
-          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <TouchableWithoutFeedback onPress={handleLogout}>
             <MaterialIcons name="logout" size={32} color="white" />
-          </TouchableOpacity>
+          </TouchableWithoutFeedback>
         </LinearGradient>
 
         <View style={styles.imageContainer}>
@@ -60,41 +61,86 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
+          <AnimatedButton
+            text="Portfolio Summary"
+            onPress={() =>
               navigation.navigate("PortfolioSummary", {
                 authToken: userData.authToken,
                 accountId: userData.accountId,
-              });
-            }}
-          >
-            <Text style={styles.buttonText}>Portfolio Summary</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
+              })
+            }
+          />
+          <AnimatedButton
+            text="Asset Allocation"
+            onPress={() =>
               navigation.navigate("AssetAllocation", {
                 authToken: userData.authToken,
                 accountId: userData.accountId,
-              });
-            }}
-          >
-            <Text style={styles.buttonText}>Asset Allocation</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.largeButton]}
+              })
+            }
+          />
+          <AnimatedButton
+            text="Portfolio"
             onPress={() => navigation.navigate("Portfolio")}
-          >
-            <Text style={styles.buttonText}>Portfolio</Text>
-          </TouchableOpacity>
+            large
+          />
         </View>
       </View>
     </ImageBackground>
   );
 }
+
+const AnimatedButton = ({ text, onPress, large }) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const opacityAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.parallel([
+      Animated.timing(scaleAnim, {
+        toValue: 1.1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 0.7,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.parallel([
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start(() => onPress && onPress());
+  };
+
+  return (
+    <TouchableWithoutFeedback
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      <Animated.View
+        style={[
+          styles.button,
+          large && styles.largeButton,
+          { transform: [{ scale: scaleAnim }], opacity: opacityAnim },
+        ]}
+      >
+        <Text style={styles.buttonText}>{text}</Text>
+      </Animated.View>
+    </TouchableWithoutFeedback>
+  );
+};
 
 const styles = StyleSheet.create({
   background: {
@@ -127,9 +173,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     paddingTop: 60,
     letterSpacing: 0.5,
-  },
-  logoutButton: {
-    paddingBottom: 150,
   },
   imageContainer: {
     alignItems: "center",
