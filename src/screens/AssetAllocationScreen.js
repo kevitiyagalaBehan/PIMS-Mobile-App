@@ -3,20 +3,30 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
+  Dimensions,
+  ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { PieChart } from "react-native-chart-kit";
-import { LinearGradient } from "expo-linear-gradient";
-import { Dimensions } from "react-native";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import { getAssetAllocationSummary } from "../utils/pimsApi";
-import { MaterialIcons } from "@expo/vector-icons";
 
 export default function AssetAllocation({ route }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
   const { authToken, accountId } = route.params;
+  const [windowSize, setWindowSize] = useState(Dimensions.get("window"));
+
+  useEffect(() => {
+    const updateSize = () => {
+      setWindowSize(Dimensions.get("window"));
+    };
+
+    const subscription = Dimensions.addEventListener("change", updateSize);
+    return () => subscription?.remove();
+  }, []);
+
+  const { width, height } = windowSize;
+  const styles = getStyles(width, height);
 
   useEffect(() => {
     if (!authToken || !accountId) {
@@ -52,10 +62,10 @@ export default function AssetAllocation({ route }) {
     fetchData();
   }, [authToken, accountId]);
 
-  if (!data.length) {
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>No data available</Text>
+        <ActivityIndicator size="large" color="#4A90E2" />
       </View>
     );
   }
@@ -78,21 +88,11 @@ export default function AssetAllocation({ route }) {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
-          <MaterialIcons name="arrow-back" size={30} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Asset Allocation</Text>
-      </LinearGradient>
-
       <View style={styles.chartContainer}>
         <PieChart
           data={chartData}
-          width={Dimensions.get("window").width - 40}
-          height={260}
+          width={width * 0.95}
+          height={height * 0.4}
           chartConfig={{
             backgroundColor: "transparent",
             backgroundGradientFrom: "transparent",
@@ -101,7 +101,7 @@ export default function AssetAllocation({ route }) {
           }}
           accessor="percentage"
           backgroundColor="transparent"
-          center={[85, 0]}
+          center={[width * (height > width ? 0.24 : 0.35), 0]}
           hasLegend={false}
         />
       </View>
@@ -123,83 +123,62 @@ export default function AssetAllocation({ route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5",
-    paddingHorizontal: 5,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-  },
-  header: {
-    height: 80,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 15,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 8,
-    position: "relative",
-  },
-  headerText: {
-    color: "white",
-    fontSize: 22,
-    fontWeight: "bold",
-    letterSpacing: 1,
-    position: "absolute",
-    left: "52%",
-    transform: [{ translateX: "-48%" }],
-  },
-  backButton: {
-    position: "absolute",
-    left: 15,
-  },
-  chartContainer: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 15,
-    elevation: 5,
-    marginVertical: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 3 },
-  },
-  breakdownContainer: {
-    width: "100%",
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 10,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  breakdownRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  colorIndicator: {
-    width: 15,
-    height: 15,
-    borderRadius: 7.5,
-    marginRight: 10,
-  },
-  breakdownText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#333",
-  },
-});
+const getStyles = (width, height) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: "#F5F5F5",
+      paddingHorizontal: width * 0.02,
+      alignItems: "center",
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#F5F5F5",
+    },
+    chartContainer: {
+      width: "100%",
+      height: "50%",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "white",
+      borderRadius: 15,
+      elevation: 5,
+      marginVertical: height * 0.03,
+      shadowColor: "#000",
+      shadowOpacity: 0.1,
+      shadowOffset: { width: 0, height: 3 },
+    },
+    breakdownContainer: {
+      width: "100%",
+      backgroundColor: "white",
+      padding: width * 0.04,
+      borderRadius: 10,
+      elevation: 3,
+      shadowColor: "#000",
+      shadowOpacity: 0.1,
+      shadowOffset: { width: 0, height: 2 },
+      maxHeight: height > width ? "auto" : height * 0.5,
+    },
+
+    breakdownRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: height * 0.015,
+      borderBottomWidth: 1,
+      borderBottomColor: "#ddd",
+    },
+    colorIndicator: {
+      width: width * 0.04,
+      height: width * 0.04,
+      borderRadius: 7.5,
+      marginRight: 10,
+    },
+    breakdownText: {
+      fontSize: RFPercentage(2.2),
+      fontWeight: "500",
+      color: "#333",
+    },
+  });

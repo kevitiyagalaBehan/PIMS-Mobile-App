@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,9 @@ import {
   Alert,
   Image,
   ImageBackground,
+  Dimensions,
 } from "react-native";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,6 +19,25 @@ import { useAuth } from "../context/AuthContext";
 export default function HomeScreen() {
   const navigation = useNavigation();
   const { userData } = useAuth();
+
+  const [windowSize, setWindowSize] = useState(Dimensions.get("window"));
+
+  useEffect(() => {
+    const updateSize = () => {
+      setWindowSize(Dimensions.get("window"));
+    };
+
+    const subscription = Dimensions.addEventListener("change", updateSize);
+
+    return () => {
+      if (subscription && subscription.remove) {
+        subscription.remove();
+      }
+    };
+  }, []);
+
+  const { width, height } = windowSize;
+  const styles = getStyles(width, height);
 
   if (!userData || !userData.authToken || !userData.accountId) {
     console.error("Error: userData or required fields are missing");
@@ -47,9 +68,11 @@ export default function HomeScreen() {
       <View style={styles.container}>
         <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
           <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
-          <TouchableWithoutFeedback onPress={handleLogout}>
-            <MaterialIcons name="logout" size={32} color="white" />
-          </TouchableWithoutFeedback>
+          <View style={styles.logout}>
+            <TouchableWithoutFeedback onPress={handleLogout}>
+              <MaterialIcons name="logout" size={32} color="white" />
+            </TouchableWithoutFeedback>
+          </View>
         </LinearGradient>
 
         <View style={styles.imageContainer}>
@@ -69,6 +92,7 @@ export default function HomeScreen() {
                 accountId: userData.accountId,
               })
             }
+            styles={styles}
           />
           <AnimatedButton
             text="Asset Allocation"
@@ -78,11 +102,13 @@ export default function HomeScreen() {
                 accountId: userData.accountId,
               })
             }
+            styles={styles}
           />
           <AnimatedButton
             text="Portfolio"
             onPress={() => navigation.navigate("Portfolio")}
             large
+            styles={styles}
           />
         </View>
       </View>
@@ -90,7 +116,7 @@ export default function HomeScreen() {
   );
 }
 
-const AnimatedButton = ({ text, onPress, large }) => {
+const AnimatedButton = ({ text, onPress, large, styles }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
@@ -132,7 +158,6 @@ const AnimatedButton = ({ text, onPress, large }) => {
       <Animated.View
         style={[
           styles.button,
-          large && styles.largeButton,
           { transform: [{ scale: scaleAnim }], opacity: opacityAnim },
         ]}
       >
@@ -142,80 +167,81 @@ const AnimatedButton = ({ text, onPress, large }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-  header: {
-    height: 260,
-    padding: 20,
-    paddingTop: 40,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 8,
-  },
-  headerText: {
-    color: "white",
-    fontSize: 36,
-    fontWeight: "bold",
-    paddingTop: 60,
-    letterSpacing: 0.5,
-  },
-  imageContainer: {
-    alignItems: "center",
-    marginTop: -30,
-    marginBottom: 10,
-  },
-  image: {
-    width: 200,
-    height: 100,
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-  },
-  buttonContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: -150,
-  },
-  button: {
-    backgroundColor: "#001F5B",
-    paddingVertical: 18,
-    paddingHorizontal: 35,
-    borderRadius: 12,
-    marginVertical: 8,
-    width: "75%",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 6,
-  },
-  largeButton: {
-    width: "65%",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-  },
-});
+const getStyles = (width, height) =>
+  StyleSheet.create({
+    background: {
+      flex: 1,
+      width: "100%",
+      height: "100%",
+    },
+    container: {
+      flex: 1,
+      backgroundColor: "transparent",
+    },
+    header: {
+      height: height * 0.25,
+      padding: 20,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderBottomLeftRadius: 25,
+      borderBottomRightRadius: 25,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 5 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 8,
+    },
+    headerText: {
+      color: "white",
+      fontSize: RFPercentage(4),
+      fontWeight: "bold",
+      paddingTop: height > width ? height * 0.08 : height * 0.02,
+      letterSpacing: 0.5,
+      textAlign: "auto",
+    },
+    logout: {
+      paddingBottom: height * 0.1,
+    },
+    imageContainer: {
+      alignItems: "center",
+      marginTop: -30,
+      marginBottom: 10,
+    },
+    image: {
+      width: width * 0.5,
+      height: height * 0.12,
+      borderRadius: 15,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 5 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+    },
+    buttonContainer: {
+      flex: 0.8,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    button: {
+      backgroundColor: "#001F5B",
+      paddingVertical: height > width ? height * 0.019 : height * 0.015,
+      paddingHorizontal: width * 0.08,
+      borderRadius: 12,
+      marginVertical: 8,
+      width: width > height ? width * 0.4 : width * 0.75,
+      height: height > width ? height * 0.07 : height * 0.05,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 5 },
+      shadowOpacity: 0.3,
+      shadowRadius: 5,
+      elevation: 6,
+    },
 
+    buttonText: {
+      color: "white",
+      fontSize: RFPercentage(2.5),
+      fontWeight: "bold",
+      textTransform: "uppercase",
+    },
+  });
