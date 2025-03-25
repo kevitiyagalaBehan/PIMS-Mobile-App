@@ -8,43 +8,47 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { loginUser } from "../utils/pimsApi";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
+import { loginUser } from "../utils/pimsApi";
+
+type NavigationProps = {
+  replace: (screen: string) => void;
+};
 
 export default function LoginScreen() {
   const { setUserData } = useAuth();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const navigation = useNavigation();
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
+  const navigation = useNavigation<NavigationProps>();
 
   const handleLogin = async () => {
     try {
-      const { authToken, accountId } = await loginUser(username, password);
-      if (!authToken || !accountId)
-        throw new Error("Invalid login credentials");
-
+      const response = await loginUser(username, password);
+  
+      if (!response) throw new Error("Invalid login credentials");
+  
+      const { authToken, accountId } = response;
+  
       setUserData({ authToken, accountId });
       navigation.replace("Home");
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert("Login Error", error.message);
     }
-  };
+  };  
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../../assets/PIMS_Logo.png")}
-        style={styles.logo}
-      />
+      <Image source={require("../../assets/PIMS_Logo.png")} style={styles.logo} />
 
       <TextInput
         style={styles.input}
         placeholder="Enter Username"
         onChangeText={setUsername}
         value={username}
+        autoCapitalize="none"
       />
 
       <View style={styles.passwordContainer}>
@@ -54,9 +58,15 @@ export default function LoginScreen() {
           secureTextEntry={secureTextEntry}
           onChangeText={setPassword}
           value={password}
+          autoCapitalize="none"
         />
         <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
-          <Text style={styles.eyeIcon}>{secureTextEntry ? <FontAwesome name="eye" size={24} color="black" /> : <FontAwesome name="eye-slash" size={24} color="black" />}</Text>
+          <FontAwesome
+            name={secureTextEntry ? "eye" : "eye-slash"}
+            size={24}
+            color="black"
+            style={styles.eyeIcon}
+          />
         </TouchableOpacity>
       </View>
 
@@ -107,7 +117,6 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     padding: 10,
-    fontSize: 18,
   },
   loginButton: {
     backgroundColor: "#001F5B",
@@ -128,3 +137,4 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
+

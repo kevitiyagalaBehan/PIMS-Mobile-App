@@ -15,12 +15,18 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
+import { HomeScreenNavigationProp } from "../navigation/types";
+
+interface WindowSize {
+  width: number;
+  height: number;
+}
 
 export default function HomeScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const { userData } = useAuth();
 
-  const [windowSize, setWindowSize] = useState(Dimensions.get("window"));
+  const [windowSize, setWindowSize] = useState<WindowSize>(Dimensions.get("window"));
 
   useEffect(() => {
     const updateSize = () => {
@@ -30,9 +36,7 @@ export default function HomeScreen() {
     const subscription = Dimensions.addEventListener("change", updateSize);
 
     return () => {
-      if (subscription && subscription.remove) {
-        subscription.remove();
-      }
+      subscription?.remove();
     };
   }, []);
 
@@ -52,7 +56,7 @@ export default function HomeScreen() {
         onPress: () => {
           navigation.reset({
             index: 0,
-            routes: [{ name: "Login" }],
+            routes: [{ name: "Login" as never }],
           });
         },
       },
@@ -87,7 +91,7 @@ export default function HomeScreen() {
           <AnimatedButton
             text="Portfolio Summary"
             onPress={() =>
-              navigation.navigate("PortfolioSummary", {
+              navigation.navigate("PortfolioSummary" as never, {
                 authToken: userData.authToken,
                 accountId: userData.accountId,
               })
@@ -97,7 +101,7 @@ export default function HomeScreen() {
           <AnimatedButton
             text="Asset Allocation"
             onPress={() =>
-              navigation.navigate("AssetAllocation", {
+              navigation.navigate("AssetAllocation" as never, {
                 authToken: userData.authToken,
                 accountId: userData.accountId,
               })
@@ -106,7 +110,7 @@ export default function HomeScreen() {
           />
           <AnimatedButton
             text="Portfolio"
-            onPress={() => navigation.navigate("Portfolio")}
+            onPress={() => navigation.navigate("Portfolio" as never)}
             large
             styles={styles}
           />
@@ -116,7 +120,14 @@ export default function HomeScreen() {
   );
 }
 
-const AnimatedButton = ({ text, onPress, large, styles }) => {
+interface AnimatedButtonProps {
+  text: string;
+  onPress: () => void;
+  large?: boolean;
+  styles: ReturnType<typeof getStyles>;
+}
+
+const AnimatedButton: React.FC<AnimatedButtonProps> = ({ text, onPress, large, styles }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
@@ -151,13 +162,11 @@ const AnimatedButton = ({ text, onPress, large, styles }) => {
   };
 
   return (
-    <TouchableWithoutFeedback
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-    >
+    <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
       <Animated.View
         style={[
           styles.button,
+          large && styles.largeButton,
           { transform: [{ scale: scaleAnim }], opacity: opacityAnim },
         ]}
       >
@@ -167,7 +176,7 @@ const AnimatedButton = ({ text, onPress, large, styles }) => {
   );
 };
 
-const getStyles = (width, height) =>
+const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     background: {
       flex: 1,
@@ -237,7 +246,11 @@ const getStyles = (width, height) =>
       shadowRadius: 5,
       elevation: 6,
     },
-
+    largeButton: {
+      width: width > height ? width * 0.55 : width * 0.9, // Adjust width for large button
+      height: height > width ? height * 0.1 : height * 0.07, // Adjust height for large button
+      paddingVertical: height > width ? height * 0.025 : height * 0.02,
+    },
     buttonText: {
       color: "white",
       fontSize: RFPercentage(2.5),
@@ -245,3 +258,4 @@ const getStyles = (width, height) =>
       textTransform: "uppercase",
     },
   });
+

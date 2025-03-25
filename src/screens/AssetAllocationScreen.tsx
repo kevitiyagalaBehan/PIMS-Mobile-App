@@ -9,10 +9,34 @@ import {
 import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { getAssetAllocationSummary } from "../utils/pimsApi";
+import { RouteProp } from "@react-navigation/native";
 
-export default function AssetAllocation({ route }) {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+type AssetAllocationRouteProp = RouteProp<
+  { AssetAllocation: { authToken: string; accountId: string } },
+  "AssetAllocation"
+>;
+
+interface AssetAllocationProps {
+  route: AssetAllocationRouteProp;
+}
+
+interface AssetData {
+  name: string;
+  percentage: number;
+}
+
+interface AssetCategory {
+  assetClass: string;
+  percentage: number;
+}
+
+interface AssetAllocationResponse {
+  assetCategories: { assetClasses: AssetCategory[] }[];
+}
+
+export default function AssetAllocation({ route }: AssetAllocationProps) {
+  const [data, setData] = useState<AssetData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const { authToken, accountId } = route.params;
   const [windowSize, setWindowSize] = useState(Dimensions.get("window"));
 
@@ -38,25 +62,29 @@ export default function AssetAllocation({ route }) {
     const fetchData = async () => {
       try {
         const result = await getAssetAllocationSummary(authToken, accountId);
-        if (result && result.assetCategories) {
-          const extractedData = [];
-          result.assetCategories.forEach((category) => {
-            category.assetClasses.forEach((asset) => {
-              extractedData.push({
-                name: asset.assetClass,
-                percentage: asset.percentage,
-              });
+
+        if (!result || !result.assetCategories) {
+          console.error("API response is null or invalid");
+          return;
+        }
+
+        const extractedData: AssetData[] = [];
+
+        result.assetCategories.forEach((category) => {
+          category.assetClasses?.forEach((asset) => {
+            extractedData.push({
+              name: asset.assetClass,
+              percentage: asset.percentage,
             });
           });
+        });
 
-          setData(extractedData);
-        } else {
-          console.error("API response is null or invalid");
-        }
+        setData(extractedData);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchData();
@@ -70,7 +98,7 @@ export default function AssetAllocation({ route }) {
     );
   }
 
-  const chartColors = {
+  const chartColors: Record<string, string> = {
     Cash: "#4BA3C3",
     "Aust. Equities": "#74B6E2",
     "Int. Equities": "#5568A8",
@@ -103,6 +131,7 @@ export default function AssetAllocation({ route }) {
           backgroundColor="transparent"
           center={[width * (height > width ? 0.24 : 0.35), 0]}
           hasLegend={false}
+          paddingLeft="15"
         />
       </View>
 
@@ -123,7 +152,7 @@ export default function AssetAllocation({ route }) {
   );
 }
 
-const getStyles = (width, height) =>
+const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -161,7 +190,6 @@ const getStyles = (width, height) =>
       shadowOffset: { width: 0, height: 2 },
       maxHeight: height > width ? "auto" : height * 0.5,
     },
-
     breakdownRow: {
       flexDirection: "row",
       alignItems: "center",

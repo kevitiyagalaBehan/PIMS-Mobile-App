@@ -8,10 +8,39 @@ import {
   Dimensions,
 } from "react-native";
 import { getAssetAllocationSummary } from "../utils/pimsApi";
+import { RouteProp } from "@react-navigation/native";
 
-export default function PortfolioSummary({ route }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+type PortfolioSummaryRouteProp = RouteProp<
+  { PortfolioSummary: { authToken: string; accountId: string } },
+  "PortfolioSummary"
+>;
+
+interface PortfolioSummaryProps {
+  route: PortfolioSummaryRouteProp;
+}
+
+interface AssetClass {
+  assetClass: string;
+  marketValue: number;
+  percentage: number;
+}
+
+interface AssetCategory {
+  assetCategory: string;
+  marketValue: number;
+  percentage: number;
+  assetClasses?: AssetClass[];
+}
+
+interface PortfolioData {
+  assetCategories: AssetCategory[];
+  totalMarketValue: number;
+  totalPercentage: number;
+}
+
+export default function PortfolioSummary({ route }: PortfolioSummaryProps) {
+  const [data, setData] = useState<PortfolioData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const { authToken, accountId } = route.params;
   const [windowSize, setWindowSize] = useState(Dimensions.get("window"));
 
@@ -24,8 +53,11 @@ export default function PortfolioSummary({ route }) {
 
     const fetchData = async () => {
       try {
-        const result = await getAssetAllocationSummary(authToken, accountId);
-        if (result) {
+        const result: PortfolioData | null = await getAssetAllocationSummary(
+          authToken,
+          accountId
+        );
+        if (result !== null) {
           setData(result);
         } else {
           console.error("API response is null");
@@ -70,11 +102,11 @@ export default function PortfolioSummary({ route }) {
 
       <FlatList
         data={[
-          ...data.assetCategories,
+          ...data!.assetCategories,
           {
             assetCategory: "TOTAL",
-            marketValue: data.totalMarketValue,
-            percentage: data.totalPercentage,
+            marketValue: data!.totalMarketValue,
+            percentage: data!.totalPercentage,
           },
         ]}
         keyExtractor={(item) => item.assetCategory}
@@ -134,7 +166,7 @@ export default function PortfolioSummary({ route }) {
   );
 }
 
-const getStyles = (width, height) =>
+const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
