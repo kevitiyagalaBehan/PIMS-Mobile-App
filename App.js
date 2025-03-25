@@ -28,10 +28,18 @@ function AppNavigator() {
         <Stack.Screen
           name="AssetAllocation"
           component={AssetAllocationScreen}
+          options={{
+            headerTitle: "Asset Allocation",
+            headerTitleAlign: "center",
+          }}
         />
         <Stack.Screen
           name="PortfolioSummary"
           component={PortfolioSummaryScreen}
+          options={{
+            headerTitle: "Asset Allocation",
+            headerTitleAlign: "center",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
