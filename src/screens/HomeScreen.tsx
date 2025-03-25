@@ -9,10 +9,12 @@ import {
   Image,
   ImageBackground,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { HomeScreenNavigationProp } from "../navigation/types";
@@ -26,7 +28,9 @@ export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { userData } = useAuth();
 
-  const [windowSize, setWindowSize] = useState<WindowSize>(Dimensions.get("window"));
+  const [windowSize, setWindowSize] = useState<WindowSize>(
+    Dimensions.get("window")
+  );
 
   useEffect(() => {
     const updateSize = () => {
@@ -34,10 +38,7 @@ export default function HomeScreen() {
     };
 
     const subscription = Dimensions.addEventListener("change", updateSize);
-
-    return () => {
-      subscription?.remove();
-    };
+    return () => subscription.remove();
   }, []);
 
   const { width, height } = windowSize;
@@ -73,9 +74,9 @@ export default function HomeScreen() {
         <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
           <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
           <View style={styles.logout}>
-            <TouchableWithoutFeedback onPress={handleLogout}>
+            <TouchableOpacity onPress={handleLogout} activeOpacity={0.7}>
               <MaterialIcons name="logout" size={32} color="white" />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
           </View>
         </LinearGradient>
 
@@ -91,26 +92,28 @@ export default function HomeScreen() {
           <AnimatedButton
             text="Portfolio Summary"
             onPress={() =>
-              navigation.navigate("PortfolioSummary" as never, {
+              navigation.navigate("PortfolioSummary", {
                 authToken: userData.authToken,
                 accountId: userData.accountId,
               })
             }
             styles={styles}
           />
+
           <AnimatedButton
             text="Asset Allocation"
             onPress={() =>
-              navigation.navigate("AssetAllocation" as never, {
+              navigation.navigate("AssetAllocation", {
                 authToken: userData.authToken,
                 accountId: userData.accountId,
               })
             }
             styles={styles}
           />
+
           <AnimatedButton
             text="Portfolio"
-            onPress={() => navigation.navigate("Portfolio" as never)}
+            onPress={() => navigation.navigate("Portfolio")}
             large
             styles={styles}
           />
@@ -127,7 +130,12 @@ interface AnimatedButtonProps {
   styles: ReturnType<typeof getStyles>;
 }
 
-const AnimatedButton: React.FC<AnimatedButtonProps> = ({ text, onPress, large, styles }) => {
+const AnimatedButton: React.FC<AnimatedButtonProps> = ({
+  text,
+  onPress,
+  large,
+  styles,
+}) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
@@ -147,6 +155,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({ text, onPress, large, s
   };
 
   const handlePressOut = () => {
+    onPress();
     Animated.parallel([
       Animated.timing(scaleAnim, {
         toValue: 1,
@@ -158,11 +167,14 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({ text, onPress, large, s
         duration: 100,
         useNativeDriver: true,
       }),
-    ]).start(() => onPress && onPress());
+    ]).start();
   };
 
   return (
-    <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
+    <TouchableWithoutFeedback
+      onPressIn={handlePressIn}
+      onPress={handlePressOut}
+    >
       <Animated.View
         style={[
           styles.button,
@@ -189,7 +201,7 @@ const getStyles = (width: number, height: number) =>
     },
     header: {
       height: height * 0.25,
-      padding: 20,
+      paddingHorizontal: 20,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
@@ -205,7 +217,6 @@ const getStyles = (width: number, height: number) =>
       color: "white",
       fontSize: RFPercentage(4),
       fontWeight: "bold",
-      paddingTop: height > width ? height * 0.08 : height * 0.02,
       letterSpacing: 0.5,
       textAlign: "auto",
     },
@@ -247,8 +258,8 @@ const getStyles = (width: number, height: number) =>
       elevation: 6,
     },
     largeButton: {
-      width: width > height ? width * 0.55 : width * 0.9, // Adjust width for large button
-      height: height > width ? height * 0.1 : height * 0.07, // Adjust height for large button
+      width: width > height ? width * 0.55 : width * 0.9,
+      height: height > width ? height * 0.1 : height * 0.07,
       paddingVertical: height > width ? height * 0.025 : height * 0.02,
     },
     buttonText: {
@@ -258,4 +269,3 @@ const getStyles = (width: number, height: number) =>
       textTransform: "uppercase",
     },
   });
-

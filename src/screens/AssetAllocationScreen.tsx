@@ -9,16 +9,7 @@ import {
 import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { getAssetAllocationSummary } from "../utils/pimsApi";
-import { RouteProp } from "@react-navigation/native";
-
-type AssetAllocationRouteProp = RouteProp<
-  { AssetAllocation: { authToken: string; accountId: string } },
-  "AssetAllocation"
->;
-
-interface AssetAllocationProps {
-  route: AssetAllocationRouteProp;
-}
+import { AssetAllocationProps } from "../navigation/types"; // Correct import
 
 interface AssetData {
   name: string;
@@ -34,7 +25,7 @@ interface AssetAllocationResponse {
   assetCategories: { assetClasses: AssetCategory[] }[];
 }
 
-export default function AssetAllocation({ route }: AssetAllocationProps) {
+export default function AssetAllocationScreen({ route }: AssetAllocationProps) {
   const [data, setData] = useState<AssetData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { authToken, accountId } = route.params;
@@ -62,30 +53,29 @@ export default function AssetAllocation({ route }: AssetAllocationProps) {
     const fetchData = async () => {
       try {
         const result = await getAssetAllocationSummary(authToken, accountId);
-
+    
         if (!result || !result.assetCategories) {
           console.error("API response is null or invalid");
+          setData([]); 
           return;
         }
-
-        const extractedData: AssetData[] = [];
-
-        result.assetCategories.forEach((category) => {
-          category.assetClasses?.forEach((asset) => {
-            extractedData.push({
+    
+        const extractedData: AssetData[] = result.assetCategories.flatMap(
+          (category) =>
+            category.assetClasses?.map((asset) => ({
               name: asset.assetClass,
               percentage: asset.percentage,
-            });
-          });
-        });
-
+            })) || [] 
+        );
+    
         setData(extractedData);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setData([]); 
       } finally {
         setLoading(false);
       }
-    };
+    };    
 
     fetchData();
   }, [authToken, accountId]);

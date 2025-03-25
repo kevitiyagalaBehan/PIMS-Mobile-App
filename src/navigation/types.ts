@@ -1,12 +1,25 @@
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-type RootStackParamList = {
+export type RootStackParamList = {
+  Login: undefined;
   Home: undefined;
-  PortfolioSummary: { authToken: string; accountId: string };
-  AssetAllocation: { authToken: string; accountId: string };
   Portfolio: undefined;
+  AssetAllocation: { authToken: string; accountId: string };
+  PortfolioSummary: { authToken: string; accountId: string };
 };
 
-export type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
-export type PortfolioSummaryScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'PortfolioSummary'>;
-export type AssetAllocationScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'AssetAllocation'>;
+export type HomeScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "Home"
+>;
+
+export type AssetAllocationProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, "AssetAllocation">;
+  route: RouteProp<RootStackParamList, "AssetAllocation">;
+};
+
+export type PortfolioSummaryProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, "PortfolioSummary">;
+  route: RouteProp<RootStackParamList, "PortfolioSummary">;
+};

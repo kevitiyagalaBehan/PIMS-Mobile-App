@@ -2,12 +2,13 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
+import { RootStackParamList } from "./src/navigation/types";
 import AssetAllocationScreen from "./src/screens/AssetAllocationScreen";
 import PortfolioSummaryScreen from "./src/screens/PortfolioSummaryScreen";
 import LoginScreen from "./src/screens/LoginScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
   const { userData } = useAuth();
