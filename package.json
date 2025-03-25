@@ -1,8 +1,8 @@
 {
-  "name": "frontend",
+  "name": "pims",
   "license": "0BSD",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -12,7 +12,8 @@
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
-    "@react-navigation/native": "^7.0.15",
+    "@react-navigation/native": "^7.0.19",
+    "@react-navigation/native-stack": "^7.3.3",
     "@react-navigation/stack": "^7.1.2",
     "axios": "^1.8.1",
     "expo": "~52.0.37",
@@ -35,7 +36,11 @@
     "react-native-web": "~0.19.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@types/react": "^18.3.20",
+    "@types/react-native": "^0.72.8",
+    "@types/react-navigation": "^3.0.8",
+    "typescript": "^5.8.2"
   },
   "private": true
 }
