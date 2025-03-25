@@ -1,9 +1,7 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TouchableWithoutFeedback,
-  Animated,
   StyleSheet,
   Alert,
   Image,
@@ -14,7 +12,6 @@ import {
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { HomeScreenNavigationProp } from "../navigation/types";
@@ -87,106 +84,10 @@ export default function HomeScreen() {
             resizeMode="contain"
           />
         </View>
-
-        <View style={styles.buttonContainer}>
-          <AnimatedButton
-            text="Portfolio Summary"
-            onPress={() =>
-              navigation.navigate("PortfolioSummary", {
-                authToken: userData.authToken,
-                accountId: userData.accountId,
-              })
-            }
-            styles={styles}
-          />
-
-          <AnimatedButton
-            text="Asset Allocation"
-            onPress={() =>
-              navigation.navigate("AssetAllocation", {
-                authToken: userData.authToken,
-                accountId: userData.accountId,
-              })
-            }
-            styles={styles}
-          />
-
-          <AnimatedButton
-            text="Portfolio"
-            onPress={() => navigation.navigate("Portfolio")}
-            large
-            styles={styles}
-          />
-        </View>
       </View>
     </ImageBackground>
   );
 }
-
-interface AnimatedButtonProps {
-  text: string;
-  onPress: () => void;
-  large?: boolean;
-  styles: ReturnType<typeof getStyles>;
-}
-
-const AnimatedButton: React.FC<AnimatedButtonProps> = ({
-  text,
-  onPress,
-  large,
-  styles,
-}) => {
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const opacityAnim = useRef(new Animated.Value(1)).current;
-
-  const handlePressIn = () => {
-    Animated.parallel([
-      Animated.timing(scaleAnim, {
-        toValue: 1.1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 0.7,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  const handlePressOut = () => {
-    onPress();
-    Animated.parallel([
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  return (
-    <TouchableWithoutFeedback
-      onPressIn={handlePressIn}
-      onPress={handlePressOut}
-    >
-      <Animated.View
-        style={[
-          styles.button,
-          large && styles.largeButton,
-          { transform: [{ scale: scaleAnim }], opacity: opacityAnim },
-        ]}
-      >
-        <Text style={styles.buttonText}>{text}</Text>
-      </Animated.View>
-    </TouchableWithoutFeedback>
-  );
-};
 
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({
@@ -236,36 +137,5 @@ const getStyles = (width: number, height: number) =>
       shadowOffset: { width: 0, height: 5 },
       shadowOpacity: 0.3,
       shadowRadius: 8,
-    },
-    buttonContainer: {
-      flex: 0.8,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    button: {
-      backgroundColor: "#001F5B",
-      paddingVertical: height > width ? height * 0.019 : height * 0.015,
-      paddingHorizontal: width * 0.08,
-      borderRadius: 12,
-      marginVertical: 8,
-      width: width > height ? width * 0.4 : width * 0.75,
-      height: height > width ? height * 0.07 : height * 0.05,
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 5 },
-      shadowOpacity: 0.3,
-      shadowRadius: 5,
-      elevation: 6,
-    },
-    largeButton: {
-      width: width > height ? width * 0.55 : width * 0.9,
-      height: height > width ? height * 0.1 : height * 0.07,
-      paddingVertical: height > width ? height * 0.025 : height * 0.02,
-    },
-    buttonText: {
-      color: "white",
-      fontSize: RFPercentage(2.5),
-      fontWeight: "bold",
-      textTransform: "uppercase",
     },
   });
