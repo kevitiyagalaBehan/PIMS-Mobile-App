@@ -22,3 +22,8 @@ export type HomeScreenNavigationProp = NativeStackNavigationProp<
 // Bottom Tab Navigation Prop for screens inside the BottomTabNavigator
 export type BottomTabNavigationProp<T extends keyof BottomTabParamList> =
   RNBottomTabNavigationProp<BottomTabParamList, T>;
+
+export type AssetAllocationProps = {
+    route: any; 
+  };
+  
