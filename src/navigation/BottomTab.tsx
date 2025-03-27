@@ -13,7 +13,21 @@ export default function BottomTab() {
   const navigation = useNavigation();
 
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 5,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12, 
+          fontWeight: 'bold', 
+        },
+        tabBarIconStyle: {
+          marginBottom: 0, 
+        },
+      }}
+    >
       <Tab.Screen
         name="HomeTab"
         component={HomeScreen}
@@ -40,6 +54,7 @@ export default function BottomTab() {
         name="Menu"
         component={HomeScreen} 
         options={{
+          headerShown: false,
           tabBarLabel: "Menu",
           tabBarIcon: ({ color, size }) => (
             <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
