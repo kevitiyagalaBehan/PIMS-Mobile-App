@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  View,
   Text,
   TextInput,
   Image,
@@ -12,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../utils/pimsApi";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type NavigationProps = {
   replace: (screen: string) => void;
@@ -40,7 +40,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Image
         source={require("../../assets/PIMS_Logo.png")}
         style={styles.logo}
@@ -54,7 +54,7 @@ export default function LoginScreen() {
         autoCapitalize="none"
       />
 
-      <View style={styles.passwordContainer}>
+      <SafeAreaView style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
           placeholder="Enter Password"
@@ -71,7 +71,7 @@ export default function LoginScreen() {
             style={styles.eyeIcon}
           />
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
@@ -80,7 +80,7 @@ export default function LoginScreen() {
       <TouchableOpacity onPress={() => console.log("Forgot Password Pressed")}>
         <Text style={styles.forgotPassword}>Forgot Password?</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
