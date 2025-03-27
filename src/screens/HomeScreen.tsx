@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  View,
   Text,
   StyleSheet,
   Image,
@@ -12,6 +11,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { HomeScreenNavigationProp } from "../navigation/types";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface WindowSize {
   width: number;
@@ -43,47 +43,47 @@ export default function HomeScreen() {
   }
 
   return (
-    <ImageBackground
-      source={require("../../assets/background.jpg")}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <View style={styles.container}>
-        <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
-          <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
-        </LinearGradient>
-
-        <View style={styles.imageContainer}>
-          <Image
-            source={require("../../assets/PIMS.png")}
-            style={styles.image}
-            resizeMode="contain"
-          />
-        </View>
-      </View>
-    </ImageBackground>
+    <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.imageContainer}>
+      <Image
+        source={require("../../assets/PIMS.png")}
+        style={styles.image}
+        resizeMode="contain"
+      />
+    </SafeAreaView>
+      <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
+        <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
 
 const getStyles = (width: number, height: number) =>
-  StyleSheet.create({
-    background: {
-      flex: 1,
-      width: "100%",
-      height: "100%",
-    },
+  StyleSheet.create({  
     container: {
       flex: 1,
       backgroundColor: "transparent",
+      paddingHorizontal: 5,
+    },
+    imageContainer: {
+      alignItems: "center",
+    },
+    image: {
+      width: width * 0.5,
+      height: height * 0.12,
+      borderRadius: 15,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 5 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
     },
     header: {
-      height: height * 0.25,
+      height: height * 0.15,
       paddingHorizontal: 20,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      borderBottomLeftRadius: 25,
-      borderBottomRightRadius: 25,
+      borderRadius: 10,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 5 },
       shadowOpacity: 0.2,
@@ -97,21 +97,21 @@ const getStyles = (width: number, height: number) =>
       letterSpacing: 0.5,
       textAlign: "auto",
     },
-    logout: {
-      paddingBottom: height * 0.1,
-    },
-    imageContainer: {
-      alignItems: "center",
-      marginTop: -30,
-      marginBottom: 10,
-    },
-    image: {
-      width: width * 0.5,
-      height: height * 0.12,
-      borderRadius: 15,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 5 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-    },
   });
+
+{
+  /*
+    <ImageBackground
+      source={require("../../assets/background.jpg")}
+      style={styles.background}
+      resizeMode="cover"
+    >
+    </ImageBackground>
+
+background: {
+      flex: 1,
+      width: "100%",
+      height: "100%",
+    },
+*/
+}
