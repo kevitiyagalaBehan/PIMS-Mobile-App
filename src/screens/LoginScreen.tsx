@@ -27,21 +27,24 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     try {
       const response = await loginUser(username, password);
-  
+
       if (!response) throw new Error("Invalid login credentials");
-  
+
       const { authToken, accountId } = response;
-  
+
       setUserData({ authToken, accountId });
       navigation.replace("Home");
     } catch (error: any) {
       Alert.alert("Login Error", error.message);
     }
-  };  
+  };
 
   return (
     <View style={styles.container}>
-      <Image source={require("../../assets/PIMS_Logo.png")} style={styles.logo} />
+      <Image
+        source={require("../../assets/PIMS_Logo.png")}
+        style={styles.logo}
+      />
 
       <TextInput
         style={styles.input}
@@ -137,4 +140,3 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
-

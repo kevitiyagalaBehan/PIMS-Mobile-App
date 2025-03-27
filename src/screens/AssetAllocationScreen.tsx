@@ -9,7 +9,6 @@ import {
 import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { getAssetAllocationSummary } from "../utils/pimsApi";
-import { AssetAllocationProps } from "../navigation/types"; // Correct import
 
 interface AssetData {
   name: string;
