@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  View,
   Text,
   TextInput,
   Image,
@@ -54,7 +55,7 @@ export default function LoginScreen() {
         autoCapitalize="none"
       />
 
-      <SafeAreaView style={styles.passwordContainer}>
+      <View style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
           placeholder="Enter Password"
@@ -71,7 +72,7 @@ export default function LoginScreen() {
             style={styles.eyeIcon}
           />
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
