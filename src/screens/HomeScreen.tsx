@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
+//import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 //import { HomeScreenNavigationProp } from "../navigation/types";
 import { SafeAreaView } from "react-native-safe-area-context";
