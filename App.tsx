@@ -2,13 +2,10 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
-import { RootStackParamList } from "./src/navigation/types";
-import AssetAllocationScreen from "./src/screens/AssetAllocationScreen";
-import PortfolioSummaryScreen from "./src/screens/PortfolioSummaryScreen";
 import LoginScreen from "./src/screens/LoginScreen";
-import HomeScreen from "./src/screens/HomeScreen";
+import DrawerNav from "./src/navigation/DrawerNav";
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator();
 
 function AppNavigator() {
   const { userData } = useAuth();
@@ -23,24 +20,8 @@ function AppNavigator() {
         />
         <Stack.Screen
           name="Home"
-          component={HomeScreen}
+          component={DrawerNav}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="AssetAllocation"
-          component={AssetAllocationScreen}
-          options={{
-            headerTitle: "Asset Allocation",
-            headerTitleAlign: "center",
-          }}
-        />
-        <Stack.Screen
-          name="PortfolioSummary"
-          component={PortfolioSummaryScreen}
-          options={{
-            headerTitle: "Asset Allocation",
-            headerTitleAlign: "center",
-          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
