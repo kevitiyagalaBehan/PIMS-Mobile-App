@@ -10,7 +10,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
-import { HomeScreenNavigationProp } from "../navigation/types";
+//import { HomeScreenNavigationProp } from "../navigation/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface WindowSize {
@@ -19,7 +19,6 @@ interface WindowSize {
 }
 
 export default function HomeScreen() {
-  //const navigation = useNavigation<HomeScreenNavigationProp>();
   const { userData } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
@@ -45,13 +44,16 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <SafeAreaView style={styles.imageContainer}>
-      <Image
-        source={require("../../assets/PIMS.png")}
-        style={styles.image}
-        resizeMode="contain"
-      />
-    </SafeAreaView>
+        <Image
+          source={require("../../assets/PIMS.png")}
+          style={styles.image}
+          resizeMode="contain"
+        />
+      </SafeAreaView>
       <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
+        <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
+      </LinearGradient>
+      <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.amount}>
         <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
       </LinearGradient>
     </SafeAreaView>
@@ -67,6 +69,7 @@ const getStyles = (width: number, height: number) =>
     },
     imageContainer: {
       alignItems: "center",
+      marginBottom: 5,
     },
     image: {
       width: width * 0.5,
@@ -78,6 +81,20 @@ const getStyles = (width: number, height: number) =>
       shadowRadius: 8,
     },
     header: {
+      height: height * 0.10,
+      paddingHorizontal: 20,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderRadius: 10,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 5 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 8,
+    },
+    amount: {
+      marginTop: 10,
       height: height * 0.15,
       paddingHorizontal: 20,
       flexDirection: "row",
