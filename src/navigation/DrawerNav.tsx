@@ -1,12 +1,41 @@
 import React from "react";
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerContentComponentProps } from "@react-navigation/drawer";
-import { Alert } from "react-native";
-import BottomTab from "./BottomTab";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+} from "@react-navigation/drawer";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+  ScrollView,
+  ScrollViewProps,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import BottomTab from "./BottomTab";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Drawer = createDrawerNavigator();
 
-function CustomDrawerContent(props: DrawerContentComponentProps) {
+const menuItems = [
+  { name: "Home", icon: "home-outline" },
+  { name: "Valuation", icon: "chart-line" },
+  { name: "Bank", icon: "bank-outline" },
+  { name: "Contributions", icon: "cash-plus" },
+  { name: "Pensions", icon: "currency-usd" },
+  { name: "Performance", icon: "chart-areaspline" },
+  { name: "Details", icon: "file-document-outline" },
+  { name: "Messages", icon: "message-outline" },
+];
+
+function CustomDrawerContent(
+  props: React.JSX.IntrinsicAttributes &
+    ScrollViewProps & {
+      children: React.ReactNode;
+    } & React.RefAttributes<ScrollView>
+) {
   const navigation = useNavigation();
 
   const handleLogout = () => {
@@ -26,28 +55,72 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
   return (
     <DrawerContentScrollView {...props}>
-      <DrawerItem label="Home" onPress={() => navigation.navigate("Home" as never)} />
-      <DrawerItem label="Valuation" onPress={() => navigation.navigate("Valuation" as never)} />
-      <DrawerItem label="Bank" onPress={() => navigation.navigate("Bank" as never)} />
-      <DrawerItem label="Contributions" onPress={() => navigation.navigate("Contributions" as never)} />
-      <DrawerItem label="Pensions" onPress={() => navigation.navigate("Pensions" as never)} />
-      <DrawerItem label="Performance" onPress={() => navigation.navigate("Performance" as never)} />
-      <DrawerItem label="Details" onPress={() => navigation.navigate("Details" as never)} />
-      <DrawerItem label="Messages" onPress={() => navigation.navigate("Messages" as never)} />
-      <DrawerItem label="Logout" onPress={handleLogout} />
+      <SafeAreaView style={styles.drawerContainer}>
+        {menuItems.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.drawerItem}
+            onPress={() => navigation.navigate(item.name as never)}
+          >
+            <Icon name={item.icon} size={24} color="#555" style={styles.icon} />
+            <Text style={styles.drawerLabel}>{item.name}</Text>
+          </TouchableOpacity>
+        ))}
+
+        <TouchableOpacity
+          style={[styles.drawerItem, styles.logoutButton]}
+          onPress={handleLogout}
+        >
+          <Icon name="logout" size={24} color="red" style={styles.icon} />
+          <Text style={[styles.drawerLabel, { color: "red" }]}>Logout</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
     </DrawerContentScrollView>
   );
 }
 
 export default function DrawerNav() {
   return (
-    <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="MainTabs" component={BottomTab} options={{ headerShown: false }} />
-      {/*
-      <Drawer.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
-      <Drawer.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
-      <Drawer.Screen name="Help" component={HelpScreen} options={{ headerShown: false }} />
-      */}
+    <Drawer.Navigator
+      screenOptions={{
+        drawerPosition: "right",
+      }}
+      drawerContent={(props) => (
+        <CustomDrawerContent children={undefined} {...props} />
+      )}
+    >
+      <Drawer.Screen
+        name="MainTabs"
+        component={BottomTab}
+        options={{ headerShown: false }}
+      />
     </Drawer.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  drawerContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  drawerItem: {
+    flexDirection: "row", 
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  icon: {
+    marginRight: 15,
+  },
+  drawerLabel: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#333",
+  },
+  logoutButton: {
+    marginTop: 20,
+    borderBottomWidth: 0,
+  },
+});
