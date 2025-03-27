@@ -19,7 +19,7 @@ interface WindowSize {
 }
 
 export default function HomeScreen() {
-  const navigation = useNavigation<HomeScreenNavigationProp>();
+  //const navigation = useNavigation<HomeScreenNavigationProp>();
   const { userData } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
