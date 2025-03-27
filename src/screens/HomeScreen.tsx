@@ -3,16 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
-  Alert,
   Image,
   ImageBackground,
   Dimensions,
-  TouchableOpacity,
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { HomeScreenNavigationProp } from "../navigation/types";
 
@@ -24,7 +21,6 @@ interface WindowSize {
 export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { userData } = useAuth();
-
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
   );
@@ -46,21 +42,6 @@ export default function HomeScreen() {
     return null;
   }
 
-  const handleLogout = () => {
-    Alert.alert("Logout", "Are you sure you want to log out?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Logout",
-        onPress: () => {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Login" as never }],
-          });
-        },
-      },
-    ]);
-  };
-
   return (
     <ImageBackground
       source={require("../../assets/background.jpg")}
@@ -70,11 +51,6 @@ export default function HomeScreen() {
       <View style={styles.container}>
         <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
           <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
-          <View style={styles.logout}>
-            <TouchableOpacity onPress={handleLogout} activeOpacity={0.7}>
-              <MaterialIcons name="logout" size={32} color="white" />
-            </TouchableOpacity>
-          </View>
         </LinearGradient>
 
         <View style={styles.imageContainer}>
