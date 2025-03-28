@@ -1,19 +1,27 @@
 export const API_BASE_URL = "https://mob.pimsolutions.net.au/api";
 
-// Define login response structure
 interface LoginResponse {
   authToken: string;
   accountId: string;
 }
 
-// Define asset class structure
+interface LinkedUsers {
+  FullName: string;
+  IsCurrent: boolean;
+}
+
+interface SuperFundDetails {
+  dataDownDate: string;
+  year: number;
+  clientTotal: number;
+}
+
 interface AssetClass {
   assetClass: string;
   marketValue: number;
   percentage: number;
 }
 
-// Define asset category structure
 interface AssetCategory {
   assetCategory: string;
   marketValue: number;
@@ -21,14 +29,12 @@ interface AssetCategory {
   assetClasses?: AssetClass[];
 }
 
-// Define Asset Allocation Summary response structure
 interface AssetAllocationSummary {
   assetCategories: AssetCategory[];
   totalMarketValue: number;
   totalPercentage: number;
 }
 
-// Function to log in a user
 export const loginUser = async (
   username: string,
   password: string
@@ -55,6 +61,38 @@ export const loginUser = async (
     return null;
   }
 };
+
+export const getLinkedUsers = async (authToken: string): Promise<LinkedUsers | null> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Auth/LinkedUsers`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch linked users");
+    }
+
+    const data = await response.json();
+    console.log("Fetched linked users:", data);
+
+    const currentUser = data.find((user: any) => user.IsCurrent === true);
+
+    if (currentUser) {
+      return currentUser.FullName;
+    } else {
+      console.log("No current user found in the response.");
+      throw new Error("No current user found");
+    }
+  } catch (error) {
+    console.error("Error fetching linked users:", error);
+    return null;
+  }
+};
+
 
 export const getAssetAllocationSummary = async (
   authToken: string,
@@ -84,6 +122,44 @@ export const getAssetAllocationSummary = async (
     }
   } catch (error) {
     console.error("Fetch failed:", error);
+    return null;
+  }
+};
+
+export const getSuperFundDetails = async (
+  authToken: string,
+  accountId: string
+): Promise<SuperFundDetails | null> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/InvestmentGraphPortfolioBalanceSummaryGraph/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (Array.isArray(data) && data.length > 0) {
+      const portfolioData = data[0];
+      if (portfolioData.year && portfolioData.clientTotal) {
+        return portfolioData;
+      } else {
+        throw new Error("Invalid response structure");
+      }
+    } else {
+      throw new Error("Invalid response structure");
+    }
+  } catch (error) {
+    console.error("Error fetching portfolio balance summary:", error);
     return null;
   }
 };
