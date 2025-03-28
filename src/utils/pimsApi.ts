@@ -1,13 +1,18 @@
 export const API_BASE_URL = "https://mob.pimsolutions.net.au/api";
 
+export interface LinkedUsers {
+  fullName: string;
+  isCurrent: boolean;
+  assignedAccount?: string;
+  assignedAccountType?: string;
+  emailAddress?: string;
+  role?: string;
+  userId?: string;
+}
+
 interface LoginResponse {
   authToken: string;
   accountId: string;
-}
-
-interface LinkedUsers {
-  FullName: string;
-  IsCurrent: boolean;
 }
 
 interface SuperFundDetails {
@@ -76,16 +81,17 @@ export const getLinkedUsers = async (authToken: string): Promise<LinkedUsers | n
       throw new Error("Failed to fetch linked users");
     }
 
-    const data = await response.json();
-    console.log("Fetched linked users:", data);
+    const data: LinkedUsers[] = await response.json();
 
-    const currentUser = data.find((user: any) => user.IsCurrent === true);
+    //console.log("Fetched linked users:", data);
+
+    const currentUser = data.find((user) => user.isCurrent === true);
 
     if (currentUser) {
-      return currentUser.FullName;
+      return currentUser;
     } else {
       console.log("No current user found in the response.");
-      throw new Error("No current user found");
+      return null;
     }
   } catch (error) {
     console.error("Error fetching linked users:", error);
