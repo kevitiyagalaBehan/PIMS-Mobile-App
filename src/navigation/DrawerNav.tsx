@@ -22,7 +22,6 @@ import { handleLogout } from "../utils/logout";
 const Drawer = createDrawerNavigator();
 
 const menuItems = [
-  //{ name: "Home", icon: "home-outline" },
   { name: "Valuation", icon: "chart-line" },
   { name: "Bank", icon: "bank-outline" },
   { name: "Contributions", icon: "cash-plus" },
@@ -49,7 +48,9 @@ function CustomDrawerContent(
             source={require("../../assets/PIMS.png")}
             style={styles.Image}
           />
-          <Text style={styles.userName}>Welcome, {currentUserName || "User"}</Text>
+          <Text style={styles.userName}>
+            Welcome, {currentUserName || "User"}
+          </Text>
         </View>
 
         {menuItems.map((item, index) => (

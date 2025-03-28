@@ -13,10 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button";
 import { useAuth } from "../context/AuthContext";
-import {
-  getLinkedUsers,
-  getSuperFundDetails,
-} from "../utils/pimsApi";
+import { getLinkedUsers, getSuperFundDetails } from "../utils/pimsApi";
 
 interface WindowSize {
   width: number;
@@ -126,9 +123,7 @@ export default function HomeScreen() {
 
       <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
         <Text style={styles.userNameText}>
-          {currentUserName
-            ? `Hello, ${currentUserName}`
-            : "Loading user..."}
+          {currentUserName ? `Hello, ${currentUserName}` : "Loading user..."}
         </Text>
       </LinearGradient>
 
