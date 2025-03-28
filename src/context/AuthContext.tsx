@@ -2,9 +2,9 @@ import React, { createContext, useState, useContext, ReactNode } from "react";
 
 type AuthContextType = {
   userData: { authToken: string; accountId: string } | null;
-  setUserData: React.Dispatch<
-    React.SetStateAction<{ authToken: string; accountId: string } | null>
-  >;
+  setUserData: React.Dispatch<React.SetStateAction<{ authToken: string; accountId: string } | null>>;
+  currentUserName: string | null;
+  setCurrentUserName: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,9 +15,10 @@ type AuthProviderProps = {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userData, setUserData] = useState<AuthContextType["userData"]>(null);
+  const [currentUserName, setCurrentUserName] = useState<string | null>(null);
 
   return (
-    <AuthContext.Provider value={{ userData, setUserData }}>
+    <AuthContext.Provider value={{ userData, setUserData, currentUserName, setCurrentUserName }}>
       {children}
     </AuthContext.Provider>
   );

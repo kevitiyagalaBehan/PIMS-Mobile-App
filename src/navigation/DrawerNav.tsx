@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../context/AuthContext";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -38,6 +39,7 @@ function CustomDrawerContent(
     }
 ) {
   const navigation = useNavigation<NavigationProp<any>>();
+  const { currentUserName } = useAuth();
 
   return (
     <DrawerContentScrollView {...props}>
@@ -47,7 +49,7 @@ function CustomDrawerContent(
             source={require("../../assets/PIMS.png")}
             style={styles.Image}
           />
-          <Text style={styles.userName}>Welcome, User</Text>
+          <Text style={styles.userName}>Welcome, {currentUserName || "User"}</Text>
         </View>
 
         {menuItems.map((item, index) => (

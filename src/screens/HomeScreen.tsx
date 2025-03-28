@@ -25,13 +25,9 @@ interface WindowSize {
 }
 
 export default function HomeScreen() {
-  const { userData } = useAuth();
+  const { userData, setCurrentUserName, currentUserName } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
-  );
-
-  const [currentUserName, setCurrentUserName] = useState<LinkedUsers | null>(
-    null
   );
 
   const [portfolioData, setPortfolioData] = useState<{
@@ -61,9 +57,9 @@ export default function HomeScreen() {
       const userName = await getLinkedUsers(userData.authToken);
 
       if (userName && userName.fullName) {
-        setCurrentUserName(userName);
+        setCurrentUserName(userName.fullName);
       } else {
-        setCurrentUserName({ fullName: "User not found", isCurrent: false });
+        setCurrentUserName("User not found");
       }
     };
 
@@ -132,7 +128,7 @@ export default function HomeScreen() {
       <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
         <Text style={styles.userNameText}>
           {currentUserName
-            ? `Hello, ${currentUserName.fullName}!`
+            ? `Hello, ${currentUserName}`
             : "Loading user..."}
         </Text>
       </LinearGradient>
