@@ -6,9 +6,11 @@ import {
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   Text,
+  View,
   TouchableOpacity,
   StyleSheet,
   ScrollViewProps,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@react-navigation/native";
@@ -30,16 +32,24 @@ const menuItems = [
 ];
 
 function CustomDrawerContent(
-  props: React.JSX.IntrinsicAttributes & ScrollViewProps & {
-    children: React.ReactNode;
-  }
+  props: React.JSX.IntrinsicAttributes &
+    ScrollViewProps & {
+      children: React.ReactNode;
+    }
 ) {
-
   const navigation = useNavigation<NavigationProp<any>>();
 
   return (
     <DrawerContentScrollView {...props}>
       <SafeAreaView style={styles.drawerContainer}>
+        <View style={styles.headerContainer}>
+          <Image
+            source={require("../../assets/PIMS.png")}
+            style={styles.Image}
+          />
+          <Text style={styles.userName}>Welcome, User</Text>
+        </View>
+
         {menuItems.map((item, index) => (
           <TouchableOpacity
             key={index}
@@ -53,7 +63,7 @@ function CustomDrawerContent(
 
         <TouchableOpacity
           style={[styles.drawerItem, styles.logoutButton]}
-          onPress={() => handleLogout(navigation)} 
+          onPress={() => handleLogout(navigation)}
         >
           <Icon name="logout" size={40} color="red" style={styles.icon} />
           <Text style={[styles.drawerLabel, { color: "red" }]}>Logout</Text>
@@ -87,6 +97,25 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 10,
+  },
+  headerContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  Image: {
+    width: "100%",
+    height: 60,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    marginBottom: 10,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
   },
   drawerItem: {
     flexDirection: "row",

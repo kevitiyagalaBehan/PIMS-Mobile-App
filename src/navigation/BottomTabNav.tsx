@@ -4,7 +4,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import HomeScreen from "../screens/HomeScreen";
 import MessageScreen from "../screens/MessageScreen";
-//import { TouchableOpacity } from "react-native";
 
 const Tab = createBottomTabNavigator();
 

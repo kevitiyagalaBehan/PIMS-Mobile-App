@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Pressable, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, StyleSheet } from "react-native";
 
 interface ButtonProps {
   onPress: () => void;
@@ -7,9 +7,9 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ onPress }) => {
   return (
-    <Pressable style={styles.button} onPress={onPress}>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
       <Text style={styles.text}>More Details</Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
