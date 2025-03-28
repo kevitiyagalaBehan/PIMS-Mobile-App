@@ -67,7 +67,9 @@ export const loginUser = async (
   }
 };
 
-export const getLinkedUsers = async (authToken: string): Promise<LinkedUsers | null> => {
+export const getLinkedUsers = async (
+  authToken: string
+): Promise<LinkedUsers | null> => {
   try {
     const response = await fetch(`${API_BASE_URL}/Auth/LinkedUsers`, {
       method: "GET",
@@ -98,7 +100,6 @@ export const getLinkedUsers = async (authToken: string): Promise<LinkedUsers | n
     return null;
   }
 };
-
 
 export const getAssetAllocationSummary = async (
   authToken: string,

@@ -3,7 +3,7 @@ import { BottomTabNavigationProp as RNBottomTabNavigationProp } from "@react-nav
 
 export type RootStackParamList = {
   Login: undefined;
-  Home: undefined; 
+  Home: undefined;
 };
 
 // Define the Bottom Tab Navigator parameters

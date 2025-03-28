@@ -42,7 +42,7 @@ export default function BottomTab() {
       />
       <Tab.Screen
         name="Menu"
-        component={HomeScreen} // Placeholder, but it won't render
+        component={HomeScreen}
         options={{
           tabBarLabel: "Menu",
           tabBarIcon: ({ color, size }) => (
@@ -51,7 +51,7 @@ export default function BottomTab() {
         }}
         listeners={{
           tabPress: (e) => {
-            e.preventDefault(); // Prevent tab from switching
+            e.preventDefault();
             navigation.dispatch(DrawerActions.openDrawer());
           },
         }}
