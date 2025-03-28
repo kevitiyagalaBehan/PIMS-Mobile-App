@@ -14,7 +14,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button";
 import { useAuth } from "../context/AuthContext";
 import {
-  LinkedUsers,
   getLinkedUsers,
   getSuperFundDetails,
 } from "../utils/pimsApi";
