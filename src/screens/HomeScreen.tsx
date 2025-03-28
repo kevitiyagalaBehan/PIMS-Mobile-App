@@ -11,11 +11,13 @@ import { BarChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Button from '../../components/Button';
-//import { HomeScreenNavigationProp } from "../navigation/types";
-//import { useNavigation } from "@react-navigation/native";
+import Button from "../../components/Button";
 import { useAuth } from "../context/AuthContext";
-import { getLinkedUsers, getSuperFundDetails } from "../utils/pimsApi";
+import {
+  LinkedUsers,
+  getLinkedUsers,
+  getSuperFundDetails,
+} from "../utils/pimsApi";
 
 interface WindowSize {
   width: number;
@@ -28,10 +30,10 @@ export default function HomeScreen() {
     Dimensions.get("window")
   );
 
-  const [currentUserName, setCurrentUserName] = useState<{
-    FullName: string;
-    IsCurrent: boolean;
-  } | null>(null);
+  const [currentUserName, setCurrentUserName] = useState<LinkedUsers | null>(
+    null
+  );
+
   const [portfolioData, setPortfolioData] = useState<{
     dataDownDate: string;
     year: number;
@@ -58,10 +60,10 @@ export default function HomeScreen() {
 
       const userName = await getLinkedUsers(userData.authToken);
 
-      if (userName) {
+      if (userName && userName.fullName) {
         setCurrentUserName(userName);
       } else {
-        setCurrentUserName({ FullName: "User not found", IsCurrent: false });
+        setCurrentUserName({ fullName: "User not found", isCurrent: false });
       }
     };
 
@@ -83,7 +85,6 @@ export default function HomeScreen() {
       );
 
       if (data) {
-        //console.log("Fetched Super Fund Data:", data);
         setPortfolioData({
           year: data.year,
           value: data.clientTotal,
@@ -130,7 +131,9 @@ export default function HomeScreen() {
 
       <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
         <Text style={styles.userNameText}>
-          {currentUserName ? `Hello, ${currentUserName}!` : "Loading user..."}
+          {currentUserName
+            ? `Hello, ${currentUserName.fullName}!`
+            : "Loading user..."}
         </Text>
       </LinearGradient>
 
@@ -139,7 +142,7 @@ export default function HomeScreen() {
         <Text style={styles.dateText}>Current Value at {formattedDate}</Text>
       </LinearGradient>
 
-      <Text style={styles.bodyText}>What is my portfolio worth?</Text>
+      <Text style={styles.bodyText}>What Is My Portfolio Worth?</Text>
 
       {loading ? (
         <ActivityIndicator size="large" color="#4A90E2" style={styles.loader} />
@@ -183,8 +186,7 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-<Button onPress={() => console.log("More Details Pressed")} />
-      
+      <Button onPress={() => console.log("More Details Pressed")} />
     </SafeAreaView>
   );
 }
@@ -195,8 +197,6 @@ const getStyles = (width: number, height: number) =>
       paddingHorizontal: 5,
       flex: 1,
       backgroundColor: "transparent",
-      //alignItems: "center",
-      //justifyContent: "center",
     },
     imageContainer: {
       paddingHorizontal: 5,
@@ -256,145 +256,3 @@ const getStyles = (width: number, height: number) =>
       textAlign: "center",
     },
   });
-
-{
-  /*
-    <SafeAreaView style={styles.container}>
-      <SafeAreaView style={styles.imageContainer}>
-        <Image
-          source={require("../../assets/PIMS.png")}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      </SafeAreaView>
-      <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
-        <Text style={styles.headerText}>You’re Welcome to PIMS</Text>
-      </LinearGradient>
-      <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.amount}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#FFF" />
-        ) : (
-          <Text style={styles.headerText}>
-            ${portfolioData?.currentValue?.toLocaleString()}
-          </Text>
-        )}
-      </LinearGradient>
-
-      <Text style={styles.chartTitle}>What is my portfolio worth?</Text>
-
-      {loading ? (
-        <ActivityIndicator size="large" color="#001F5B" />
-      ) : (
-        <LineChart
-          data={{
-            labels: portfolioData?.history?.map((item: any) =>
-              item.date.slice(0, 10)
-            ),
-            datasets: [
-              { data: portfolioData?.history?.map((item: any) => item.value) },
-            ],
-          }}
-          width={width - 40}
-          height={220}
-          yAxisLabel="$"
-          chartConfig={{
-            backgroundGradientFrom: "#ffffff",
-            backgroundGradientTo: "#ffffff",
-            decimalPlaces: 2,
-            color: (opacity = 1) => `rgba(0, 31, 91, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            style: { borderRadius: 8 },
-          }}
-          style={styles.chart}
-        />
-      )}
-    </SafeAreaView>
-  );
-  */
-}
-
-{
-  /*
-  const getStyles = (width: number, height: number) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "transparent",
-      paddingHorizontal: 5,
-    },
-    imageContainer: {
-      alignItems: "center",
-      marginBottom: 5,
-    },
-    image: {
-      width: width * 0.5,
-      height: height * 0.12,
-      borderRadius: 15,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 5 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-    },
-    header: {
-      height: height * 0.1,
-      paddingHorizontal: 20,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 10,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 5 },
-      shadowOpacity: 0.2,
-      shadowRadius: 5,
-      elevation: 8,
-    },
-    amount: {
-      marginTop: 10,
-      height: height * 0.15,
-      paddingHorizontal: 20,
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 10,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 5 },
-      shadowOpacity: 0.2,
-      shadowRadius: 5,
-      elevation: 8,
-    },
-    headerText: {
-      color: "white",
-      fontSize: RFPercentage(4),
-      fontWeight: "bold",
-      letterSpacing: 0.5,
-      textAlign: "center",
-    },
-    chartTitle: {
-      fontSize: 16,
-      fontWeight: "bold",
-      marginTop: 20,
-      textAlign: "center",
-    },
-    chart: {
-      borderRadius: 8,
-      marginTop: 10,
-      alignSelf: "center",
-    },
-  });
-*/
-}
-{
-  /*
-    <ImageBackground
-      source={require("../../assets/background.jpg")}
-      style={styles.background}
-      resizeMode="cover"
-    >
-    </ImageBackground>
-
-background: {
-      flex: 1,
-      width: "100%",
-      height: "100%",
-    },
-*/
-}
