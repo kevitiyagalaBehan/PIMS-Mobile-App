@@ -3,13 +3,7 @@ import React from 'react';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../src/navigation/types";
-import { StackNavigationProp } from "@react-navigation/stack";
-
-type AssetAllocationScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Home"
->;
+import { AssetAllocationScreenNavigationProp } from "../src/navigation/types";
 
 export default function BackButton() {
     const navigation = useNavigation<AssetAllocationScreenNavigationProp>();

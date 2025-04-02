@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Dimensions, ScrollView } from "react-native";
-import { RFPercentage } from "react-native-responsive-fontsize";
-//import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet, Dimensions, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-//import { useAuth } from "../context/AuthContext";
-//import { getLinkedUsers, getAssetAllocationSummary } from "../utils/pimsApi";
-import { WindowSize, PortfolioData } from "../navigation/types";
+import { WindowSize } from "../navigation/types";
 import { Header, PortfolioSummary } from "../../components";
 
 export default function HomeScreen() {
@@ -26,8 +22,10 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
-      <PortfolioSummary />
+      <ScrollView style={styles.scrollView}>
+        <Header />
+        <PortfolioSummary />
+      </ScrollView>
     </SafeAreaView>
   );
 }

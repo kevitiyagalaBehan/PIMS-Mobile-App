@@ -1,7 +1,7 @@
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RouteProp } from "@react-navigation/native";
 import { BottomTabNavigationProp as RNBottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { DrawerNavigationProp as RNDrawerNavigationProp } from "@react-navigation/drawer";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 // Root Stack Navigation
 export type RootStackParamList = {
@@ -38,6 +38,11 @@ export type DrawerNavigationProp<T extends keyof DrawerParamList> =
 export type PortfolioSummaryRouteProp = RouteProp<
 { PortfolioSummary: { authToken: string; accountId: string } },
 "PortfolioSummary"
+>;
+
+export type AssetAllocationScreenNavigationProp = StackNavigationProp<
+RootStackParamList,
+"Home"
 >;
 
 export interface LinkedUsers {
