@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/PIMS.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,15 +17,21 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/PIMS.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.pims_app.PIMS"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/PIMS.png"
     },
     "plugins": [
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "87b6b802-ff02-459b-b2d8-591fa969363f"
+      }
+    }
   }
 }
