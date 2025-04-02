@@ -22,6 +22,7 @@ export type DrawerParamList = {
   AssetAllocation: { authToken: string; accountId: string };
   PortfolioSummary: { authToken: string; accountId: string };
   TopTenInvestments: { authToken: string; accountId: string };
+  InvestmentPerformance: { authToken: string; accountId: string };
   PortfolioBalance: { authToken: string; accountId: string };
   ContributionCap: { authToken: string; accountId: string };
   PensionLimit: { authToken: string; accountId: string };
@@ -110,4 +111,10 @@ export interface PortfolioData {
 
 export interface PortfolioSummaryProps {
   route: PortfolioSummaryRouteProp;
+}
+
+export interface SuperFundDetails {
+  dataDownDate: string;
+  year: number;
+  clientTotal: number;
 }

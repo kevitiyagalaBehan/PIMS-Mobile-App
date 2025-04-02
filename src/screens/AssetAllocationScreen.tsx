@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Dimensions, ScrollView } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { WindowSize } from "../navigation/types";
 import { Header, AssetAllocation, BackButton } from "../../components";
 
 export default function AssetAllocationScreen() {
-  const [windowSize, setWindowSize] = useState(Dimensions.get("window"));
+  const [windowSize, setWindowSize] = useState<WindowSize>(
+    Dimensions.get("window")
+  );
 
   useEffect(() => {
     const updateSize = () => setWindowSize(Dimensions.get("window"));

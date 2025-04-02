@@ -22,10 +22,8 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <Header />
-        <PortfolioSummary />
-      </ScrollView>
+      <Header />
+      <PortfolioSummary />
     </SafeAreaView>
   );
 }
@@ -36,9 +34,5 @@ const getStyles = (width: number, height: number) =>
       paddingHorizontal: width * 0.02,
       flex: 1,
       backgroundColor: "transparent",
-    },
-    scrollView: {
-      flexGrow: 1,
-      paddingBottom: height * 0.1,
     },
   });

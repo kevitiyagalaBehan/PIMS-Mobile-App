@@ -10,11 +10,13 @@ import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getAssetAllocationSummary } from "../src/utils/pimsApi";
-import { PortfolioData, ChartData } from "../src/navigation/types";
+import { PortfolioData, ChartData, WindowSize } from "../src/navigation/types";
 
 export default function AssetAllocation() {
-    const { userData } = useAuth();
-  const [windowSize, setWindowSize] = useState(Dimensions.get("window"));
+  const { userData } = useAuth();
+  const [windowSize, setWindowSize] = useState<WindowSize>(
+    Dimensions.get("window")
+  );
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -125,105 +127,115 @@ export default function AssetAllocation() {
 
   return (
     <View>
-      {chartData.length > 0 ? (
-          <View style={styles.chartSection}>
-            <PieChart
-              data={chartData}
-              width={width * 1.746}
-              height={300}
-              chartConfig={{
-                backgroundColor: "#ffffff",
-                backgroundGradientFrom: "#ffffff",
-                backgroundGradientTo: "#ffffff",
-                color: (opacity = 1) => `rgba(0, 31, 91, ${opacity})`,
-              }}
-              accessor="percentage"
-              backgroundColor="transparent"
-              paddingLeft="0"
-              absolute
-              hasLegend={false}
-            />
+      <Text style={styles.bodyText}>Asset Allocation</Text>
 
-            <View style={styles.legendContainer}>
-              {chartData.map((item, index) => (
-                <View key={index} style={styles.legendItem}>
-                  <View
-                    style={[styles.colorBox, { backgroundColor: item.color }]}
-                  />
-                  <Text style={styles.legendText}>
-                    {item.name}: {item.percentage.toFixed(2)}%
-                  </Text>
-                </View>
-              ))}
-            </View>
+      {chartData.length > 0 ? (
+        <View style={styles.chartSection}>
+          <PieChart
+            data={chartData}
+            width={width * 1.746}
+            height={300}
+            chartConfig={{
+              backgroundColor: "#ffffff",
+              backgroundGradientFrom: "#ffffff",
+              backgroundGradientTo: "#ffffff",
+              color: (opacity = 1) => `rgba(0, 31, 91, ${opacity})`,
+            }}
+            accessor="percentage"
+            backgroundColor="transparent"
+            paddingLeft="0"
+            absolute
+            hasLegend={false}
+          />
+
+          <View style={styles.legendContainer}>
+            {chartData.map((item, index) => (
+              <View key={index} style={styles.legendItem}>
+                <View
+                  style={[styles.colorBox, { backgroundColor: item.color }]}
+                />
+                <Text style={styles.legendText}>
+                  {item.name}: {item.percentage.toFixed(2)}%
+                </Text>
+              </View>
+            ))}
           </View>
-        ) : (
-          <Text style={styles.noDataText}>
-            No asset allocation data available
-          </Text>
-        )}
+        </View>
+      ) : (
+        <Text style={styles.noDataText}>
+          No asset allocation data available
+        </Text>
+      )}
     </View>
   );
 }
 
 const getStyles = (width: number, height: number) =>
-    StyleSheet.create({
-      loadingContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      },
-      loader: {
-        marginTop: height * 0.1,
-      },
-      errorContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-      },
-      errorText: {
-        color: "red",
-        fontSize: RFPercentage(2.5),
-        textAlign: "center",
-      },
-      noDataText: {
-        textAlign: "center",
-        marginTop: 20,
-        fontSize: RFPercentage(2),
-        color: "#666",
-      },
-      chartSection: {
-        backgroundColor: "white",
-        borderRadius: 10,
-        padding: 15,
-        marginTop: height * 0.02,
-        elevation: 3,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      legendContainer: {
-        marginTop: 15,
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-      },
-      legendItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: "48%",
-        marginBottom: 10,
-      },
-      colorBox: {
-        width: 12,
-        height: 12,
-        marginRight: 8,
-        borderRadius: 3,
-      },
-      legendText: {
-        fontSize: RFPercentage(2),
-        color: "#333",
-      },
-    });
+  StyleSheet.create({
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loader: {
+      marginTop: height * 0.1,
+    },
+    bodyText: {
+      fontWeight: "bold",
+      color: "#4A90E2",
+      paddingHorizontal: width * 0.02,
+      marginLeft: width * 0.001,
+      marginTop: height * 0.02,
+      fontSize: RFPercentage(3),
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    errorText: {
+      color: "red",
+      fontSize: RFPercentage(2.5),
+      textAlign: "center",
+    },
+    noDataText: {
+      textAlign: "center",
+      marginTop: 20,
+      fontSize: RFPercentage(2),
+      color: "#666",
+    },
+    chartSection: {
+      marginVertical: height > width ? height * 0.01 : height * 0.015,
+      backgroundColor: "white",
+      borderRadius: 10,
+      padding: 15,
+      elevation: 3,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    legendContainer: {
+      marginTop: 15,
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "space-between",
+    },
+    legendItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      width: "48%",
+      marginBottom: 10,
+    },
+    colorBox: {
+      width: 12,
+      height: 12,
+      marginRight: 8,
+      borderRadius: 3,
+    },
+    legendText: {
+      fontSize: RFPercentage(2),
+      color: "#333",
+    },
+  });

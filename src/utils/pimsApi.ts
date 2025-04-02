@@ -2,6 +2,7 @@ import {
   LoginResponse,
   LinkedUsers,
   AssetAllocationSummary,
+  SuperFundDetails,
 } from "../navigation/types";
 
 export const API_BASE_URL = "https://mob.pimsolutions.net.au/api";
@@ -83,3 +84,53 @@ export const getAssetAllocationSummary = async (
     return null;
   }
 };
+
+export const getSuperFundDetails = async (
+  authToken: string,
+  accountId: string
+): Promise<SuperFundDetails[] | null> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/InvestmentGraphPortfolioBalanceSummaryGraph/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    //console.log("Super Fund Data:", data);
+
+    if (Array.isArray(data) && data.length > 0) {
+      return data;
+    } else {
+      throw new Error("Invalid response structure");
+    }
+  } catch (error) {
+    console.error("Error fetching portfolio balance summary:", error);
+    return null;
+  }
+};
+
+{/*
+  
+    if (Array.isArray(data) && data.length > 0) {
+      const portfolioData = data[0];
+      if (portfolioData.year && portfolioData.clientTotal) {
+        return portfolioData;
+      } else {
+        throw new Error("Invalid response structure");
+      }
+    } else {
+      throw new Error("Invalid response structure");
+    }  
+  
+*/}

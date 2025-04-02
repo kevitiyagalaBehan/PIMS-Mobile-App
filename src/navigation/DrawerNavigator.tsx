@@ -2,6 +2,7 @@ import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import BottomTab from "./BottomTabNavigator";
+import InvestmentPerformanceScreen from "../screens/InvestmentPerformanceScreen";
 import AssetAllocationScreen from "../screens/AssetAllocationScreen";
 import TopTenInvestmentsScreen from "../screens/TopTenInvestmentsScreen";
 import PortfolioBalanceScreen from "../screens/PortfolioBalanceScreen";
@@ -65,7 +66,21 @@ export default function DrawerNavigator() {
           accountId: userData?.accountId 
         }}
         options={{
-          drawerLabel: "Top 10 Investments",
+          drawerLabel: "Top Ten Investments",
+          drawerIcon: ({ color }) => (
+            <Ionicons name="list" size={30} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="InvestmentPerformance"
+        component={InvestmentPerformanceScreen}
+        initialParams={{ 
+          authToken: userData?.authToken, 
+          accountId: userData?.accountId 
+        }}
+        options={{
+          drawerLabel: "Investment Performance",
           drawerIcon: ({ color }) => (
             <Ionicons name="list" size={30} color={color} />
           ),
@@ -79,7 +94,7 @@ export default function DrawerNavigator() {
           accountId: userData?.accountId 
         }}
         options={{
-          drawerLabel: "Portfolio Balance",
+          drawerLabel: "Portfolio Balance Summary",
           drawerIcon: ({ color }) => (
             <Ionicons name="wallet" size={30} color={color} />
           ),
@@ -93,7 +108,7 @@ export default function DrawerNavigator() {
           accountId: userData?.accountId 
         }}
         options={{
-          drawerLabel: "Contribution Cap",
+          drawerLabel: "Contribution Cap Summary",
           drawerIcon: ({ color }) => (
             <Ionicons name="checkmark-circle" size={30} color={color} />
           ),
@@ -107,7 +122,7 @@ export default function DrawerNavigator() {
           accountId: userData?.accountId 
         }}
         options={{
-          drawerLabel: "Pension Limit",
+          drawerLabel: "Pension Limit Summary",
           drawerIcon: ({ color }) => (
             <Ionicons name="cash" size={30} color={color} />
           ),
