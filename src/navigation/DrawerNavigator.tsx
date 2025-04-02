@@ -3,7 +3,6 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import BottomTab from "./BottomTabNavigator";
 import AssetAllocationScreen from "../screens/AssetAllocationScreen";
-import PortfolioSummaryScreen from "../screens/PortfolioSummaryScreen";
 import TopTenInvestmentsScreen from "../screens/TopTenInvestmentsScreen";
 import PortfolioBalanceScreen from "../screens/PortfolioBalanceScreen";
 import ContributionCapScreen from "../screens/ContributionCapScreen";
@@ -55,20 +54,6 @@ export default function DrawerNavigator() {
           drawerLabel: "Asset Allocation",
           drawerIcon: ({ color }) => (
             <Ionicons name="pie-chart" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="PortfolioSummary"
-        component={PortfolioSummaryScreen}
-        initialParams={{ 
-          authToken: userData?.authToken, 
-          accountId: userData?.accountId 
-        }}
-        options={{
-          drawerLabel: "Portfolio Summary",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="document-text" size={30} color={color} />
           ),
         }}
       />
