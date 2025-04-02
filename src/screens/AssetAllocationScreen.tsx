@@ -1,202 +1,342 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  View,
   Text,
+  View,
   StyleSheet,
   Dimensions,
+  TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
-import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { getAssetAllocationSummary } from "../utils/pimsApi";
-import { AssetAllocationProps } from "../navigation/types";
+import { PieChart } from "react-native-chart-kit";
+import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "../context/AuthContext";
+import { getLinkedUsers, getAssetAllocationSummary } from "../utils/pimsApi";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { PortfolioData, RootStackParamList } from "../navigation/types";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-interface AssetData {
+type AssetAllocationScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Home"
+>;
+
+interface ChartData {
   name: string;
   percentage: number;
+  color: string;
+  legendFontColor: string;
+  legendFontSize: number;
 }
 
-interface AssetCategory {
-  assetClass: string;
-  percentage: number;
-}
-
-interface AssetAllocationResponse {
-  assetCategories: { assetClasses: AssetCategory[] }[];
-}
-
-export default function AssetAllocationScreen({ route }: AssetAllocationProps) {
-  const [data, setData] = useState<AssetData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { authToken, accountId } = route.params;
+export default function AssetAllocationScreen() {
+  const navigation = useNavigation<AssetAllocationScreenNavigationProp>();
+  const { userData, setCurrentUserName, currentUserName } = useAuth();
   const [windowSize, setWindowSize] = useState(Dimensions.get("window"));
+  const [portfolioSummary, setPortfolioSummary] =
+    useState<PortfolioData | null>(null);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const updateSize = () => {
-      setWindowSize(Dimensions.get("window"));
-    };
-
+    const updateSize = () => setWindowSize(Dimensions.get("window"));
     const subscription = Dimensions.addEventListener("change", updateSize);
     return () => subscription?.remove();
   }, []);
 
-  const { width, height } = windowSize;
-  const styles = getStyles(width, height);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!userData?.authToken) {
+        setCurrentUserName(null);
+        return;
+      }
+
+      const userName = await getLinkedUsers(userData.authToken);
+      if (userName && userName.fullName) {
+        setCurrentUserName(userName.fullName);
+      } else {
+        setCurrentUserName("User not found");
+      }
+    };
+
+    fetchUserData();
+  }, [userData?.authToken]);
 
   useEffect(() => {
-    if (!authToken || !accountId) {
-      console.error("Missing authToken or accountId");
-      setLoading(false);
-      return;
-    }
-
     const fetchData = async () => {
+      if (!userData?.authToken || !userData?.accountId) {
+        setError("Authentication required");
+        setLoading(false);
+        return;
+      }
+
       try {
-        const result = await getAssetAllocationSummary(authToken, accountId);
-    
-        if (!result || !result.assetCategories) {
-          console.error("API response is null or invalid");
-          setData([]); 
+        setLoading(true);
+        const response = await getAssetAllocationSummary(
+          userData.authToken,
+          userData.accountId
+        );
+
+        if (!response) {
+          setError("No data received from server");
           return;
         }
-    
-        const extractedData: AssetData[] = result.assetCategories.flatMap(
-          (category) =>
-            category.assetClasses?.map((asset) => ({
-              name: asset.assetClass,
-              percentage: asset.percentage,
-            })) || [] 
-        );
-    
-        setData(extractedData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setData([]); 
+
+        setPortfolioSummary(response);
+
+        const processedData: ChartData[] = [];
+        if (response.assetCategories) {
+          response.assetCategories.forEach((category) => {
+            category.assetClasses?.forEach((asset) => {
+              processedData.push({
+                name: asset.assetClass,
+                percentage: asset.percentage,
+                color: getRandomColor(),
+                legendFontColor: "#333",
+                legendFontSize: RFPercentage(1.8),
+              });
+            });
+          });
+        }
+
+        if (processedData.length > 0) {
+          setChartData(processedData);
+        } else {
+          setError("No asset allocation data available");
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError("Failed to load asset allocation data");
       } finally {
         setLoading(false);
       }
-    };    
+    };
 
     fetchData();
-  }, [authToken, accountId]);
+  }, [userData]);
 
-  if (loading) {
+  const getRandomColor = () => {
+    const colors = [
+      "#4BA3C3",
+      "#74B6E2",
+      "#5568A8",
+      "#9D7070",
+      "#E2AB60",
+      "#8A9B0F",
+      "#FF6B6B",
+      "#48D1CC",
+      "#BA68C8",
+      "#4DB6AC",
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const { width, height } = windowSize;
+  const styles = getStyles(width, height);
+
+  if (!userData || !userData.authToken || !userData.accountId) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4A90E2" />
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Authentication data missing</Text>
       </View>
     );
   }
 
-  const chartColors: Record<string, string> = {
-    Cash: "#4BA3C3",
-    "Aust. Equities": "#74B6E2",
-    "Int. Equities": "#5568A8",
-    Property: "#9D7070",
-    Other: "#E2AB60",
-  };
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4A90E2" style={styles.loader} />
+      </View>
+    );
+  }
 
-  const chartData = data.map((item) => ({
-    name: item.name,
-    percentage: item.percentage,
-    color: chartColors[item.name] || "#CCCCCC",
-    legendFontColor: "#333",
-    legendFontSize: 14,
-  }));
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.chartContainer}>
-        <PieChart
-          data={chartData}
-          width={width * 0.95}
-          height={height * 0.4}
-          chartConfig={{
-            backgroundColor: "transparent",
-            backgroundGradientFrom: "transparent",
-            backgroundGradientTo: "transparent",
-            color: (opacity = 1) => `rgba(0, 31, 91, ${opacity})`,
-          }}
-          accessor="percentage"
-          backgroundColor="transparent"
-          center={[width * (height > width ? 0.24 : 0.35), 0]}
-          hasLegend={false}
-          paddingLeft="15"
-        />
-      </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#4A90E2" />
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
 
-      <View style={styles.breakdownContainer}>
-        {chartData.map((item, index) => (
-          <View key={index} style={styles.breakdownRow}>
-            <View
-              style={[styles.colorIndicator, { backgroundColor: item.color }]}
+        <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
+          <Text style={styles.userNameText}>
+            {currentUserName ? `Hello, ${currentUserName}` : "Loading user..."}
+          </Text>
+        </LinearGradient>
+
+        <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
+          <Text style={styles.valueText}>
+            {portfolioSummary
+              ? new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(portfolioSummary.totalMarketValue)
+              : "N/A"}
+          </Text>
+          <Text style={styles.dateText}>
+            Current value as at {new Date().toLocaleDateString("en-GB")}
+          </Text>
+        </LinearGradient>
+
+        {chartData.length > 0 ? (
+          <View style={styles.chartSection}>
+            <PieChart
+              data={chartData}
+              width={width * 1.746}
+              height={300}
+              chartConfig={{
+                backgroundColor: "#ffffff",
+                backgroundGradientFrom: "#ffffff",
+                backgroundGradientTo: "#ffffff",
+                color: (opacity = 1) => `rgba(0, 31, 91, ${opacity})`,
+              }}
+              accessor="percentage"
+              backgroundColor="transparent"
+              paddingLeft="0"
+              absolute
+              hasLegend={false}
             />
-            <Text style={styles.breakdownText}>{item.name}</Text>
-            <Text style={styles.breakdownText}>
-              {item.percentage.toFixed(2)}%
-            </Text>
+
+            <View style={styles.legendContainer}>
+              {chartData.map((item, index) => (
+                <View key={index} style={styles.legendItem}>
+                  <View
+                    style={[styles.colorBox, { backgroundColor: item.color }]}
+                  />
+                  <Text style={styles.legendText}>
+                    {item.name}: {item.percentage.toFixed(2)}%
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
-        ))}
-      </View>
-    </View>
+        ) : (
+          <Text style={styles.noDataText}>
+            No asset allocation data available
+          </Text>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: "#F5F5F5",
       paddingHorizontal: width * 0.02,
-      alignItems: "center",
+      flex: 1,
+      backgroundColor: "transparent",
+    },
+    scrollView: {
+      flexGrow: 1,
+      paddingBottom: height * 0.1,
     },
     loadingContainer: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: "#F5F5F5",
     },
-    chartContainer: {
-      width: "100%",
-      height: "50%",
+    loader: {
+      marginTop: height * 0.1,
+    },
+    errorContainer: {
+      flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: "white",
-      borderRadius: 15,
-      elevation: 5,
-      marginVertical: height * 0.03,
-      shadowColor: "#000",
-      shadowOpacity: 0.1,
-      shadowOffset: { width: 0, height: 3 },
+      padding: 20,
     },
-    breakdownContainer: {
-      width: "100%",
-      backgroundColor: "white",
-      padding: width * 0.04,
-      borderRadius: 10,
-      elevation: 3,
-      shadowColor: "#000",
-      shadowOpacity: 0.1,
-      shadowOffset: { width: 0, height: 2 },
-      maxHeight: height > width ? "auto" : height * 0.5,
+    errorText: {
+      color: "red",
+      fontSize: RFPercentage(2.5),
+      textAlign: "center",
     },
-    breakdownRow: {
+    noDataText: {
+      textAlign: "center",
+      marginTop: 20,
+      fontSize: RFPercentage(2),
+      color: "#666",
+    },
+    backButton: {
       flexDirection: "row",
       alignItems: "center",
+      padding: 10,
+      marginBottom: 10,
+    },
+    backButtonText: {
+      color: "#4A90E2",
+      fontSize: RFPercentage(2),
+      marginLeft: 5,
+    },
+    header: {
+      marginTop: height * 0.005,
+      width: "100%",
+      height: height * 0.085,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 10,
+      elevation: 5,
+    },
+    userNameText: {
+      fontSize: RFPercentage(4),
+      fontWeight: "bold",
+      color: "white",
+      textAlign: "center",
+    },
+    valueText: {
+      fontSize: RFPercentage(4),
+      fontWeight: "bold",
+      color: "white",
+    },
+    dateText: {
+      color: "white",
+      fontSize: RFPercentage(2),
+    },
+    chartSection: {
+      backgroundColor: "white",
+      borderRadius: 10,
+      padding: 15,
+      marginTop: height * 0.02,
+      elevation: 3,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    legendContainer: {
+      marginTop: 15,
+      flexDirection: "row",
+      flexWrap: "wrap",
       justifyContent: "space-between",
-      paddingVertical: height * 0.015,
-      borderBottomWidth: 1,
-      borderBottomColor: "#ddd",
     },
-    colorIndicator: {
-      width: width * 0.04,
-      height: width * 0.04,
-      borderRadius: 7.5,
-      marginRight: 10,
+    legendItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      width: "48%",
+      marginBottom: 10,
     },
-    breakdownText: {
-      fontSize: RFPercentage(2.2),
-      fontWeight: "500",
+    colorBox: {
+      width: 12,
+      height: 12,
+      marginRight: 8,
+      borderRadius: 3,
+    },
+    legendText: {
+      fontSize: RFPercentage(2),
       color: "#333",
     },
   });

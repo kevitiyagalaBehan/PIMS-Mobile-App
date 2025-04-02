@@ -6,31 +6,22 @@ import {
   Image,
   Dimensions,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
-import { BarChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Button from "../../components/Button";
 import { useAuth } from "../context/AuthContext";
-import { getLinkedUsers, getSuperFundDetails } from "../utils/pimsApi";
-
-interface WindowSize {
-  width: number;
-  height: number;
-}
+import { getLinkedUsers, getAssetAllocationSummary } from "../utils/pimsApi";
+import { WindowSize, PortfolioData } from "../navigation/types";
 
 export default function HomeScreen() {
   const { userData, setCurrentUserName, currentUserName } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
   );
-
-  const [portfolioData, setPortfolioData] = useState<{
-    dataDownDate: string;
-    year: number;
-    value: number;
-  } | null>(null);
+  const [portfolioSummary, setPortfolioSummary] =
+    useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +29,6 @@ export default function HomeScreen() {
     const updateSize = () => {
       setWindowSize(Dimensions.get("window"));
     };
-
     const subscription = Dimensions.addEventListener("change", updateSize);
     return () => subscription.remove();
   }, []);
@@ -71,19 +61,14 @@ export default function HomeScreen() {
 
       setLoading(true);
 
-      const data = await getSuperFundDetails(
-        userData.authToken,
-        userData.accountId
-      );
+      const [summaryData] = await Promise.all([
+        getAssetAllocationSummary(userData.authToken, userData.accountId),
+      ]);
 
-      if (data) {
-        setPortfolioData({
-          year: data.year,
-          value: data.clientTotal,
-          dataDownDate: data.dataDownDate,
-        });
+      if (summaryData) {
+        setPortfolioSummary(summaryData);
       } else {
-        setError("Failed to load data");
+        setError("Failed to load portfolio summary");
       }
 
       setLoading(false);
@@ -99,17 +84,6 @@ export default function HomeScreen() {
     console.error("Error: userData or required fields are missing");
     return null;
   }
-
-  const formattedValue = portfolioData
-    ? new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(portfolioData.value)
-    : "$0.00";
-
-  const formattedDate = portfolioData
-    ? new Date(portfolioData.dataDownDate).toLocaleDateString("en-GB")
-    : "";
 
   return (
     <SafeAreaView style={styles.container}>
@@ -128,8 +102,18 @@ export default function HomeScreen() {
       </LinearGradient>
 
       <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
-        <Text style={styles.valueText}>{formattedValue}</Text>
-        <Text style={styles.dateText}>Current Value at {formattedDate}</Text>
+        <Text style={styles.valueText}>
+          {portfolioSummary
+            ? new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(portfolioSummary.totalMarketValue)
+            : "N/A"}
+        </Text>
+
+        <Text style={styles.dateText}>
+          Current value as at {new Date().toLocaleDateString("en-GB")}
+        </Text>
       </LinearGradient>
 
       <Text style={styles.bodyText}>What Is My Portfolio Worth?</Text>
@@ -138,45 +122,84 @@ export default function HomeScreen() {
         <ActivityIndicator size="large" color="#4A90E2" style={styles.loader} />
       ) : error ? (
         <Text style={styles.errorText}>{error}</Text>
-      ) : portfolioData ? (
+      ) : portfolioSummary ? (
         <View>
-          <BarChart
-            style={styles.chartContainer}
-            data={{
-              labels: [`${portfolioData.year}`],
-              datasets: [
-                {
-                  data: [portfolioData.value / 1_000_000],
-                },
-              ],
-            }}
-            width={width * 0.95}
-            height={250}
-            yAxisLabel="$"
-            yAxisSuffix="M"
-            chartConfig={{
-              backgroundColor: "#f5f5f5",
-              backgroundGradientFrom: "#ffffff",
-              backgroundGradientTo: "#ffffff",
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              barPercentage: 1,
-              propsForBackgroundLines: {
-                strokeWidth: 1,
-                stroke: "#e0e0e0",
-                strokeDasharray: "5,5",
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderText, { flex: 4 }]}>
+              Asset Class
+            </Text>
+            <Text style={[styles.tableHeaderText, { flex: 3.15 }]}>
+              Current $
+            </Text>
+            <Text
+              style={[styles.tableHeaderText, styles.rightAlign, { flex: 2.5 }]}
+            >
+              Current %
+            </Text>
+          </View>
+
+          <FlatList
+            data={[
+              ...portfolioSummary.assetCategories,
+              {
+                assetCategory: "TOTAL",
+                marketValue: portfolioSummary.totalMarketValue,
+                percentage: portfolioSummary.totalPercentage,
               },
-              propsForLabels: {
-                fontSize: RFPercentage(2),
-              },
-            }}
-            fromZero={true}
+            ]}
+            keyExtractor={(item) => item.assetCategory}
+            renderItem={({ item }) => (
+              <>
+                <View style={[styles.row, styles.categoryRow]}>
+                  <Text style={[styles.cell, styles.boldText, { flex: 4 }]}>
+                    {item.assetCategory.toUpperCase()}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.cell,
+                      styles.rightAlign,
+                      styles.boldText,
+                      { flex: 3 },
+                    ]}
+                  >
+                    {item.marketValue.toLocaleString()}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.cell,
+                      styles.rightAlign,
+                      styles.boldText,
+                      { flex: 3.8 },
+                    ]}
+                  >
+                    {item.percentage.toFixed(2)}
+                  </Text>
+                </View>
+
+                {item.assetClasses &&
+                  item.assetClasses.map((subItem, index) => (
+                    <View key={index} style={styles.row}>
+                      <Text style={[styles.cell, { flex: 4 }]}>
+                        {subItem.assetClass}
+                      </Text>
+                      <Text
+                        style={[styles.cell, styles.rightAlign, { flex: 3 }]}
+                      >
+                        {subItem.marketValue.toLocaleString()}
+                      </Text>
+                      <Text
+                        style={[styles.cell, styles.rightAlign, { flex: 3.8 }]}
+                      >
+                        {subItem.percentage.toFixed(2)}
+                      </Text>
+                    </View>
+                  ))}
+              </>
+            )}
           />
         </View>
       ) : null}
-
-      <Button onPress={() => console.log("More Details Pressed")} />
+      {/*<Button onPress={() => console.log("More Details Pressed")} />*/}
     </SafeAreaView>
   );
 }
@@ -184,19 +207,17 @@ export default function HomeScreen() {
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
-      paddingHorizontal: 5,
+      paddingHorizontal: width * 0.02,
       flex: 1,
       backgroundColor: "transparent",
     },
-    imageContainer: {
-      paddingHorizontal: 5,
-      alignItems: "center",
+    scrollView: {
+      flexGrow: 1,
+      paddingBottom: height * 0.1,
     },
-    chartContainer: {
+    imageContainer: {
+      paddingHorizontal: width * 0.02,
       alignItems: "center",
-      width: "100%",
-      borderRadius: 10,
-      paddingTop: 25,
     },
     image: {
       width: width * 0.5,
@@ -208,22 +229,22 @@ const getStyles = (width: number, height: number) =>
       shadowRadius: 8,
     },
     header: {
-      marginTop: 5,
+      marginTop: height * 0.005,
       width: "100%",
-      height: height * 0.1,
+      height: height * 0.085,
       alignItems: "center",
       justifyContent: "center",
       borderRadius: 10,
       elevation: 5,
     },
     userNameText: {
-      fontSize: RFPercentage(4),
+      fontSize: RFPercentage(3.5),
       fontWeight: "bold",
       color: "white",
       textAlign: "center",
     },
     valueText: {
-      fontSize: RFPercentage(4),
+      fontSize: RFPercentage(3.5),
       fontWeight: "bold",
       color: "white",
     },
@@ -232,17 +253,69 @@ const getStyles = (width: number, height: number) =>
       fontSize: RFPercentage(2),
     },
     loader: {
-      marginTop: 100,
+      marginTop: height * 0.1,
     },
     bodyText: {
-      paddingHorizontal: 5,
-      marginLeft: 3,
-      marginTop: 25,
+      paddingHorizontal: width * 0.02,
+      marginLeft: width * 0.001,
+      marginTop: height * 0.02,
       fontSize: RFPercentage(3),
     },
     errorText: {
       color: "red",
       fontSize: RFPercentage(2.5),
       textAlign: "center",
+    },
+    tableHeader: {
+      flexDirection: "row",
+      backgroundColor: "#4A90E2",
+      paddingVertical: height > width ? height * 0.018 : height * 0.015,
+      paddingHorizontal: width * 0.03,
+      marginVertical: height > width ? height * 0.005 : height * 0.015,
+      marginBottom: height * 0.01,
+      borderRadius: 10,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3,
+      elevation: 2,
+    },
+    tableHeaderText: {
+      color: "white",
+      fontWeight: "bold",
+      fontSize: width * 0.04,
+      textTransform: "uppercase",
+    },
+    row: {
+      flexDirection: "row",
+      paddingVertical: height * 0.006,
+      paddingHorizontal: width * 0.03,
+      borderBottomWidth: 1,
+      borderBottomColor: "#ddd",
+      alignItems: "center",
+    },
+    categoryRow: {
+      backgroundColor: "#E6F0FF",
+      borderRadius: 8,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3,
+      elevation: 1,
+    },
+    leftAlign: {
+      textAlign: "left",
+    },
+    rightAlign: {
+      textAlign: "right",
+    },
+    cell: {
+      fontSize: width * 0.04,
+      color: "#333",
+      textAlign: "left",
+      paddingVertical: height * 0.008,
+    },
+    boldText: {
+      fontWeight: "bold",
     },
   });

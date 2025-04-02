@@ -21,7 +21,7 @@ type PortfolioSummaryScreenNavigationProp = StackNavigationProp<
   'Home'
 >;
 
-export default function ValuationScreen() {
+export default function EstimatedMemberStatementScreen() {
   const navigation = useNavigation<PortfolioSummaryScreenNavigationProp>();
   const { userData, setCurrentUserName, currentUserName } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(

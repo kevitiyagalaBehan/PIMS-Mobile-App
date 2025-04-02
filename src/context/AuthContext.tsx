@@ -1,10 +1,9 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
+import { LoginResponse } from "../navigation/types";
 
 type AuthContextType = {
-  userData: { authToken: string; accountId: string } | null;
-  setUserData: React.Dispatch<
-    React.SetStateAction<{ authToken: string; accountId: string } | null>
-  >;
+  userData: LoginResponse | null;
+  setUserData: React.Dispatch<React.SetStateAction<LoginResponse | null>>;
   currentUserName: string | null;
   setCurrentUserName: React.Dispatch<React.SetStateAction<string | null>>;
 };
@@ -16,7 +15,7 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [userData, setUserData] = useState<AuthContextType["userData"]>(null);
+  const [userData, setUserData] = useState<LoginResponse | null>(null);
   const [currentUserName, setCurrentUserName] = useState<string | null>(null);
 
   return (
