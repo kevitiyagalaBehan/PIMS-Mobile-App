@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import LoginScreen from "./src/screens/LoginScreen";
-import DrawerNav from "./src/navigation/DrawerNav";
+import DrawerNavigator from "./src/navigation/DrawerNavigator";
 
 const Stack = createStackNavigator();
 
@@ -20,7 +20,7 @@ function AppNavigator() {
         />
         <Stack.Screen
           name="Home"
-          component={DrawerNav}
+          component={DrawerNavigator}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
