@@ -21,11 +21,9 @@ export default function AssetAllocationScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
         <BackButton />
         <Header />
         <AssetAllocation />
-      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -36,10 +34,6 @@ const getStyles = (width: number, height: number) =>
       paddingHorizontal: width * 0.02,
       flex: 1,
       backgroundColor: "transparent",
-    },
-    scrollView: {
-      flexGrow: 1,
-      paddingBottom: height * 0.1,
     },
     backButton: {
       flexDirection: "row",

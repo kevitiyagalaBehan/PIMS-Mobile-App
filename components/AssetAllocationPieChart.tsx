@@ -209,7 +209,7 @@ const getStyles = (width: number, height: number) =>
       marginVertical: height > width ? height * 0.01 : height * 0.015,
       backgroundColor: "white",
       borderRadius: 10,
-      padding: 15,
+      padding: 20,
       elevation: 3,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },

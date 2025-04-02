@@ -68,7 +68,7 @@ export default function DrawerNavigator() {
         options={{
           drawerLabel: "Top Ten Investments",
           drawerIcon: ({ color }) => (
-            <Ionicons name="list" size={30} color={color} />
+            <Ionicons name="trending-up" size={30} color={color} />
           ),
         }}
       />
@@ -82,7 +82,7 @@ export default function DrawerNavigator() {
         options={{
           drawerLabel: "Investment Performance",
           drawerIcon: ({ color }) => (
-            <Ionicons name="list" size={30} color={color} />
+            <Ionicons name="speedometer" size={30} color={color} />
           ),
         }}
       />
@@ -96,7 +96,7 @@ export default function DrawerNavigator() {
         options={{
           drawerLabel: "Portfolio Balance Summary",
           drawerIcon: ({ color }) => (
-            <Ionicons name="wallet" size={30} color={color} />
+            <Ionicons name="bar-chart" size={30} color={color} />
           ),
         }}
       />
@@ -138,7 +138,7 @@ export default function DrawerNavigator() {
         options={{
           drawerLabel: "Estimated Member Statement",
           drawerIcon: ({ color }) => (
-            <Ionicons name="document" size={30} color={color} />
+            <Ionicons name="document-text" size={30} color={color} />
           ),
         }}
       />
