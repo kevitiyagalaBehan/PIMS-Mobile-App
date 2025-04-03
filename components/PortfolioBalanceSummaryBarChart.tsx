@@ -76,7 +76,7 @@ export default function PortfolioBalanceSummary() {
 
   const { width, height } = windowSize;
   const chartWidth = width * 1;
-  const chartHeight = 250;
+  const chartHeight = 330;
   const styles = getStyles(width, height);
 
   if (!userData || !userData.authToken || !userData.accountId) {
