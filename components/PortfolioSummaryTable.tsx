@@ -162,7 +162,7 @@ const getStyles = (width: number, height: number) =>
       color: "#4A90E2",
       paddingHorizontal: width * 0.02,
       marginLeft: width * 0.001,
-      marginTop: height * 0.02,
+      marginTop: height * 0.05,
       fontSize: RFPercentage(3),
     },
     errorText: {
