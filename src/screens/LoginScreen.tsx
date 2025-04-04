@@ -34,7 +34,7 @@ export default function LoginScreen() {
       const { authToken, accountId } = response;
 
       setUserData({ authToken, accountId });
-      navigation.replace("Home");
+      navigation.replace("Main");
     } catch (error: any) {
       Alert.alert("Login Error", error.message);
     }
