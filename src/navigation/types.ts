@@ -6,14 +6,13 @@ import { StackNavigationProp } from "@react-navigation/stack";
 // Root Stack Navigation
 export type RootStackParamList = {
   Login: undefined;
-  Home: undefined;
+  Main: undefined;
 };
 
 // Bottom Tab Navigation
 export type BottomTabParamList = {
   Home: { authToken: string; accountId: string };
   Messages: { authToken: string; accountId: string };
-  Menu: { authToken: string; accountId: string };
 };
 
 // Drawer Navigation
@@ -41,9 +40,9 @@ export type PortfolioSummaryRouteProp = RouteProp<
 "PortfolioSummary"
 >;
 
-export type AssetAllocationScreenNavigationProp = StackNavigationProp<
+export type SubScreenNavigationProp = StackNavigationProp<
 RootStackParamList,
-"Home"
+"Main"
 >;
 
 export interface LinkedUsers {

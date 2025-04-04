@@ -41,7 +41,7 @@ export default function DrawerNavigator() {
         }}
         options={{
           drawerLabel: "Home",
-          drawerItemStyle: { display: "none" },
+          //drawerItemStyle: { display: "none" },
         }}
       />
       <Drawer.Screen
