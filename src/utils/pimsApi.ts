@@ -3,6 +3,7 @@ import {
   LinkedUsers,
   AssetAllocationSummary,
   SuperFundDetails,
+  TopTenInvestmentDetails,
 } from "../navigation/types";
 
 export const API_BASE_URL = "https://mob.pimsolutions.net.au/api";
@@ -69,6 +70,7 @@ export const getAssetAllocationSummary = async (
         method: "GET",
         headers: {
           Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
         },
       }
     );
@@ -120,7 +122,57 @@ export const getSuperFundDetails = async (
   }
 };
 
-{/*
+export const getTopTenInvestmentDetails = async (
+  authToken: string,
+  accountId: string
+): Promise<TopTenInvestmentDetails[] | null> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/ClientDashboard/TopTenInvestments/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) {
+      throw new Error("Expected array response");
+    }
+
+    const isValid = data.every(
+      (item) =>
+        item.code &&
+        item.description &&
+        typeof item.percentage === "number" &&
+        typeof item.quantity === "number" &&
+        typeof item.value === "number"
+    );
+
+    if (!isValid) {
+      throw new Error("Invalid data structure received");
+    }
+
+    return data as TopTenInvestmentDetails[];
+  } catch (error) {
+    console.error(
+      "Fetch failed:",
+      error instanceof Error ? error.message : String(error)
+    );
+    return null;
+  }
+};
+
+{
+  /*
   
     if (Array.isArray(data) && data.length > 0) {
       const portfolioData = data[0];
@@ -133,4 +185,5 @@ export const getSuperFundDetails = async (
       throw new Error("Invalid response structure");
     }  
   
-*/}
+*/
+}
