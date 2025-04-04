@@ -117,3 +117,11 @@ export interface SuperFundDetails {
   year: number;
   clientTotal: number;
 }
+
+export interface TopTenInvestmentDetails {
+  code: string;
+  description: string;
+  quantity: number;
+  value: number;
+  percentage: number;
+}
