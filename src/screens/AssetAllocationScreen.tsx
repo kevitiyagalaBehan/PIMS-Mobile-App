@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, ScrollView } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WindowSize } from "../navigation/types";
-import { Header, AssetAllocation, BackButton } from "../../components";
+import { Header, AssetAllocation, Drawer } from "../../components";
 
 export default function AssetAllocationScreen() {
   const [windowSize, setWindowSize] = useState<WindowSize>(
@@ -21,7 +21,7 @@ export default function AssetAllocationScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-        <BackButton />
+        <Drawer />
         <Header />
         <AssetAllocation />
     </SafeAreaView>

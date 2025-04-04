@@ -126,14 +126,14 @@ export default function AssetAllocation() {
   }
 
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={styles.bodyText}>Asset Allocation</Text>
 
       {chartData.length > 0 ? (
         <View style={styles.chartSection}>
           <PieChart
             data={chartData}
-            width={width * 1.746}
+            width={width * 1.71}
             height={200}
             chartConfig={{
               backgroundColor: "#ffffff",
@@ -172,6 +172,9 @@ export default function AssetAllocation() {
 
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+    },
     loadingContainer: {
       flex: 1,
       justifyContent: "center",
@@ -184,7 +187,6 @@ const getStyles = (width: number, height: number) =>
       fontWeight: "bold",
       color: "#4A90E2",
       paddingHorizontal: width * 0.02,
-      marginLeft: width * 0.001,
       marginTop: height * 0.05,
       fontSize: RFPercentage(3),
     },

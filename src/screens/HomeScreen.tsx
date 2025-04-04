@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, ScrollView } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WindowSize } from "../navigation/types";
-import { Header, PortfolioSummary } from "../../components";
+import { Header, PortfolioSummary, Drawer } from "../../components";
 
 export default function HomeScreen() {
   const [windowSize, setWindowSize] = useState<WindowSize>(
@@ -22,6 +22,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Drawer />
       <Header />
       <PortfolioSummary />
     </SafeAreaView>

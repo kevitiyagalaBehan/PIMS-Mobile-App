@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Dimensions,
-  ScrollView,
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WindowSize } from "../navigation/types";
-import { Header, PortfolioBalanceSummary, BackButton } from "../../components";
+import { Header, PortfolioBalanceSummary, Drawer } from "../../components";
 
 export default function PortfolioBalanceScreen() {
   const [windowSize, setWindowSize] = useState<WindowSize>(
@@ -27,11 +26,9 @@ export default function PortfolioBalanceScreen() {
 
   return (
         <SafeAreaView style={styles.container}>
-          <ScrollView style={styles.scrollView}>
-            <BackButton />
+            <Drawer />
             <Header />
             <PortfolioBalanceSummary />
-          </ScrollView>
         </SafeAreaView>
   );
 }
@@ -42,16 +39,6 @@ const getStyles = (width: number, height: number) =>
       paddingHorizontal: width * 0.02,
       flex: 1,
       backgroundColor: "transparent",
-    },
-    scrollView: {
-      flexGrow: 1,
-      paddingBottom: height * 0.1,
-    },
-    backButton: {
-      flexDirection: "row",
-      alignItems: "center",
-      padding: 10,
-      //marginBottom: height * 0.01,
     },
     backButtonText: {
       color: "#4A90E2",
