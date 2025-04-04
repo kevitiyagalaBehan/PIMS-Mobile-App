@@ -1,7 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation, DrawerActions, useRoute } from "@react-navigation/native";
 import HomeScreen from "../screens/HomeScreen";
 import MessageScreen from "../screens/MessageScreen";
 import { BottomTabParamList } from "./types";
@@ -9,7 +8,6 @@ import { BottomTabParamList } from "./types";
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function BottomTab() {
-  const navigation = useNavigation();
 
   return (
     <Tab.Navigator
@@ -39,22 +37,6 @@ export default function BottomTab() {
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="message" size={size} color={color} />
           ),
-        }}
-      />
-      <Tab.Screen
-        name="Menu"
-        component={HomeScreen} 
-        options={{
-          tabBarLabel: "Menu",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="menu" size={size} color={color} />
-          ),
-        }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            navigation.dispatch(DrawerActions.openDrawer());
-          },
         }}
       />
     </Tab.Navigator>
