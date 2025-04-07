@@ -33,7 +33,7 @@ const getStyles = (width: number, height: number) =>
     container: {
       paddingHorizontal: width * 0.02,
       flex: 1,
-      backgroundColor: "transparent",
+      backgroundColor: "#fff",
     },
     backButtonText: {
       color: "#4A90E2",
