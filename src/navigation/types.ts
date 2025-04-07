@@ -45,6 +45,11 @@ RootStackParamList,
 "Main"
 >;
 
+export type Props = {
+  refreshing: boolean;
+  refreshTrigger: number;
+};
+
 export interface LinkedUsers {
   fullName: string;
   isCurrent: boolean;
