@@ -72,7 +72,7 @@ export default function PortfolioSummary() {
       ) : error ? (
         <Text style={styles.errorText}>{error}</Text>
       ) : portfolioSummary ? (
-        <View>
+        <View style={styles.tableContainer}>
           <View style={styles.tableHeader}>
             <Text style={[styles.tableHeaderText1, { flex: 1 }]}>
               Asset Class
@@ -163,10 +163,13 @@ const getStyles = (width: number, height: number) =>
     bodyText: {
       fontWeight: "bold",
       color: "#4A90E2",
-      paddingHorizontal: width * 0.02,
-      marginLeft: width * 0.001,
+      paddingHorizontal: width * 0.03,
+      //marginLeft: width * 0.001,
       marginTop: height * 0.05,
       fontSize: RFPercentage(3),
+    },
+    tableContainer: {
+      marginVertical: height > width ? height * 0.005 : height * 0.015,
     },
     errorText: {
       color: "red",
@@ -177,23 +180,23 @@ const getStyles = (width: number, height: number) =>
     tableHeader: {
       flexDirection: "row",
       backgroundColor: "#4A90E2",
-      paddingVertical: height * 0.01,
+      paddingVertical: height * 0.008,
       paddingHorizontal: width * 0.02,
-      marginVertical: height > width ? height * 0.005 : height * 0.015,
-      borderRadius: 10,
-      marginBottom: height * 0.01,
+      //marginVertical: height > width ? height * 0.005 : height * 0.015,
+      borderRadius: 8,
+      //marginBottom: height * 0.01,
     },
     tableHeaderText1: {
       color: "white",
       fontWeight: "bold",
-      fontSize: width * 0.035,
+      fontSize: RFPercentage(2),
       textAlign: "left",
       paddingHorizontal: width * 0.01,
     },
     tableHeaderText2: {
       color: "white",
       fontWeight: "bold",
-      fontSize: width * 0.035,
+      fontSize: RFPercentage(2),
       textAlign: "right",
       paddingHorizontal: width * 0.01,
     },
@@ -202,8 +205,10 @@ const getStyles = (width: number, height: number) =>
       paddingVertical: height * 0.008,
       paddingHorizontal: width * 0.02,
       borderBottomWidth: 1,
-      borderBottomColor: "#ddd",
+      borderBottomColor: "#fff",
       alignItems: "center",
+      backgroundColor: "#eee",
+      borderRadius: 8,
     },
     categoryRow: {
       backgroundColor: "#D0F0FF",

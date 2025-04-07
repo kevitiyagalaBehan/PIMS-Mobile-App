@@ -11,7 +11,7 @@ export default function Drawer() {
     <View>
       <TouchableOpacity
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        style={{ padding: 15 }}
+        style={{ paddingTop: 10 }}
       >
         <Ionicons name="menu" size={24} color="black" />
       </TouchableOpacity>

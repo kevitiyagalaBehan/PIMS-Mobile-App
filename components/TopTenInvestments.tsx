@@ -76,7 +76,7 @@ export default function TopTenInvestments() {
     <View style={styles.container}>
       <Text style={styles.bodyText}>Top Ten Investments</Text>
 
-      <View>
+      <View style={styles.tableContainer}>
 
         <View style={styles.tableHeader}>
           <Text style={[styles.headerCell1, { flex: 1 }]}>Code</Text>
@@ -163,9 +163,12 @@ const getStyles = (width: number, height: number) =>
     bodyText: {
       fontWeight: "bold",
       color: "#4A90E2",
-      paddingHorizontal: width * 0.02,
+      paddingHorizontal: width * 0.03,
       marginTop: height * 0.05,
       fontSize: RFPercentage(3),
+    },
+    tableContainer: {
+      marginVertical: height > width ? height * 0.005 : height * 0.015,
     },
     loader: {
       marginTop: height * 0.3,
@@ -176,27 +179,25 @@ const getStyles = (width: number, height: number) =>
       textAlign: "center",
       marginTop: height * 0.3,
     },
-
     tableHeader: {
       flexDirection: "row",
       backgroundColor: "#4A90E2",
-      paddingVertical: height * 0.01,
+      paddingVertical: height * 0.008,
       paddingHorizontal: width * 0.02,
-      marginVertical: height > width ? height * 0.005 : height * 0.015,
-      borderRadius: 10,
-      marginBottom: height * 0.01,
+      borderRadius: 8,
+      //marginBottom: height * 0.01,
     },
     headerCell1: {
       color: "white",
       fontWeight: "bold",
-      fontSize: width * 0.035,
+      fontSize: RFPercentage(2),
       textAlign: "left",
       paddingHorizontal: width * 0.01,
     },
     headerCell2: {
       color: "white",
       fontWeight: "bold",
-      fontSize: width * 0.035,
+      fontSize: RFPercentage(2),
       textAlign: "right",
       paddingHorizontal: width * 0.01,
     },
@@ -205,8 +206,10 @@ const getStyles = (width: number, height: number) =>
       paddingVertical: height * 0.008,
       paddingHorizontal: width * 0.01,
       borderBottomWidth: 1,
-      borderBottomColor: "#ddd",
+      borderBottomColor: "#fff",
       alignItems: "center",
+      backgroundColor: "#eee",
+      borderRadius: 8,
     },
     dataCell: {
       fontSize: width * 0.035,
