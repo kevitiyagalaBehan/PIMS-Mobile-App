@@ -43,7 +43,7 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Image
-        source={require("../../assets/PIMS_Logo.png")}
+        source={require("../../assets/PIMS.png")}
         style={styles.logo}
       />
 
