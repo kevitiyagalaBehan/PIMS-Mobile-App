@@ -148,6 +148,7 @@ export const getTopTenInvestmentDetails = async (
       throw new Error("Expected array response");
     }
 
+    {/*
     const isValid = data.every(
       (item) =>
         item.code &&
@@ -160,6 +161,7 @@ export const getTopTenInvestmentDetails = async (
     if (!isValid) {
       throw new Error("Invalid data structure received");
     }
+    */}
 
     return data as TopTenInvestmentDetails[];
   } catch (error) {
