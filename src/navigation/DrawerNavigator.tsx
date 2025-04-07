@@ -42,6 +42,9 @@ export default function DrawerNavigator() {
         options={{
           drawerLabel: "Home",
           //drawerItemStyle: { display: "none" },
+          drawerIcon: ({ color }) => (
+            <Ionicons name="home" size={30} color={color} />
+          ),
         }}
       />
       <Drawer.Screen
