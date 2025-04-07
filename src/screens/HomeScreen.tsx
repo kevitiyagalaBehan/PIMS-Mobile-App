@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, FlatList,
+  RefreshControl,
+  View, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WindowSize } from "../navigation/types";
+import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 import { Header, PortfolioSummary, Drawer } from "../../components";
 
 export default function HomeScreen() {
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
   );
+  const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
 
   useEffect(() => {
     const updateSize = () => {
@@ -23,8 +27,20 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Drawer />
-      <Header />
-      <PortfolioSummary />
+      <FlatList
+        data={[]}
+        keyExtractor={() => "dummy"}
+        renderItem={null}
+        ListHeaderComponent={
+          <View>
+            <Header refreshTrigger={refreshTrigger} refreshing={refreshing} />
+            <PortfolioSummary refreshTrigger={refreshTrigger} refreshing={refreshing} />
+          </View>
+        }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
     </SafeAreaView>
   );
 }

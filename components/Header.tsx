@@ -1,6 +1,5 @@
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions, ActivityIndicator } from "react-native";
 import React, { useState, useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../src/context/AuthContext";
@@ -8,77 +7,77 @@ import {
   getLinkedUsers,
   getAssetAllocationSummary,
 } from "../src/utils/pimsApi";
-import { WindowSize, PortfolioData } from "../src/navigation/types";
+import { WindowSize, PortfolioData, Props } from "../src/navigation/types";
 
-export default function Header() {
-    const { userData, setCurrentUserName, currentUserName } = useAuth();
-    const [windowSize, setWindowSize] = useState<WindowSize>(
-      Dimensions.get("window")
-    );
-    const [portfolioSummary, setPortfolioSummary] =
-      useState<PortfolioData | null>(null);
-      const [loading, setLoading] = useState(true);
+export default function Header({ refreshTrigger, refreshing }: Props) {
+  const { userData, setCurrentUserName, currentUserName } = useAuth();
+  const [windowSize, setWindowSize] = useState<WindowSize>(
+    Dimensions.get("window")
+  );
+  const [portfolioSummary, setPortfolioSummary] =
+    useState<PortfolioData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-      useEffect(() => {
-        const updateSize = () => {
-          setWindowSize(Dimensions.get("window"));
-        };
-        const subscription = Dimensions.addEventListener("change", updateSize);
-        return () => subscription.remove();
-      }, []);
-    
-      useEffect(() => {
-        const fetchUserData = async () => {
-          if (!userData?.authToken) {
-            setCurrentUserName(null);
-            return;
-          }
-    
-          const userName = await getLinkedUsers(userData.authToken);
-    
-          if (userName && userName.fullName) {
-            setCurrentUserName(userName.fullName);
-          } else {
-            setCurrentUserName("User not found");
-          }
-        };
-    
-        fetchUserData();
-      }, [userData?.authToken]);
+  useEffect(() => {
+    const updateSize = () => {
+      setWindowSize(Dimensions.get("window"));
+    };
+    const subscription = Dimensions.addEventListener("change", updateSize);
+    return () => subscription.remove();
+  }, []);
 
-      useEffect(() => {
-        const fetchData = async () => {
-          if (!userData?.authToken || !userData?.accountId) {
-            setLoading(false);
-            return;
-          }
-    
-          setLoading(true);
-    
-          const [summaryData] = await Promise.all([
-            getAssetAllocationSummary(userData.authToken, userData.accountId),
-          ]);
-    
-          if (summaryData) {
-            setPortfolioSummary(summaryData);
-          } else {
-            setError("Failed to load portfolio summary");
-          }
-    
-          setLoading(false);
-        };
-    
-        fetchData();
-      }, [userData]);
-    
-      const { width, height } = windowSize;
-      const styles = getStyles(width, height);
-    
-      if (!userData || !userData.authToken || !userData.accountId) {
-        console.error("Error: userData or required fields are missing");
-        return null;
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!userData?.authToken) {
+        setCurrentUserName(null);
+        return;
       }
+
+      const userName = await getLinkedUsers(userData.authToken);
+
+      if (userName && userName.fullName) {
+        setCurrentUserName(userName.fullName);
+      } else {
+        setCurrentUserName("User not found");
+      }
+    };
+
+    fetchUserData();
+  }, [userData?.authToken, refreshTrigger, refreshing]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userData?.authToken || !userData?.accountId) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+
+      const [summaryData] = await Promise.all([
+        getAssetAllocationSummary(userData.authToken, userData.accountId),
+      ]);
+
+      if (summaryData) {
+        setPortfolioSummary(summaryData);
+      } else {
+        setError("Failed to load portfolio summary");
+      }
+
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [userData?.authToken, userData?.accountId, refreshTrigger, refreshing]);
+
+  const { width, height } = windowSize;
+  const styles = getStyles(width, height);
+
+  if (!userData || !userData.authToken || !userData.accountId) {
+    //console.error("Error: userData or required fields are missing");
+    return null;
+  }
 
   return (
     <View>
@@ -90,26 +89,36 @@ export default function Header() {
         />
       </View>
 
-      <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
-        <Text style={styles.userNameText}>
-          {currentUserName ? `Hello, ${currentUserName}` : "Loading user..."}
-        </Text>
-      </LinearGradient>
+      {refreshing ? (
+        <ActivityIndicator
+          size="large"
+          color="#4A90E2"
+          style={{ marginVertical: 20 }}
+        />
+      ) : (
+        <>
+          <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
+            <Text style={styles.userNameText}>
+              {currentUserName ? `Hello, ${currentUserName}` : "Loading user..."}
+            </Text>
+          </LinearGradient>
 
-      <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
-        <Text style={styles.valueText}>
-          {portfolioSummary
-            ? new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(portfolioSummary.totalMarketValue)
-            : "N/A"}
-        </Text>
+          <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
+            <Text style={styles.valueText}>
+              {portfolioSummary
+                ? new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(portfolioSummary.totalMarketValue)
+                : "N/A"}
+            </Text>
 
-        <Text style={styles.dateText}>
-          Current value as at {new Date().toLocaleDateString("en-GB")}
-        </Text>
-      </LinearGradient>
+            <Text style={styles.dateText}>
+              Current value as at {new Date().toLocaleDateString("en-GB")}
+            </Text>
+          </LinearGradient>
+        </>
+      )}
     </View>
   );
 }

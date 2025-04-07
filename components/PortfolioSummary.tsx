@@ -10,9 +10,9 @@ import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getAssetAllocationSummary } from "../src/utils/pimsApi";
-import { WindowSize, PortfolioData } from "../src/navigation/types";
+import { WindowSize, PortfolioData, Props } from "../src/navigation/types";
 
-export default function PortfolioSummary() {
+export default function PortfolioSummary({ refreshTrigger, refreshing }: Props) {
   const { userData } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
@@ -53,21 +53,32 @@ export default function PortfolioSummary() {
     };
 
     fetchData();
-  }, [userData]);
+  }, [userData?.authToken, userData?.accountId, refreshTrigger, refreshing]);
 
   const { width, height } = windowSize;
   const styles = getStyles(width, height);
 
   if (!userData || !userData.authToken || !userData.accountId) {
-    console.error("Error: userData or required fields are missing");
+    //console.error("Error: userData or required fields are missing");
     return null;
   }
+
+  const dataWithTotal = portfolioSummary
+  ? [
+      ...portfolioSummary.assetCategories,
+      {
+        assetCategory: "TOTAL",
+        marketValue: portfolioSummary.totalMarketValue,
+        percentage: portfolioSummary.totalPercentage,
+      },
+    ]
+  : [];
 
   return (
     <View style={styles.container}>
       <Text style={styles.bodyText}>Portfolio Summary</Text>
 
-      {loading ? (
+      {refreshing ? (
         <ActivityIndicator size="large" color="#4A90E2" style={styles.loader} />
       ) : error ? (
         <Text style={styles.errorText}>{error}</Text>
@@ -88,14 +99,7 @@ export default function PortfolioSummary() {
           </View>
 
           <FlatList
-            data={[
-              ...portfolioSummary.assetCategories,
-              {
-                assetCategory: "TOTAL",
-                marketValue: portfolioSummary.totalMarketValue,
-                percentage: portfolioSummary.totalPercentage,
-              },
-            ]}
+            data={dataWithTotal}
             keyExtractor={(item) => item.assetCategory}
             renderItem={({ item }) => (
               <>
@@ -158,7 +162,7 @@ const getStyles = (width: number, height: number) =>
       flex: 1,
     },
     loader: {
-      marginTop: height * 0.25,
+      marginTop: height * 0.20,
     },
     bodyText: {
       fontWeight: "bold",
