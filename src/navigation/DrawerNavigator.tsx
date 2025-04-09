@@ -127,7 +127,7 @@ export default function DrawerNavigator() {
         options={{
           drawerLabel: "Pension Limit Summary",
           drawerIcon: ({ color }) => (
-            <Ionicons name="cash" size={30} color={color} />
+            <Ionicons name="briefcase" size={30} color={color} />
           ),
         }}
       />
