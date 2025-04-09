@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  ActivityIndicator,
   TouchableOpacity,
   Modal,
 } from "react-native";
@@ -11,9 +10,9 @@ import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getTopTenInvestmentDetails } from "../src/utils/pimsApi";
-import { WindowSize, TopTenInvestmentDetails } from "../src/navigation/types";
+import { WindowSize, TopTenInvestmentDetails, Props } from "../src/navigation/types";
 
-export default function TopTenInvestments() {
+export default function TopTenInvestments({ refreshTrigger }: Props) {
   const { userData } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
@@ -54,7 +53,7 @@ export default function TopTenInvestments() {
     };
 
     fetchData();
-  }, [userData]);
+  }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
   const handleCodePress = (item: TopTenInvestmentDetails) => {
     setSelectedItem(item);
@@ -63,10 +62,6 @@ export default function TopTenInvestments() {
 
   const { width, height } = windowSize;
   const styles = getStyles(width, height);
-
-  if (loading) {
-    return <ActivityIndicator size="large" color="#4A90E2" style={styles.loader} />;
-  }
 
   if (error) {
     return <Text style={styles.errorText}>{error}</Text>;
@@ -163,7 +158,7 @@ const getStyles = (width: number, height: number) =>
     bodyText: {
       fontWeight: "bold",
       color: "#4A90E2",
-      paddingHorizontal: width * 0.03,
+      paddingHorizontal: width * 0.015,
       marginTop: height * 0.05,
       fontSize: RFPercentage(3),
     },
@@ -185,26 +180,24 @@ const getStyles = (width: number, height: number) =>
       paddingVertical: height * 0.008,
       paddingHorizontal: width * 0.02,
       borderRadius: 8,
-      //marginBottom: height * 0.01,
+      marginBottom: height * 0.001,
     },
     headerCell1: {
       color: "white",
       fontWeight: "bold",
       fontSize: RFPercentage(2),
       textAlign: "left",
-      paddingHorizontal: width * 0.01,
     },
     headerCell2: {
       color: "white",
       fontWeight: "bold",
       fontSize: RFPercentage(2),
       textAlign: "right",
-      paddingHorizontal: width * 0.01,
     },
     dataRow: {
       flexDirection: "row",
       paddingVertical: height * 0.008,
-      paddingHorizontal: width * 0.01,
+      paddingHorizontal: width * 0.02,
       borderBottomWidth: 1,
       borderBottomColor: "#fff",
       alignItems: "center",
@@ -214,7 +207,6 @@ const getStyles = (width: number, height: number) =>
     dataCell: {
       fontSize: width * 0.035,
       color: "#333",
-      paddingHorizontal: width * 0.01,
     },
     leftAlign: {
       textAlign: "left",

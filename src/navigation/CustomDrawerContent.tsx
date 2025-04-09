@@ -15,7 +15,7 @@ export default function CustomDrawerContent(props: any) {
     <DrawerContentScrollView {...props}>
       <View style={styles.headerContainer}>
         <Image
-          source={require("../../assets/PIMS.png")}
+          source={require("../../assets/pims_logo.png")}
           style={styles.image}
           resizeMode="contain"
         />

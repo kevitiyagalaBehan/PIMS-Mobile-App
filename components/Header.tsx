@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Dimensions, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
@@ -9,7 +9,7 @@ import {
 } from "../src/utils/pimsApi";
 import { WindowSize, PortfolioData, Props } from "../src/navigation/types";
 
-export default function Header({ refreshTrigger, refreshing }: Props) {
+export default function Header({ refreshTrigger }: Props) {
   const { userData, setCurrentUserName, currentUserName } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
@@ -44,7 +44,7 @@ export default function Header({ refreshTrigger, refreshing }: Props) {
     };
 
     fetchUserData();
-  }, [userData?.authToken, refreshTrigger, refreshing]);
+  }, [userData?.authToken, refreshTrigger]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,7 +69,7 @@ export default function Header({ refreshTrigger, refreshing }: Props) {
     };
 
     fetchData();
-  }, [userData?.authToken, userData?.accountId, refreshTrigger, refreshing]);
+  }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
   const { width, height } = windowSize;
   const styles = getStyles(width, height);
@@ -83,20 +83,13 @@ export default function Header({ refreshTrigger, refreshing }: Props) {
     <View>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../assets/PIMS.png")}
+          source={require("../assets/pims_logo.png")}
           style={styles.image}
           resizeMode="contain"
         />
       </View>
 
-      {refreshing ? (
-        <ActivityIndicator
-          size="large"
-          color="#4A90E2"
-          style={{ marginVertical: 20 }}
-        />
-      ) : (
-        <>
+
           <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
             <Text style={styles.userNameText}>
               {currentUserName ? `Hello, ${currentUserName}` : "Loading user..."}
@@ -117,8 +110,7 @@ export default function Header({ refreshTrigger, refreshing }: Props) {
               Current value as at {new Date().toLocaleDateString("en-GB")}
             </Text>
           </LinearGradient>
-        </>
-      )}
+
     </View>
   );
 }

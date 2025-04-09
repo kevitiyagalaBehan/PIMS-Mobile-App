@@ -3,10 +3,10 @@ import { StyleSheet, Dimensions, FlatList, View, RefreshControl } from "react-na
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WindowSize } from "../navigation/types";
-import { Header, Drawer, EstimatedMemberStatement } from "../../components"
+import { Header, Drawer, PensionLimitSummary } from "../../components"
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 
-export default function EstimatedMemberStatementScreen() {
+export default function PensionLimitSummaryScreen() {
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
   );
@@ -31,7 +31,7 @@ export default function EstimatedMemberStatementScreen() {
         ListHeaderComponent={
           <View>
             <Header refreshTrigger={refreshTrigger} refreshing={refreshing} />
-            <EstimatedMemberStatement refreshTrigger={refreshTrigger} refreshing={refreshing} />
+            <PensionLimitSummary refreshTrigger={refreshTrigger} refreshing={refreshing} />
           </View>
         }
         refreshControl={

@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
-  Dimensions,
+  Dimensions, FlatList,
+  RefreshControl,
+  View,
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WindowSize } from "../navigation/types";
 import { Header, PortfolioBalanceSummary, Drawer } from "../../components";
+import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 
 export default function PortfolioBalanceScreen() {
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
   );
+
+  const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
 
   useEffect(() => {
     const updateSize = () => {
@@ -27,8 +32,20 @@ export default function PortfolioBalanceScreen() {
   return (
         <SafeAreaView style={styles.container}>
             <Drawer />
-            <Header />
-            <PortfolioBalanceSummary />
+<FlatList
+        data={[]}
+        keyExtractor={() => "dummy"}
+        renderItem={null}
+        ListHeaderComponent={
+          <View>
+            <Header refreshTrigger={refreshTrigger} refreshing={refreshing} />
+            <PortfolioBalanceSummary refreshTrigger={refreshTrigger} refreshing={refreshing} />
+          </View>
+        }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
         </SafeAreaView>
   );
 }

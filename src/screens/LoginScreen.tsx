@@ -43,7 +43,7 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Image
-        source={require("../../assets/PIMS.png")}
+        source={require("../../assets/pims_logo.png")}
         style={styles.logo}
       />
 
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 250,
     height: 60,
-    marginBottom: 30,
+    marginBottom: 80,
   },
   input: {
     width: "100%",

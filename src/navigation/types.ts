@@ -12,7 +12,7 @@ export type RootStackParamList = {
 // Bottom Tab Navigation
 export type BottomTabParamList = {
   Home: { authToken: string; accountId: string };
-  Messages: { authToken: string; accountId: string };
+  Notifications: { authToken: string; accountId: string };
 };
 
 // Drawer Navigation
@@ -78,12 +78,6 @@ export interface AssetCategory {
   assetClasses?: AssetClass[];
 }
 
-export interface AssetAllocationSummary {
-  assetCategories: AssetCategory[];
-  totalMarketValue: number;
-  totalPercentage: number;
-}
-
 export interface ChartData {
   name: string;
   percentage: number;
@@ -130,3 +124,70 @@ export interface TopTenInvestmentDetails {
   value: number;
   percentage: number;
 }
+
+export type PortfolioItem = {
+  year: number;
+  value: number;
+  dataDownDate: string;
+};
+
+// Selected item when clicking on a bar
+export type SelectedData = {
+  clientTotal: number;
+  dataDownDate: string;
+  year: number;
+};
+
+export interface ContributionCap {
+  accountName: string;
+  financialYear: {
+    endDate: string;
+    financialYear: string;
+    id: string;
+    isCurrent: boolean;
+    startDate: string;
+  };
+  members: {
+    age: number;
+    birthDate: string;
+    concessionalAvailable: number;
+    concessionalMaximum: number;
+    concessionalPaidToDate: number;
+    name: string;
+    nonConcessionalAvailable: number;
+    nonConcessionalMaximum: number;
+    nonConcessionalPaidToDate: number;
+  }[];
+}
+
+export interface PensionLimitDetails {
+  accountName: string;
+  financialYear: {
+    endDate: string;
+    financialYear: string;
+    id: string;
+    isCurrent: boolean;
+    startDate: string;
+  };
+  members: {
+    age: number;
+    birthDate: string;
+    drawdownsToDate: number;
+    maximumPensionAmount: number;
+    minimumPaidToDate: number;
+    minimumPensionAmount: number;
+    name: string;
+    remainingToMaximum: number;
+    requiredForMinimum: number;
+  }[];
+}
+
+export interface EstimatedMemberDetails {
+  accumulation: number;
+  memberName: string;
+  pension: number;
+  taxFree: number;
+  taxableTaxed: number;
+  taxableUntaxed: number;
+}
+

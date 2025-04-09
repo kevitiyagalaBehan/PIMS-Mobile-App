@@ -4,36 +4,24 @@ import {
   View,
   StyleSheet,
   Dimensions,
-  ActivityIndicator,
   Modal,
   TouchableOpacity,
-  RefreshControl,
-  ScrollView,
 } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import Svg, { Rect } from "react-native-svg";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getSuperFundDetails } from "../src/utils/pimsApi";
-import { WindowSize } from "../src/navigation/types";
+import { WindowSize, Props, PortfolioItem, SelectedData } from "../src/navigation/types";
 import { useIsFocused } from "@react-navigation/native";
 
-export default function PortfolioBalanceSummary() {
+export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const [refreshing, setRefreshing] = useState(false);
-  const [windowSize, setWindowSize] = useState<WindowSize>(
-    Dimensions.get("window")
-  );
-  const [portfolioData, setPortfolioData] = useState<
-    { dataDownDate: string; year: number; value: number }[] | null
-  >(null);
+  const [windowSize, setWindowSize] = useState<WindowSize>(Dimensions.get("window"));
+  const [portfolioData, setPortfolioData] = useState<PortfolioItem[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedData, setSelectedData] = useState<{
-    clientTotal: number;
-    dataDownDate: string;
-    year: number;
-  } | null>(null);
+  const [selectedData, setSelectedData] = useState<SelectedData | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const isFocused = useIsFocused();
@@ -42,7 +30,6 @@ export default function PortfolioBalanceSummary() {
     const updateSize = () => {
       setWindowSize(Dimensions.get("window"));
     };
-
     const subscription = Dimensions.addEventListener("change", updateSize);
     return () => subscription.remove();
   }, []);
@@ -55,10 +42,7 @@ export default function PortfolioBalanceSummary() {
 
     setLoading(true);
     try {
-      const data = await getSuperFundDetails(
-        userData.authToken,
-        userData.accountId
-      );
+      const data = await getSuperFundDetails(userData.authToken, userData.accountId);
 
       if (data) {
         setPortfolioData(
@@ -80,7 +64,7 @@ export default function PortfolioBalanceSummary() {
 
   useEffect(() => {
     fetchData();
-  }, [userData]);
+  }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
   useEffect(() => {
     if (isFocused) {
@@ -88,14 +72,8 @@ export default function PortfolioBalanceSummary() {
     }
   }, [isFocused]);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await fetchData();
-    setRefreshing(false);
-  };
-
   const { width, height } = windowSize;
-  const chartWidth = width * 0.96;
+  const chartWidth = width * 0.97;
   const chartHeight = width * 0.8;
   const styles = getStyles(width, height);
 
@@ -107,11 +85,7 @@ export default function PortfolioBalanceSummary() {
     );
   }
 
-  const handleBarPress = (item: {
-    year: number;
-    value: number;
-    dataDownDate: string;
-  }) => {
+  const handleBarPress = (item: PortfolioItem) => {
     setSelectedData({
       clientTotal: item.value,
       dataDownDate: item.dataDownDate,
@@ -125,26 +99,12 @@ export default function PortfolioBalanceSummary() {
   };
 
   return (
-    <ScrollView
-      
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          tintColor="#4A90E2"
-          colors={["#4A90E2"]}
-        />
-      }
-    >
+    <View style={styles.container}>
       <Text style={styles.bodyText}>Portfolio Summary Balance</Text>
 
-      {loading && !refreshing ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#4A90E2" />
-        </View>
-      ) : portfolioData ? (
-        <View style={styles.container}>
-          <View style={styles.chartContainer}>
+      {portfolioData ? (
+        <View>
+          <View>
             <BarChart
               data={{
                 labels: portfolioData.map((item) => `${item.year}`),
@@ -186,11 +146,7 @@ export default function PortfolioBalanceSummary() {
               }}
               fromZero={true}
             />
-            <Svg
-              width={chartWidth}
-              height={chartHeight}
-              style={StyleSheet.absoluteFill}
-            >
+            <Svg width={chartWidth} height={chartHeight} style={StyleSheet.absoluteFill}>
               {portfolioData.map((item, index) => {
                 const barWidth = chartWidth / portfolioData.length - 20;
                 const x = (chartWidth * index) / portfolioData.length + 15;
@@ -221,9 +177,7 @@ export default function PortfolioBalanceSummary() {
               <View style={styles.modalContent}>
                 {selectedData && (
                   <>
-                    <Text style={styles.modalTitle}>
-                      Year {selectedData.year}
-                    </Text>
+                    <Text style={styles.modalTitle}>Year {selectedData.year}</Text>
                     <View style={styles.modalRow}>
                       <Text style={styles.modalLabel}>Client Total:</Text>
                       <Text style={styles.modalText}>
@@ -233,15 +187,10 @@ export default function PortfolioBalanceSummary() {
                     <View style={styles.modalRow}>
                       <Text style={styles.modalLabel}>Down Date:</Text>
                       <Text style={styles.modalText}>
-                        {new Date(
-                          selectedData.dataDownDate
-                        ).toLocaleDateString("en-GB")}
+                        {new Date(selectedData.dataDownDate).toLocaleDateString("en-GB")}
                       </Text>
                     </View>
-                    <TouchableOpacity
-                      style={styles.closeButton}
-                      onPress={handleCloseModal}
-                    >
+                    <TouchableOpacity style={styles.closeButton} onPress={handleCloseModal}>
                       <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>
                   </>
@@ -251,7 +200,7 @@ export default function PortfolioBalanceSummary() {
           </Modal>
         </View>
       ) : null}
-    </ScrollView>
+    </View>
   );
 }
 
@@ -275,7 +224,7 @@ const getStyles = (width: number, height: number) =>
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      minHeight: height * 0.5,
+      minHeight: height * 0.4,
     },
     bodyText: {
       fontWeight: "bold",

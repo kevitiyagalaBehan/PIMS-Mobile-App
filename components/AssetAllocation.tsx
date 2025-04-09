@@ -3,16 +3,15 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getAssetAllocationSummary } from "../src/utils/pimsApi";
-import { PortfolioData, ChartData, WindowSize } from "../src/navigation/types";
+import { PortfolioData, ChartData, WindowSize, Props } from "../src/navigation/types";
 
-export default function AssetAllocation() {
+export default function AssetAllocation({ refreshTrigger }: Props) {
   const { userData } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
@@ -74,13 +73,11 @@ export default function AssetAllocation() {
       } catch (err) {
         console.error("Fetch error:", err);
         setError("Failed to load asset allocation data");
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchData();
-  }, [userData]);
+  }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
   const getRandomColor = () => {
     const colors = [
@@ -109,14 +106,6 @@ export default function AssetAllocation() {
     );
   }
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4A90E2" style={styles.loader} />
-      </View>
-    );
-  }
-
   if (error) {
     return (
       <View style={styles.errorContainer}>
@@ -134,7 +123,7 @@ export default function AssetAllocation() {
           <PieChart
             data={chartData}
             width={width * 1.71}
-            height={200}
+            height={height * 0.3}
             chartConfig={{
               backgroundColor: "#ffffff",
               backgroundGradientFrom: "#ffffff",
@@ -181,7 +170,7 @@ const getStyles = (width: number, height: number) =>
       alignItems: "center",
     },
     loader: {
-      marginTop: height * 0.1,
+      marginTop: height * 0.25,
     },
     bodyText: {
       fontWeight: "bold",

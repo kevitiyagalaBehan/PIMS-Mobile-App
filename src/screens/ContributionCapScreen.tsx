@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, FlatList, View, RefreshControl } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WindowSize } from "../navigation/types";
-import { Header, Drawer } from "../../components";
+import { Header, Drawer, ContributionCapSummary } from "../../components"
+import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 
-export default function AssetAllocationScreen() {
+export default function ContributionCapSummaryScreen() {
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
   );
+  const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
 
   useEffect(() => {
     const updateSize = () => setWindowSize(Dimensions.get("window"));
@@ -22,7 +24,20 @@ export default function AssetAllocationScreen() {
   return (
     <SafeAreaView style={styles.container}>
         <Drawer />
-        <Header />
+      <FlatList
+        data={[]}
+        keyExtractor={() => "dummy"}
+        renderItem={null}
+        ListHeaderComponent={
+          <View>
+            <Header refreshTrigger={refreshTrigger} refreshing={refreshing} />
+            <ContributionCapSummary refreshTrigger={refreshTrigger} refreshing={refreshing} />
+          </View>
+        }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
     </SafeAreaView>
   );
 }

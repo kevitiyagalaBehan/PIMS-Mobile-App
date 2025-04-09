@@ -7,7 +7,7 @@ import AssetAllocationScreen from "../screens/AssetAllocationScreen";
 import TopTenInvestmentsScreen from "../screens/TopTenInvestmentsScreen";
 import PortfolioBalanceScreen from "../screens/PortfolioBalanceScreen";
 import ContributionCapScreen from "../screens/ContributionCapScreen";
-import PensionLimitScreen from "../screens/PensionLimitScreen";
+import PensionLimitScreen from "../screens/PensionLimitSummaryScreen";
 import EstimatedMemberStatementScreen from "../screens/EstimatedMemberStatementScreen";
 import CustomDrawerContent from "./CustomDrawerContent";
 import { DrawerParamList } from "./types";

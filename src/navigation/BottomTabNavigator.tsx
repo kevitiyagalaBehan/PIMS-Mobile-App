@@ -1,8 +1,9 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialIcons } from "@expo/vector-icons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+//import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
-import MessageScreen from "../screens/MessageScreen";
+import NotifyScreen from "../screens/NotifyScreen";
 import { BottomTabParamList } from "./types";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
@@ -24,18 +25,18 @@ export default function BottomTab() {
           headerShown: false,
           tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="home" size={size} color={color} />
+            <Ionicons name="home" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="Messages"
-        component={MessageScreen}
+        name="Notifications"
+        component={NotifyScreen}
         options={{
           headerShown: false,
-          tabBarLabel: "Messages",
+          tabBarLabel: "Notifications",
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="message" size={size} color={color} />
+            <Ionicons name="notifications" size={size} color={color} />
           ),
         }}
       />
