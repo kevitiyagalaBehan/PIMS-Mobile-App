@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../src/context/AuthContext";
 import { getAssetAllocationSummary } from "../src/utils/pimsApi";
 import { WindowSize, PortfolioData, Props } from "../src/navigation/types";
@@ -85,13 +86,13 @@ export default function PortfolioSummary({ refreshTrigger }: Props) {
     <View style={styles.container}>
       <Text style={styles.bodyText}>Portfolio Summary</Text>
       <View style={styles.tableContainer}>
-        <View style={styles.tableHeader}>
+        <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.tableHeader}>
           <Text style={[styles.tableHeaderText1, { flex: 1 }]}>Asset Class</Text>
           <Text style={[styles.tableHeaderText2, styles.rightAlign, { flex: 1 }]}>Current $</Text>
           <Text style={[styles.tableHeaderText2, styles.rightAlign, { flex: 1 }]}>
             Current %
           </Text>
-        </View>
+        </LinearGradient>
 
         {dataWithTotal.map((category, index) => (
           <View key={index}>

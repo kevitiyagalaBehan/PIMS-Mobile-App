@@ -4,7 +4,7 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { Text, View, TouchableOpacity, Image, StyleSheet } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { useAuth } from "../context/AuthContext";
 import { handleLogout } from "../utils/logout"; 
 
@@ -28,7 +28,7 @@ export default function CustomDrawerContent(props: any) {
         style={styles.logoutButton}
         onPress={() => handleLogout(props.navigation)} 
       >
-        <Icon name="logout" size={24} color="red" />
+        <Ionicons name="log-out" size={30} color="red" />
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
     </DrawerContentScrollView>
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   logoutText: {
     fontSize: 16,
     color: "red",
+    fontWeight: "bold",
     marginLeft: 10,
   },
 });
