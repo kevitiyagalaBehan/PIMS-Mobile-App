@@ -139,6 +139,7 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
           }
           members={members}
           styles={styles}
+          bold
         />
 
         <TableSection label="TAX COMPONENTS" styles={styles} />
@@ -185,18 +186,22 @@ const TableRow = ({
   renderRow,
   members,
   styles,
+  bold = false,
 }: {
   label: string;
   renderRow: (member: any) => string;
   members: any[];
   styles: any;
+  bold?: boolean;
 }) => (
   <View style={styles.row}>
-    <Text style={[styles.cell, { flex: 2 }]}>{label}</Text>
+    <Text style={[styles.cell, bold && styles.boldText, { flex: 2 }]}>
+      {label}
+    </Text>
     {members.map((member) => (
       <Text
         key={member.memberName}
-        style={[styles.cell, styles.rightAlign, { flex: 2 }]}
+        style={[styles.cell, styles.rightAlign, bold && styles.boldText, { flex: 2 }]}
       >
         {renderRow(member)}
       </Text>
@@ -273,6 +278,9 @@ const getStyles = (width: number, height: number) =>
     sectionLabel: {
       fontWeight: "bold",
       fontSize: RFPercentage(2),
+    },
+    boldText: {
+      fontWeight: "bold",
     },
     loader: {
       marginTop: height * 0.2,
