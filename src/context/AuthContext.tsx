@@ -1,18 +1,7 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
-import { LoginResponse } from "../navigation/types";
-
-type AuthContextType = {
-  userData: LoginResponse | null;
-  setUserData: React.Dispatch<React.SetStateAction<LoginResponse | null>>;
-  currentUserName: string | null;
-  setCurrentUserName: React.Dispatch<React.SetStateAction<string | null>>;
-};
+import React, { createContext, useState, useContext } from "react";
+import { LoginResponse, AuthContextType, AuthProviderProps } from "../navigation/types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-type AuthProviderProps = {
-  children: ReactNode;
-};
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userData, setUserData] = useState<LoginResponse | null>(null);

@@ -2,6 +2,18 @@ import { RouteProp } from "@react-navigation/native";
 import { BottomTabNavigationProp as RNBottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { DrawerNavigationProp as RNDrawerNavigationProp } from "@react-navigation/drawer";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { ReactNode } from "react";
+
+export type AuthContextType = {
+  userData: LoginResponse | null;
+  setUserData: React.Dispatch<React.SetStateAction<LoginResponse | null>>;
+  currentUserName: string | null;
+  setCurrentUserName: React.Dispatch<React.SetStateAction<string | null>>;
+};
+
+export type AuthProviderProps = {
+  children: ReactNode;
+};
 
 // Root Stack Navigation
 export type RootStackParamList = {
@@ -48,6 +60,10 @@ RootStackParamList,
 export type Props = {
   refreshing: boolean;
   refreshTrigger: number;
+};
+
+export type NavigationProps = {
+  replace: (screen: string) => void;
 };
 
 export interface LinkedUsers {
@@ -189,5 +205,10 @@ export interface EstimatedMemberDetails {
   taxFree: number;
   taxableTaxed: number;
   taxableUntaxed: number;
+}
+
+export interface InvestmentPerformanceDetails {
+  cumulativePercent: number;
+  date: string;
 }
 

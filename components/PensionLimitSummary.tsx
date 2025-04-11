@@ -3,7 +3,11 @@ import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getPensionLimitSummary } from "../src/utils/pimsApi";
-import { WindowSize, Props, PensionLimitDetails } from "../src/navigation/types";
+import {
+  WindowSize,
+  Props,
+  PensionLimitDetails,
+} from "../src/navigation/types";
 
 export default function PensionLimitSummary({ refreshTrigger }: Props) {
   const { userData } = useAuth();
@@ -32,18 +36,23 @@ export default function PensionLimitSummary({ refreshTrigger }: Props) {
 
       setLoading(true);
 
-      const data = await getPensionLimitSummary(
-        userData.authToken,
-        userData.accountId
-      );
+      try {
+        const data = await getPensionLimitSummary(
+          userData.authToken,
+          userData.accountId
+        );
 
-      if (data) {
-        setPensionLimitSummary(data);
-      } else {
-        setError("Failed to load pension limit summary");
+        if (data) {
+          setPensionLimitSummary(data);
+        } else {
+          setError("Failed to load pension limit summary");
+        }
+      } catch (err) {
+        console.error("Error fetching pension limit summary:", err);
+        setError("Something went wrong while fetching pension limit summary");
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchData();
@@ -53,17 +62,13 @@ export default function PensionLimitSummary({ refreshTrigger }: Props) {
   const styles = getStyles(width, height);
 
   if (loading) {
-    return (
-      <View style={styles.loader}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <Text style={styles.bodyText}>Loading...</Text>;
   }
 
   if (!pensionLimitSummary || error) {
     return (
       <View style={styles.errorText}>
-        <Text>{error || "No data available"}</Text>
+        <Text>{error || "No pension data available"}</Text>
       </View>
     );
   }
@@ -173,7 +178,8 @@ const getStyles = (width: number, height: number) =>
       fontSize: RFPercentage(3),
     },
     tableContainer: {
-      marginVertical: height > width ? height * 0.005 : height * 0.015,
+      marginVertical: height > width ? height * 0.01 : height * 0.015,
+      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
     },
     tableHeader: {
       flexDirection: "row",

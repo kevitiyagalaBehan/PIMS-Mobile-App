@@ -10,17 +10,24 @@ import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getTopTenInvestmentDetails } from "../src/utils/pimsApi";
-import { WindowSize, TopTenInvestmentDetails, Props } from "../src/navigation/types";
+import {
+  WindowSize,
+  TopTenInvestmentDetails,
+  Props,
+} from "../src/navigation/types";
 
 export default function TopTenInvestments({ refreshTrigger }: Props) {
   const { userData } = useAuth();
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
   );
-  const [investments, setInvestments] = useState<TopTenInvestmentDetails[] | null>(null);
+  const [investments, setInvestments] = useState<
+    TopTenInvestmentDetails[] | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<TopTenInvestmentDetails | null>(null);
+  const [selectedItem, setSelectedItem] =
+    useState<TopTenInvestmentDetails | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -63,8 +70,16 @@ export default function TopTenInvestments({ refreshTrigger }: Props) {
   const { width, height } = windowSize;
   const styles = getStyles(width, height);
 
-  if (error) {
-    return <Text style={styles.errorText}>{error}</Text>;
+  if (!investments || error) {
+    return (
+      <Text style={styles.errorText}>
+        {error || "No investments data available"}
+      </Text>
+    );
+  }
+
+  if (loading) {
+    return <Text style={styles.bodyText}>Loading...</Text>;
   }
 
   return (
@@ -72,7 +87,6 @@ export default function TopTenInvestments({ refreshTrigger }: Props) {
       <Text style={styles.bodyText}>Top Ten Investments</Text>
 
       <View style={styles.tableContainer}>
-
         <View style={styles.tableHeader}>
           <Text style={[styles.headerCell1, { flex: 1 }]}>Code</Text>
           <Text style={[styles.headerCell2, { flex: 1 }]}>Value $</Text>
@@ -81,24 +95,24 @@ export default function TopTenInvestments({ refreshTrigger }: Props) {
 
         {investments?.map((item) => (
           <View key={item.code} style={styles.dataRow}>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => handleCodePress(item)}
               style={{ flex: 1 }}
             >
-              <Text 
+              <Text
                 style={[styles.dataCell, styles.boldText, styles.leftAlign]}
                 numberOfLines={1}
               >
                 {item.code}
               </Text>
             </TouchableOpacity>
-            <Text 
+            <Text
               style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
               numberOfLines={1}
             >
               {item.value.toLocaleString()}
             </Text>
-            <Text 
+            <Text
               style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
               numberOfLines={1}
             >
@@ -121,19 +135,27 @@ export default function TopTenInvestments({ refreshTrigger }: Props) {
                 <Text style={styles.modalTitle}>{selectedItem.code}</Text>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>Description:</Text>
-                  <Text style={styles.modalText}>{selectedItem.description}</Text>
+                  <Text style={styles.modalText}>
+                    {selectedItem.description}
+                  </Text>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>Quantity:</Text>
-                  <Text style={styles.modalText}>{selectedItem.quantity.toFixed(1)}</Text>
+                  <Text style={styles.modalText}>
+                    {selectedItem.quantity.toFixed(1)}
+                  </Text>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>Value:</Text>
-                  <Text style={styles.modalText}>${selectedItem.value.toLocaleString()}</Text>
+                  <Text style={styles.modalText}>
+                    ${selectedItem.value.toLocaleString()}
+                  </Text>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalLabel}>Percentage:</Text>
-                  <Text style={styles.modalText}>{selectedItem.percentage.toFixed(2)}%</Text>
+                  <Text style={styles.modalText}>
+                    {selectedItem.percentage.toFixed(2)}%
+                  </Text>
                 </View>
                 <TouchableOpacity
                   style={styles.closeButton}
@@ -164,6 +186,7 @@ const getStyles = (width: number, height: number) =>
     },
     tableContainer: {
       marginVertical: height > width ? height * 0.005 : height * 0.015,
+      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
     },
     loader: {
       marginTop: height * 0.3,

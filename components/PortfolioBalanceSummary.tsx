@@ -12,13 +12,22 @@ import Svg, { Rect } from "react-native-svg";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getSuperFundDetails } from "../src/utils/pimsApi";
-import { WindowSize, Props, PortfolioItem, SelectedData } from "../src/navigation/types";
+import {
+  WindowSize,
+  Props,
+  PortfolioItem,
+  SelectedData,
+} from "../src/navigation/types";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const [windowSize, setWindowSize] = useState<WindowSize>(Dimensions.get("window"));
-  const [portfolioData, setPortfolioData] = useState<PortfolioItem[] | null>(null);
+  const [windowSize, setWindowSize] = useState<WindowSize>(
+    Dimensions.get("window")
+  );
+  const [portfolioData, setPortfolioData] = useState<PortfolioItem[] | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedData, setSelectedData] = useState<SelectedData | null>(null);
@@ -42,7 +51,10 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
 
     setLoading(true);
     try {
-      const data = await getSuperFundDetails(userData.authToken, userData.accountId);
+      const data = await getSuperFundDetails(
+        userData.authToken,
+        userData.accountId
+      );
 
       if (data) {
         setPortfolioData(
@@ -73,7 +85,7 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
   }, [isFocused]);
 
   const { width, height } = windowSize;
-  const chartWidth = width * 0.97;
+  const chartWidth = width * 0.9;
   const chartHeight = width * 0.8;
   const styles = getStyles(width, height);
 
@@ -82,6 +94,18 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Data Loading Error...</Text>
       </View>
+    );
+  }
+
+  if (loading) {
+    return <Text style={styles.bodyText}>Loading...</Text>;
+  }
+
+  if (!portfolioData || error) {
+    return (
+      <Text style={styles.errorText}>
+        {error || "No portfolio data available"}
+      </Text>
     );
   }
 
@@ -104,7 +128,7 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
 
       {portfolioData ? (
         <View>
-          <View>
+          <View style={styles.chartContainer}>
             <BarChart
               data={{
                 labels: portfolioData.map((item) => `${item.year}`),
@@ -135,18 +159,13 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
                   fontSize: RFPercentage(2),
                 },
               }}
-              style={{
-                marginVertical: height > width ? height * 0.01 : height * 0.015,
-                borderRadius: 10,
-                elevation: 3,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-              }}
               fromZero={true}
             />
-            <Svg width={chartWidth} height={chartHeight} style={StyleSheet.absoluteFill}>
+            <Svg
+              width={chartWidth}
+              height={chartHeight}
+              style={StyleSheet.absoluteFill}
+            >
               {portfolioData.map((item, index) => {
                 const barWidth = chartWidth / portfolioData.length - 20;
                 const x = (chartWidth * index) / portfolioData.length + 15;
@@ -177,7 +196,9 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
               <View style={styles.modalContent}>
                 {selectedData && (
                   <>
-                    <Text style={styles.modalTitle}>Year {selectedData.year}</Text>
+                    <Text style={styles.modalTitle}>
+                      Year {selectedData.year}
+                    </Text>
                     <View style={styles.modalRow}>
                       <Text style={styles.modalLabel}>Client Total:</Text>
                       <Text style={styles.modalText}>
@@ -187,10 +208,15 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
                     <View style={styles.modalRow}>
                       <Text style={styles.modalLabel}>Down Date:</Text>
                       <Text style={styles.modalText}>
-                        {new Date(selectedData.dataDownDate).toLocaleDateString("en-GB")}
+                        {new Date(selectedData.dataDownDate).toLocaleDateString(
+                          "en-GB"
+                        )}
                       </Text>
                     </View>
-                    <TouchableOpacity style={styles.closeButton} onPress={handleCloseModal}>
+                    <TouchableOpacity
+                      style={styles.closeButton}
+                      onPress={handleCloseModal}
+                    >
                       <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>
                   </>
@@ -210,7 +236,8 @@ const getStyles = (width: number, height: number) =>
       flex: 1,
     },
     chartContainer: {
-      marginVertical: height > width ? height * 0.005 : height * 0.015,
+      marginVertical: height > width ? height * 0.01 : height * 0.015,
+      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
       backgroundColor: "white",
       borderRadius: 10,
       elevation: 3,
@@ -218,7 +245,7 @@ const getStyles = (width: number, height: number) =>
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
-      paddingLeft: 5,
+      padding: width * 0.02,
     },
     loadingContainer: {
       flex: 1,
@@ -229,7 +256,7 @@ const getStyles = (width: number, height: number) =>
     bodyText: {
       fontWeight: "bold",
       color: "#4A90E2",
-      paddingHorizontal: width * 0.03,
+      paddingHorizontal: width * 0.02,
       marginTop: height * 0.05,
       fontSize: RFPercentage(3),
     },

@@ -40,20 +40,25 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
 
       setLoading(true);
 
-      const data = await getEstimatedMemberStatement(
-        userData.authToken,
-        userData.accountId,
-        fromDate,
-        toDate
-      );
+      try {
+        const data = await getEstimatedMemberStatement(
+          userData.authToken,
+          userData.accountId,
+          fromDate,
+          toDate
+        );
 
-      if (Array.isArray(data)) {
-        setEstimatedMemberStatement(data);
-      } else {
-        setError("Invalid response format");
+        if (Array.isArray(data)) {
+          setEstimatedMemberStatement(data);
+        } else {
+          setError("Invalid response format");
+        }
+      } catch (err) {
+        console.error("Error fetching estimated member statement:", err);
+        setError("Failed to fetch estimated member statement");
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchData();
@@ -63,11 +68,7 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
   const styles = getStyles(width, height);
 
   if (loading) {
-    return (
-      <View style={styles.loader}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <Text style={styles.bodyText}>Loading...</Text>;
   }
 
   if (!estimatedMemberStatement || error) {
@@ -201,7 +202,12 @@ const TableRow = ({
     {members.map((member) => (
       <Text
         key={member.memberName}
-        style={[styles.cell, styles.rightAlign, bold && styles.boldText, { flex: 2 }]}
+        style={[
+          styles.cell,
+          styles.rightAlign,
+          bold && styles.boldText,
+          { flex: 2 },
+        ]}
       >
         {renderRow(member)}
       </Text>
@@ -228,7 +234,8 @@ const getStyles = (width: number, height: number) =>
       fontSize: RFPercentage(2.4),
     },
     tableContainer: {
-      marginVertical: height > width ? height * 0.005 : height * 0.015,
+      marginVertical: height > width ? height * 0.01 : height * 0.015,
+      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
     },
     tableHeader: {
       flexDirection: "row",

@@ -1,15 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { Text, View, TouchableOpacity, Image, StyleSheet } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { Text, View, TouchableOpacity, Image, StyleSheet, Dimensions } from "react-native";
+import { RFPercentage } from "react-native-responsive-fontsize";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAuth } from "../context/AuthContext";
-import { handleLogout } from "../utils/logout"; 
+import { handleLogout } from "../utils/logout";
+import { WindowSize } from "./types";
 
 export default function CustomDrawerContent(props: any) {
   const { currentUserName } = useAuth();
+    const [windowSize, setWindowSize] = useState<WindowSize>(
+      Dimensions.get("window")
+    );
+
+    useEffect(() => {
+      const updateSize = () => {
+        setWindowSize(Dimensions.get("window"));
+      };
+      const subscription = Dimensions.addEventListener("change", updateSize);
+      return () => subscription.remove();
+    }, []);
+
+    const { width, height } = windowSize;
+  const styles = getStyles(width, height);
 
   return (
     <DrawerContentScrollView {...props}>
@@ -19,14 +35,16 @@ export default function CustomDrawerContent(props: any) {
           style={styles.image}
           resizeMode="contain"
         />
-        <Text style={styles.userName}>Welcome, {currentUserName || "User"}</Text>
+        <Text style={styles.userName}>
+          Welcome, {currentUserName || "User"}
+        </Text>
       </View>
 
       <DrawerItemList {...props} />
 
       <TouchableOpacity
         style={styles.logoutButton}
-        onPress={() => handleLogout(props.navigation)} 
+        onPress={() => handleLogout(props.navigation)}
       >
         <Ionicons name="log-out" size={30} color="red" />
         <Text style={styles.logoutText}>Logout</Text>
@@ -35,7 +53,8 @@ export default function CustomDrawerContent(props: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (width: number, height: number) =>
+  StyleSheet.create({
   headerContainer: {
     alignItems: "center",
     padding: 20,
@@ -43,13 +62,13 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
   },
   image: {
-    width: 120,
-    height: 60,
+    width: width * 1.2,
+    height: height * 0.06,
   },
   userName: {
-    fontSize: 16,
+    fontSize: RFPercentage(2),
     fontWeight: "bold",
-    marginTop: 10,
+    marginTop: height * 0.01,
   },
   logoutButton: {
     flexDirection: "row",
@@ -59,9 +78,9 @@ const styles = StyleSheet.create({
     borderTopColor: "#ccc",
   },
   logoutText: {
-    fontSize: 16,
+    fontSize: RFPercentage(2),
     color: "red",
     fontWeight: "bold",
-    marginLeft: 10,
+    marginLeft: width * 0.03,
   },
 });

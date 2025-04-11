@@ -67,15 +67,15 @@ export default function LoginScreen() {
       setEmailError("Email is required");
       return;
     }
-  
+
     if (!validateEmail(email)) {
       setEmailError("Please enter a valid email address");
       return;
     }
-  
+
     try {
-      await requestPasswordReset('temporary-token-or-null', email);
-      
+      await requestPasswordReset("temporary-token-or-null", email);
+
       Alert.alert(
         "Reset Link Sent",
         "If this email is registered, you'll receive a password reset link shortly.",
@@ -247,7 +247,7 @@ const getStyles = (width: number, height: number) =>
       borderWidth: 1,
       borderColor: "#ddd",
       borderRadius: 10,
-      marginBottom: height * 0.02,
+      marginBottom: height * 0.01,
       fontSize: RFPercentage(1.8),
       color: "#333",
     },

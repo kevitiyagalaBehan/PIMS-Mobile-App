@@ -1,15 +1,15 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import React, { useState, useEffect } from "react";
 import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getAssetAllocationSummary } from "../src/utils/pimsApi";
-import { PortfolioData, ChartData, WindowSize, Props } from "../src/navigation/types";
+import {
+  PortfolioData,
+  ChartData,
+  WindowSize,
+  Props,
+} from "../src/navigation/types";
 
 export default function AssetAllocation({ refreshTrigger }: Props) {
   const { userData } = useAuth();
@@ -23,21 +23,23 @@ export default function AssetAllocation({ refreshTrigger }: Props) {
     useState<PortfolioData | null>(null);
 
   useEffect(() => {
-    const updateSize = () => setWindowSize(Dimensions.get("window"));
+    const updateSize = () => {
+      setWindowSize(Dimensions.get("window"));
+    };
     const subscription = Dimensions.addEventListener("change", updateSize);
-    return () => subscription?.remove();
+    return () => subscription.remove();
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!userData?.authToken || !userData?.accountId) {
-        setError("Authentication required");
         setLoading(false);
         return;
       }
 
+      setLoading(true);
+
       try {
-        setLoading(true);
         const response = await getAssetAllocationSummary(
           userData.authToken,
           userData.accountId
@@ -57,7 +59,7 @@ export default function AssetAllocation({ refreshTrigger }: Props) {
               processedData.push({
                 name: asset.assetClass,
                 percentage: asset.percentage,
-                color: getRandomColor(),
+                color: getColorForAssetClass(asset.assetClass),
                 legendFontColor: "#333",
                 legendFontSize: RFPercentage(1.8),
               });
@@ -73,44 +75,42 @@ export default function AssetAllocation({ refreshTrigger }: Props) {
       } catch (err) {
         console.error("Fetch error:", err);
         setError("Failed to load asset allocation data");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
-  const getRandomColor = () => {
-    const colors = [
-      "#4BA3C3",
-      "#74B6E2",
-      "#5568A8",
-      "#9D7070",
-      "#E2AB60",
-      "#8A9B0F",
-      "#FF6B6B",
-      "#48D1CC",
-      "#BA68C8",
-      "#4DB6AC",
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
+  const getColorForAssetClass = (assetClass: string) => {
+    const colorMap: { [key: string]: string } = {
+      "Cash": "#5DA8A7",
+      "Aust. Equities": "#7AC2E1",
+      "Int. Equities": "#677EB5",
+      "Property": "#A46E7E",
+      "Other": "#EDBE72",
+    };
+  
+    return colorMap[assetClass];
+  };  
 
   const { width, height } = windowSize;
   const styles = getStyles(width, height);
 
   if (!userData || !userData.authToken || !userData.accountId) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Data Loading Error...</Text>
-      </View>
-    );
+    return null;
   }
 
-  if (error) {
+  if (loading) {
+    return <Text style={styles.bodyText}>Loading...</Text>;
+  }
+
+  if (!portfolioSummary || error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+      <Text style={styles.errorText}>
+        {error || "No asset allocation data available"}
+      </Text>
     );
   }
 
@@ -198,9 +198,10 @@ const getStyles = (width: number, height: number) =>
     },
     chartContainer: {
       marginVertical: height > width ? height * 0.01 : height * 0.015,
+      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
       backgroundColor: "white",
       borderRadius: 10,
-      padding: 20,
+      padding: width * 0.03,
       elevation: 3,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },

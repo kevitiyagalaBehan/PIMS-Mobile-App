@@ -10,8 +10,7 @@ export default function ContributionCapSummary({ refreshTrigger }: Props) {
   const [windowSize, setWindowSize] = useState<WindowSize>(
     Dimensions.get("window")
   );
-  const [contributionCapSummary, setContributionCapSummary] =
-    useState<ContributionCap | null>(null);
+  const [data, setData] = useState<ContributionCap | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,18 +31,23 @@ export default function ContributionCapSummary({ refreshTrigger }: Props) {
 
       setLoading(true);
 
-      const data = await getContributionCapSummary(
-        userData.authToken,
-        userData.accountId
-      );
+      try {
+        const result = await getContributionCapSummary(
+          userData.authToken,
+          userData.accountId
+        );
 
-      if (data) {
-        setContributionCapSummary(data);
-      } else {
-        setError("Failed to load contribution cap summary");
+        if (result) {
+          setData(result);
+        } else {
+          setError("Failed to load contribution cap summary");
+        }
+      } catch (err) {
+        console.error("Error fetching contribution cap summary:", err);
+        setError("Something went wrong while fetching data");
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchData();
@@ -53,22 +57,18 @@ export default function ContributionCapSummary({ refreshTrigger }: Props) {
   const styles = getStyles(width, height);
 
   if (loading) {
-    return (
-      <View style={styles.loader}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <Text style={styles.bodyText}>Loading...</Text>;
   }
 
-  if (!contributionCapSummary || error) {
+  if (!data || error) {
     return (
       <View style={styles.errorText}>
-        <Text>{error || "No data available"}</Text>
+        <Text>{error || "No contribution cap data available"}</Text>
       </View>
     );
   }
 
-  const { financialYear, members } = contributionCapSummary;
+  const { financialYear, members } = data;
   const endDate = new Date(financialYear.endDate).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -202,6 +202,7 @@ const getStyles = (width: number, height: number) =>
     },
     tableContainer: {
       marginVertical: height > width ? height * 0.005 : height * 0.015,
+      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
     },
     tableHeader: {
       flexDirection: "row",

@@ -1,7 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Ionicons from "react-native-vector-icons/Ionicons";
-//import { Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import NotifyScreen from "../screens/NotifyScreen";
 import { BottomTabParamList } from "./types";
@@ -9,7 +8,6 @@ import { BottomTabParamList } from "./types";
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function BottomTab() {
-
   return (
     <Tab.Navigator
       screenOptions={{

@@ -89,28 +89,26 @@ export default function Header({ refreshTrigger }: Props) {
         />
       </View>
 
+      <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
+        <Text style={styles.userNameText}>
+          {currentUserName ? `Hello, ${currentUserName}` : "Loading user..."}
+        </Text>
+      </LinearGradient>
 
-          <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
-            <Text style={styles.userNameText}>
-              {currentUserName ? `Hello, ${currentUserName}` : "Loading user..."}
-            </Text>
-          </LinearGradient>
+      <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
+        <Text style={styles.valueText}>
+          {portfolioSummary
+            ? new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(portfolioSummary.totalMarketValue)
+            : "N/A"}
+        </Text>
 
-          <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.header}>
-            <Text style={styles.valueText}>
-              {portfolioSummary
-                ? new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  }).format(portfolioSummary.totalMarketValue)
-                : "N/A"}
-            </Text>
-
-            <Text style={styles.dateText}>
-              Current value as at {new Date().toLocaleDateString("en-GB")}
-            </Text>
-          </LinearGradient>
-
+        <Text style={styles.dateText}>
+          Current value as at {new Date().toLocaleDateString("en-GB")}
+        </Text>
+      </LinearGradient>
     </View>
   );
 }

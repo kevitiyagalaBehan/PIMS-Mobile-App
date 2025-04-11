@@ -1,13 +1,7 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, Dimensions, FlatList } from "react-native";
 import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { LinearGradient } from "expo-linear-gradient";
+//import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../src/context/AuthContext";
 import { getAssetAllocationSummary } from "../src/utils/pimsApi";
 import { WindowSize, PortfolioData, Props } from "../src/navigation/types";
@@ -33,23 +27,30 @@ export default function PortfolioSummary({ refreshTrigger }: Props) {
   useEffect(() => {
     const fetchData = async () => {
       if (!userData?.authToken || !userData?.accountId) {
+        setError("Authentication required");
         setLoading(false);
         return;
       }
 
       setLoading(true);
+      setError(null);
 
-      const [summaryData] = await Promise.all([
-        getAssetAllocationSummary(userData.authToken, userData.accountId),
-      ]);
+      try {
+        const [summaryData] = await Promise.all([
+          getAssetAllocationSummary(userData.authToken, userData.accountId),
+        ]);
 
-      if (summaryData) {
-        setPortfolioSummary(summaryData);
-      } else {
-        setError("Failed to load portfolio summary");
+        if (summaryData) {
+          setPortfolioSummary(summaryData);
+        } else {
+          setError("Failed to load portfolio summary");
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError("An error occurred while fetching data");
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchData();
@@ -86,13 +87,21 @@ export default function PortfolioSummary({ refreshTrigger }: Props) {
     <View style={styles.container}>
       <Text style={styles.bodyText}>Portfolio Summary</Text>
       <View style={styles.tableContainer}>
-        <LinearGradient colors={["#4A90E2", "#003366"]} style={styles.tableHeader}>
-          <Text style={[styles.tableHeaderText1, { flex: 1 }]}>Asset Class</Text>
-          <Text style={[styles.tableHeaderText2, styles.rightAlign, { flex: 1 }]}>Current $</Text>
-          <Text style={[styles.tableHeaderText2, styles.rightAlign, { flex: 1 }]}>
+        <View style={styles.tableHeader}>
+          <Text style={[styles.tableHeaderText1, { flex: 1 }]}>
+            Asset Class
+          </Text>
+          <Text
+            style={[styles.tableHeaderText2, styles.rightAlign, { flex: 1 }]}
+          >
+            Current $
+          </Text>
+          <Text
+            style={[styles.tableHeaderText2, styles.rightAlign, { flex: 1 }]}
+          >
             Current %
           </Text>
-        </LinearGradient>
+        </View>
 
         {dataWithTotal.map((category, index) => (
           <View key={index}>
@@ -134,13 +143,7 @@ const TableRow = ({
   isCategory?: boolean;
 }) => (
   <View style={[styles.row, isCategory && styles.categoryRow]}>
-    <Text
-      style={[
-        styles.cell,
-        isCategory && styles.boldText,
-        { flex: 1 },
-      ]}
-    >
+    <Text style={[styles.cell, isCategory && styles.boldText, { flex: 1 }]}>
       {label}
     </Text>
     <Text
@@ -180,6 +183,7 @@ const getStyles = (width: number, height: number) =>
     },
     tableContainer: {
       marginVertical: height > width ? height * 0.005 : height * 0.015,
+      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
     },
     errorText: {
       color: "red",
