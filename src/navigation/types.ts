@@ -212,3 +212,7 @@ export interface InvestmentPerformanceDetails {
   date: string;
 }
 
+export interface ForgotPassword {
+  message: string;
+  success: boolean;
+}

@@ -201,7 +201,7 @@ const getStyles = (width: number, height: number) =>
       marginHorizontal: height > width ? height * 0.01 : height * 0.015,
       backgroundColor: "white",
       borderRadius: 10,
-      padding: width * 0.03,
+      padding: 15,
       elevation: 3,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
