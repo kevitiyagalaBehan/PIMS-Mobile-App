@@ -310,37 +310,3 @@ export const getInvestmentPerformance = async (
     return null;
   }
 };
-
-{
-  /*
-    const isValid = data.every(
-      (item) =>
-        item.code &&
-        item.description &&
-        typeof item.percentage === "number" &&
-        typeof item.quantity === "number" &&
-        typeof item.value === "number"
-    );
-
-    if (!isValid) {
-      throw new Error("Invalid data structure received");
-    }
-    */
-}
-
-{
-  /*
-  
-    if (Array.isArray(data) && data.length > 0) {
-      const portfolioData = data[0];
-      if (portfolioData.year && portfolioData.clientTotal) {
-        return portfolioData;
-      } else {
-        throw new Error("Invalid response structure");
-      }
-    } else {
-      throw new Error("Invalid response structure");
-    }  
-  
-*/
-}
