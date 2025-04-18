@@ -74,36 +74,28 @@ export default function LoginScreen() {
     }
 
     try {
-      await requestPasswordReset("temporary-token-or-null", email);
+      const result = await requestPasswordReset(email);
 
-      Alert.alert(
-        "Reset Link Sent",
-        "If this email is registered, you'll receive a password reset link shortly.",
-        [
+      if (result) {
+        Alert.alert(result.success ? "Success" : "Error", result.message, [
           {
             text: "OK",
             onPress: () => {
-              setModalVisible(false);
-              setEmail("");
-              setEmailError("");
+              if (result.success) {
+                setModalVisible(false);
+                setEmail("");
+                setEmailError("");
+              }
             },
           },
-        ]
-      );
-    } catch (error) {
+        ]);
+      } else {
+        throw new Error("Unexpected Error");
+      }
+    } catch (error: any) {
       Alert.alert(
-        "Reset Link Sent",
-        "If this email is registered, you'll receive a password reset link shortly.",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              setModalVisible(false);
-              setEmail("");
-              setEmailError("");
-            },
-          },
-        ]
+        "Error",
+        error.message || "Something went wrong. Please try again."
       );
     }
   };
