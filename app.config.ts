@@ -6,34 +6,41 @@ export default {
     slug: "PIMS",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/pims_logo.png",
+    icon: "./assets/icon.png",
     userInterfaceStyle: "light",
     newArchEnabled: true,
-    splash: {
-      image: "./assets/pims_logo.png",
-      resizeMode: "contain",
-      backgroundColor: "#ffffff",
-    },
     ios: {
       supportsTablet: true,
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/app_icon.png",
+        foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
       package: "com.pims_app.PIMS",
     },
     web: {
-      favicon: "./assets/app_icon.png",
+      favicon: "./assets/adaptive-icon.png",
     },
-    plugins: ["expo-asset"],
+    plugins: ["expo-asset",
+      [
+        "expo-splash-screen",
+        {
+          backgroundColor: "#ffffff",
+          image: "./assets/images/splash-icon.png",
+          imageWidth: 200,
+          resizeMode: "contain"
+        }
+      ]
+    ],
     extra: {
-      eas: {
-        projectId: "2443f24a-aee5-4b52-9478-070288e766a8"
-      },
       apiBaseUrl: process.env.API_BASE_URL,
       appEnv: process.env.APP_ENV,
+      eas: {
+        projectId: "3a492d15-b6a8-427d-afb2-a5dbcba5c041"
+      }
     },
   },
 };
+
+

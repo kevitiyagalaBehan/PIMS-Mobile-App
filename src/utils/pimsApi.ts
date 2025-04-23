@@ -13,6 +13,12 @@ import {
 import Constants from 'expo-constants';
 
 const apiBaseUrl = Constants.expoConfig?.extra?.apiBaseUrl as string;
+const appEnv = Constants.expoConfig?.extra?.appEnv as string;
+const projectId = Constants.expoConfig?.extra?.eas?.projectId as string;
+
+//console.log("API:", apiBaseUrl);
+//console.log("ENV:", appEnv);
+//console.log("PROJECT_ID:", projectId);
 
 export const loginUser = async (
   username: string,
