@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,21 +8,19 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { loginUser, requestPasswordReset } from "../utils/pimsApi";
-import { WindowSize, NavigationProps } from "../navigation/types";
+import { NavigationProps } from "../navigation/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { useWindowSize } from "../../hooks/useWindowSize";
 
 export default function LoginScreen() {
   const { setUserData } = useAuth();
-  const [windowSize, setWindowSize] = useState<WindowSize>(
-    Dimensions.get("window")
-  );
+  const { width, height } = useWindowSize();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
@@ -30,12 +28,6 @@ export default function LoginScreen() {
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const navigation = useNavigation<NavigationProps>();
-
-  useEffect(() => {
-    const updateSize = () => setWindowSize(Dimensions.get("window"));
-    const subscription = Dimensions.addEventListener("change", updateSize);
-    return () => subscription?.remove();
-  }, []);
 
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,13 +92,12 @@ export default function LoginScreen() {
     }
   };
 
-  const { width, height } = windowSize;
   const styles = getStyles(width, height);
 
   return (
     <SafeAreaView style={styles.container}>
       <Image
-        source={require("../../assets/pims_logo.png")}
+        source={require("../../assets/pims_logo_v1.png")}
         style={styles.logo}
         resizeMode="contain"
       />
@@ -240,7 +231,7 @@ const getStyles = (width: number, height: number) =>
       borderColor: "#ddd",
       borderRadius: 10,
       marginBottom: height * 0.01,
-      fontSize: RFPercentage(1.8),
+      fontSize: RFPercentage(2),
       color: "#333",
     },
     passwordContainer: {
@@ -255,7 +246,7 @@ const getStyles = (width: number, height: number) =>
     passwordInput: {
       flex: 1,
       padding: 15,
-      fontSize: RFPercentage(1.8),
+      fontSize: RFPercentage(2),
       color: "#333",
     },
     eyeIconContainer: {
@@ -263,7 +254,7 @@ const getStyles = (width: number, height: number) =>
       marginRight: width * 0.01,
     },
     loginButton: {
-      backgroundColor: "#001F5B",
+      backgroundColor: "#00205A",
       padding: 15,
       borderRadius: 10,
       width: "100%",
@@ -272,12 +263,12 @@ const getStyles = (width: number, height: number) =>
     },
     loginButtonText: {
       color: "#fff",
-      fontSize: RFPercentage(1.8),
+      fontSize: RFPercentage(2),
       fontWeight: "bold",
     },
     forgotPassword: {
-      color: "#001F5B",
-      fontSize: RFPercentage(1.8),
+      color: "#1B77BE",
+      fontSize: RFPercentage(2),
       textDecorationLine: "underline",
     },
     modalContainer: {
@@ -293,9 +284,9 @@ const getStyles = (width: number, height: number) =>
       padding: 20,
     },
     modalTitle: {
-      fontSize: RFPercentage(2.8),
+      fontSize: RFPercentage(2.5),
       fontWeight: "bold",
-      color: "#001F5B",
+      color: "#1B77BE",
       marginBottom: height * 0.02,
       textAlign: "center",
     },
@@ -319,7 +310,7 @@ const getStyles = (width: number, height: number) =>
     },
     errorText: {
       color: "#ff4444",
-      fontSize: RFPercentage(1.8),
+      fontSize: RFPercentage(2),
       marginBottom: height * 0.015,
       paddingHorizontal: width * 0.005,
     },
@@ -335,7 +326,7 @@ const getStyles = (width: number, height: number) =>
       alignItems: "center",
     },
     submitButton: {
-      backgroundColor: "#001F5B",
+      backgroundColor: "#00205A",
     },
     closeButton: {
       backgroundColor: "#ccc",

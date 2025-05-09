@@ -9,6 +9,8 @@ export type AuthContextType = {
   setUserData: React.Dispatch<React.SetStateAction<LoginResponse | null>>;
   currentUserName: string | null;
   setCurrentUserName: React.Dispatch<React.SetStateAction<string | null>>;
+  currentAccountName: string | null;
+  setCurrentAccountName: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export type AuthProviderProps = {
@@ -25,12 +27,12 @@ export type RootStackParamList = {
 export type BottomTabParamList = {
   Home: { authToken: string; accountId: string };
   Notifications: { authToken: string; accountId: string };
+  Menu: { authToken: string; accountId: string };
 };
 
 // Drawer Navigation
 export type DrawerParamList = {
   MainTabs: { authToken: string; accountId: string };
-  AssetAllocation: { authToken: string; accountId: string };
   PortfolioSummary: { authToken: string; accountId: string };
   TopTenInvestments: { authToken: string; accountId: string };
   InvestmentPerformance: { authToken: string; accountId: string };
@@ -69,7 +71,7 @@ export type NavigationProps = {
 export interface LinkedUsers {
   fullName: string;
   isCurrent: boolean;
-  assignedAccount?: string;
+  assignedAccount: string;
   assignedAccountType?: string;
   emailAddress?: string;
   role?: string;

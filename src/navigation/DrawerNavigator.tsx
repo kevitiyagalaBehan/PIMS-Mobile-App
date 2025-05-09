@@ -3,7 +3,6 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import BottomTab from "./BottomTabNavigator";
 import InvestmentPerformanceScreen from "../screens/InvestmentPerformanceScreen";
-import AssetAllocationScreen from "../screens/AssetAllocationScreen";
 import TopTenInvestmentsScreen from "../screens/TopTenInvestmentsScreen";
 import PortfolioBalanceScreen from "../screens/PortfolioBalanceScreen";
 import ContributionCapScreen from "../screens/ContributionCapScreen";
@@ -12,6 +11,7 @@ import EstimatedMemberStatementScreen from "../screens/EstimatedMemberStatementS
 import CustomDrawerContent from "./CustomDrawerContent";
 import { DrawerParamList } from "./types";
 import { useAuth } from "../context/AuthContext";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
@@ -30,14 +30,17 @@ export default function DrawerNavigator() {
           marginHorizontal: -3,
           marginVertical: 4,
         },
+        drawerLabelStyle: {
+          fontSize: RFPercentage(2),
+        },
       }}
     >
       <Drawer.Screen
         name="MainTabs"
         component={BottomTab}
-        initialParams={{ 
-          authToken: userData?.authToken, 
-          accountId: userData?.accountId 
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
         }}
         options={{
           drawerLabel: "Home",
@@ -48,25 +51,11 @@ export default function DrawerNavigator() {
         }}
       />
       <Drawer.Screen
-        name="AssetAllocation"
-        component={AssetAllocationScreen}
-        initialParams={{ 
-          authToken: userData?.authToken, 
-          accountId: userData?.accountId 
-        }}
-        options={{
-          drawerLabel: "Asset Allocation",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="pie-chart" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
         name="TopTenInvestments"
         component={TopTenInvestmentsScreen}
-        initialParams={{ 
-          authToken: userData?.authToken, 
-          accountId: userData?.accountId 
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
         }}
         options={{
           drawerLabel: "Top Ten Investments",
@@ -78,9 +67,9 @@ export default function DrawerNavigator() {
       <Drawer.Screen
         name="InvestmentPerformance"
         component={InvestmentPerformanceScreen}
-        initialParams={{ 
-          authToken: userData?.authToken, 
-          accountId: userData?.accountId 
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
         }}
         options={{
           drawerLabel: "Investment Performance",
@@ -92,9 +81,9 @@ export default function DrawerNavigator() {
       <Drawer.Screen
         name="PortfolioBalance"
         component={PortfolioBalanceScreen}
-        initialParams={{ 
-          authToken: userData?.authToken, 
-          accountId: userData?.accountId 
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
         }}
         options={{
           drawerLabel: "Portfolio Balance Summary",
@@ -106,9 +95,9 @@ export default function DrawerNavigator() {
       <Drawer.Screen
         name="ContributionCap"
         component={ContributionCapScreen}
-        initialParams={{ 
-          authToken: userData?.authToken, 
-          accountId: userData?.accountId 
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
         }}
         options={{
           drawerLabel: "Contribution Cap Summary",
@@ -120,9 +109,9 @@ export default function DrawerNavigator() {
       <Drawer.Screen
         name="PensionLimit"
         component={PensionLimitScreen}
-        initialParams={{ 
-          authToken: userData?.authToken, 
-          accountId: userData?.accountId 
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
         }}
         options={{
           drawerLabel: "Pension Limit Summary",
@@ -134,9 +123,9 @@ export default function DrawerNavigator() {
       <Drawer.Screen
         name="EstimatedMemberStatement"
         component={EstimatedMemberStatementScreen}
-        initialParams={{ 
-          authToken: userData?.authToken, 
-          accountId: userData?.accountId 
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
         }}
         options={{
           drawerLabel: "Estimated Member Statement",
