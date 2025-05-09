@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getEstimatedMemberStatement } from "../src/utils/pimsApi";
-import {
-  WindowSize,
-  EstimatedMemberDetails,
-  Props,
-} from "../src/navigation/types";
+import { EstimatedMemberDetails, Props } from "../src/navigation/types";
+import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const [windowSize, setWindowSize] = useState<WindowSize>(
-    Dimensions.get("window")
-  );
+  const { width, height } = useWindowSize();
   const [estimatedMemberStatement, setEstimatedMemberStatement] = useState<
     EstimatedMemberDetails[] | null
   >(null);
@@ -22,14 +17,6 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
   const toDate = new Date();
   const fromDate = new Date();
   fromDate.setFullYear(toDate.getFullYear() - 1);
-
-  useEffect(() => {
-    const updateSize = () => {
-      setWindowSize(Dimensions.get("window"));
-    };
-    const subscription = Dimensions.addEventListener("change", updateSize);
-    return () => subscription.remove();
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,19 +51,14 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
     fetchData();
   }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
-  const { width, height } = windowSize;
   const styles = getStyles(width, height);
 
   if (loading) {
-    return <Text style={styles.bodyText}>Loading...</Text>;
+    return <Text style={styles.loader}>Loading...</Text>;
   }
 
   if (!estimatedMemberStatement || error) {
-    return (
-      <View style={styles.loader}>
-        <Text style={styles.errorText}>{error || "No data available"}</Text>
-      </View>
-    );
+    return <Text style={styles.errorText}>{error || "No data available"}</Text>;
   }
 
   const members = estimatedMemberStatement;
@@ -91,92 +73,98 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.bodyText}>
-        Estimated Member Statement As At{" "}
-        {new Date().toLocaleDateString("en-GB")}
-      </Text>
+      <View style={styles.border}>
+        <Text style={styles.bodyText}>
+          Estimated Member Statement As At{" "}
+          {new Date().toLocaleDateString("en-GB")}
+        </Text>
 
-      <View style={styles.tableContainer}>
-        <View style={styles.tableHeader}>
-          <Text style={[styles.tableHeaderText1, { flex: 2 }]}>Members</Text>
-          {members.map((member) => (
-            <Text
-              key={member.memberName}
-              style={[styles.tableHeaderText2, styles.rightAlign, { flex: 2 }]}
-            >
-              {member.memberName}
-            </Text>
-          ))}
+        <View style={styles.tableContainer}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderText1, { flex: 2 }]}>Members</Text>
+            {members.map((member) => (
+              <Text
+                key={member.memberName}
+                style={[
+                  styles.tableHeaderText2,
+                  styles.rightAlign,
+                  { flex: 2 },
+                ]}
+              >
+                {member.memberName}
+              </Text>
+            ))}
+          </View>
+
+          <TableRow
+            label="Accumulation"
+            renderRow={(member) =>
+              formatWithPercentage(
+                member.accumulation,
+                member.accumulation + member.pension
+              )
+            }
+            members={members}
+            styles={styles}
+          />
+          <TableRow
+            label="Pension"
+            renderRow={(member) =>
+              formatWithPercentage(
+                member.pension,
+                member.accumulation + member.pension
+              )
+            }
+            members={members}
+            styles={styles}
+          />
+          <TableRow
+            label={`TOTAL AS AT ${new Date().toLocaleDateString("en-GB")}`}
+            renderRow={(member) =>
+              (member.accumulation + member.pension).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+              })
+            }
+            members={members}
+            styles={styles}
+            bold
+          />
+
+          <TableSection label="TAX COMPONENTS" styles={styles} />
+          <TableRow
+            label="Tax Free"
+            renderRow={(member) =>
+              formatWithPercentage(
+                member.taxFree,
+                member.taxFree + member.taxableTaxed + member.taxableUntaxed
+              )
+            }
+            members={members}
+            styles={styles}
+          />
+          <TableRow
+            label="Taxable Taxed"
+            renderRow={(member) =>
+              formatWithPercentage(
+                member.taxableTaxed,
+                member.taxFree + member.taxableTaxed + member.taxableUntaxed
+              )
+            }
+            members={members}
+            styles={styles}
+          />
+          <TableRow
+            label="Taxable Untaxed"
+            renderRow={(member) =>
+              formatWithPercentage(
+                member.taxableUntaxed,
+                member.taxFree + member.taxableTaxed + member.taxableUntaxed
+              )
+            }
+            members={members}
+            styles={styles}
+          />
         </View>
-
-        <TableRow
-          label="ACCUMULATION"
-          renderRow={(member) =>
-            formatWithPercentage(
-              member.accumulation,
-              member.accumulation + member.pension
-            )
-          }
-          members={members}
-          styles={styles}
-        />
-        <TableRow
-          label="PENSION"
-          renderRow={(member) =>
-            formatWithPercentage(
-              member.pension,
-              member.accumulation + member.pension
-            )
-          }
-          members={members}
-          styles={styles}
-        />
-        <TableRow
-          label={`TOTAL AS AT ${new Date().toLocaleDateString("en-GB")}`}
-          renderRow={(member) =>
-            (member.accumulation + member.pension).toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-            })
-          }
-          members={members}
-          styles={styles}
-          bold
-        />
-
-        <TableSection label="TAX COMPONENTS" styles={styles} />
-        <TableRow
-          label="TAX FREE"
-          renderRow={(member) =>
-            formatWithPercentage(
-              member.taxFree,
-              member.taxFree + member.taxableTaxed + member.taxableUntaxed
-            )
-          }
-          members={members}
-          styles={styles}
-        />
-        <TableRow
-          label="TAXABLE TAXED"
-          renderRow={(member) =>
-            formatWithPercentage(
-              member.taxableTaxed,
-              member.taxFree + member.taxableTaxed + member.taxableUntaxed
-            )
-          }
-          members={members}
-          styles={styles}
-        />
-        <TableRow
-          label="TAXABLE UNTAXED"
-          renderRow={(member) =>
-            formatWithPercentage(
-              member.taxableUntaxed,
-              member.taxFree + member.taxableTaxed + member.taxableUntaxed
-            )
-          }
-          members={members}
-          styles={styles}
-        />
       </View>
     </View>
   );
@@ -225,25 +213,38 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: "#fff",
+      marginTop: height * 0.02,
+      borderRadius: 6,
+    },
+    border: {
+      borderWidth: 1,
+      borderColor: "#1B77BE",
+      borderRadius: 6,
+      paddingHorizontal: width * 0.02,
+    },
+    loader: {
+      fontWeight: "bold",
+      color: "#1B77BE",
+      fontSize: RFPercentage(2.5),
+      marginTop: height * 0.021,
+      marginLeft: height * 0.01,
     },
     bodyText: {
       fontWeight: "bold",
-      color: "#4A90E2",
-      paddingHorizontal: width * 0.015,
-      marginTop: height * 0.05,
-      fontSize: RFPercentage(2.4),
+      color: "#1B77BE",
+      marginBottom: height * 0.005,
+      fontSize: RFPercentage(2.5),
     },
     tableContainer: {
-      marginVertical: height > width ? height * 0.01 : height * 0.015,
-      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
+      marginBottom: height * 0.02,
     },
     tableHeader: {
       flexDirection: "row",
-      backgroundColor: "#4A90E2",
-      paddingVertical: height * 0.008,
+      backgroundColor: "#1B77BE",
+      paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
       marginBottom: height * 0.001,
-      borderRadius: 8,
     },
     tableHeaderText1: {
       color: "white",
@@ -259,28 +260,24 @@ const getStyles = (width: number, height: number) =>
     },
     row: {
       flexDirection: "row",
-      paddingVertical: height * 0.008,
+      paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
       borderBottomWidth: 1,
-      borderBottomColor: "#fff",
+      borderBottomColor: "#ccc",
       alignItems: "center",
-      backgroundColor: "#eee",
-      borderRadius: 8,
-      marginBottom: height * 0.001,
+      backgroundColor: "#fff",
     },
     cell: {
-      fontSize: RFPercentage(1.6),
+      fontSize: RFPercentage(2),
       color: "#333",
     },
     rightAlign: {
       textAlign: "right",
     },
     sectionHeader: {
-      backgroundColor: "#D0F0FF",
-      paddingVertical: height * 0.01,
+      backgroundColor: "#ddd",
+      paddingVertical: height * 0.003,
       paddingHorizontal: width * 0.02,
-      marginBottom: height * 0.001,
-      borderRadius: 8,
     },
     sectionLabel: {
       fontWeight: "bold",
@@ -289,14 +286,11 @@ const getStyles = (width: number, height: number) =>
     boldText: {
       fontWeight: "bold",
     },
-    loader: {
-      marginTop: height * 0.2,
-      alignItems: "center",
-      justifyContent: "center",
-    },
     errorText: {
       color: "red",
-      fontSize: RFPercentage(2.5),
+      fontSize: RFPercentage(2),
+      fontWeight: "bold",
       textAlign: "center",
+      marginTop: height * 0.2,
     },
   });

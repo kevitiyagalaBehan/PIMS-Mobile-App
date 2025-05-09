@@ -3,7 +3,6 @@ import {
   Text,
   View,
   StyleSheet,
-  Dimensions,
   Modal,
   TouchableOpacity,
 } from "react-native";
@@ -13,18 +12,16 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getSuperFundDetails } from "../src/utils/pimsApi";
 import {
-  WindowSize,
   Props,
   PortfolioItem,
   SelectedData,
 } from "../src/navigation/types";
 import { useIsFocused } from "@react-navigation/native";
+import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const [windowSize, setWindowSize] = useState<WindowSize>(
-    Dimensions.get("window")
-  );
+  const { width, height } = useWindowSize();
   const [portfolioData, setPortfolioData] = useState<PortfolioItem[] | null>(
     null
   );
@@ -32,16 +29,7 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [selectedData, setSelectedData] = useState<SelectedData | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-
   const isFocused = useIsFocused();
-
-  useEffect(() => {
-    const updateSize = () => {
-      setWindowSize(Dimensions.get("window"));
-    };
-    const subscription = Dimensions.addEventListener("change", updateSize);
-    return () => subscription.remove();
-  }, []);
 
   const fetchData = async () => {
     if (!userData?.authToken || !userData?.accountId) {
@@ -84,7 +72,6 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
     }
   }, [isFocused]);
 
-  const { width, height } = windowSize;
   const chartWidth = width * 0.9;
   const chartHeight = width * 0.8;
   const styles = getStyles(width, height);
@@ -98,7 +85,7 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
   }
 
   if (loading) {
-    return <Text style={styles.bodyText}>Loading...</Text>;
+    return <Text style={styles.loader}>Loading...</Text>;
   }
 
   if (!portfolioData || error) {
@@ -124,108 +111,110 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.bodyText}>Portfolio Summary Balance</Text>
+      <View style={styles.border}>
+        <Text style={styles.bodyText}>Portfolio Summary Balance</Text>
 
-      {portfolioData ? (
-        <View>
-          <View style={styles.chartContainer}>
-            <BarChart
-              data={{
-                labels: portfolioData.map((item) => `${item.year}`),
-                datasets: [
-                  {
-                    data: portfolioData.map((item) => item.value / 1_000_000),
+        {portfolioData ? (
+          <View>
+            <View style={styles.chartContainer}>
+              <BarChart
+                data={{
+                  labels: portfolioData.map((item) => `${item.year}`),
+                  datasets: [
+                    {
+                      data: portfolioData.map((item) => item.value / 1_000_000),
+                    },
+                  ],
+                }}
+                width={chartWidth}
+                height={chartHeight}
+                yAxisLabel="$"
+                yAxisSuffix="M"
+                chartConfig={{
+                  backgroundColor: "#f5f5f5",
+                  backgroundGradientFrom: "#ffffff",
+                  backgroundGradientTo: "#ffffff",
+                  decimalPlaces: 0,
+                  color: () => `rgba(195, 16, 231, 1)`,
+                  labelColor: () => `rgba(0, 0, 0, 1)`,
+                  barPercentage: 1,
+                  propsForBackgroundLines: {
+                    strokeWidth: 1,
+                    stroke: "#e0e0e0",
+                    strokeDasharray: "5,5",
                   },
-                ],
-              }}
-              width={chartWidth}
-              height={chartHeight}
-              yAxisLabel="$"
-              yAxisSuffix="M"
-              chartConfig={{
-                backgroundColor: "#f5f5f5",
-                backgroundGradientFrom: "#ffffff",
-                backgroundGradientTo: "#ffffff",
-                decimalPlaces: 0,
-                color: () => `rgba(195, 16, 231, 1)`,
-                labelColor: () => `rgba(0, 0, 0, 1)`,
-                barPercentage: 1,
-                propsForBackgroundLines: {
-                  strokeWidth: 1,
-                  stroke: "#e0e0e0",
-                  strokeDasharray: "5,5",
-                },
-                propsForLabels: {
-                  fontSize: RFPercentage(2),
-                },
-              }}
-              fromZero={true}
-            />
-            <Svg
-              width={chartWidth}
-              height={chartHeight}
-              style={StyleSheet.absoluteFill}
-            >
-              {portfolioData.map((item, index) => {
-                const barWidth = chartWidth / portfolioData.length - 20;
-                const x = (chartWidth * index) / portfolioData.length + 15;
-                const y = chartHeight - (item.value / 1_000_000) * 200;
+                  propsForLabels: {
+                    fontSize: RFPercentage(2),
+                  },
+                }}
+                fromZero={true}
+              />
+              <Svg
+                width={chartWidth}
+                height={chartHeight}
+                style={StyleSheet.absoluteFill}
+              >
+                {portfolioData.map((item, index) => {
+                  const barWidth = chartWidth / portfolioData.length - 20;
+                  const x = (chartWidth * index) / portfolioData.length + 15;
+                  const y = chartHeight - (item.value / 1_000_000) * 200;
 
-                return (
-                  <Rect
-                    key={index}
-                    x={x}
-                    y={y}
-                    width={barWidth}
-                    height={chartHeight - y}
-                    fill="transparent"
-                    onPress={() => handleBarPress(item)}
-                  />
-                );
-              })}
-            </Svg>
-          </View>
-
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={handleCloseModal}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                {selectedData && (
-                  <>
-                    <Text style={styles.modalTitle}>
-                      Year {selectedData.year}
-                    </Text>
-                    <View style={styles.modalRow}>
-                      <Text style={styles.modalLabel}>Client Total:</Text>
-                      <Text style={styles.modalText}>
-                        ${selectedData.clientTotal.toLocaleString()}
-                      </Text>
-                    </View>
-                    <View style={styles.modalRow}>
-                      <Text style={styles.modalLabel}>Down Date:</Text>
-                      <Text style={styles.modalText}>
-                        {new Date(selectedData.dataDownDate).toLocaleDateString(
-                          "en-GB"
-                        )}
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.closeButton}
-                      onPress={handleCloseModal}
-                    >
-                      <Text style={styles.closeButtonText}>Close</Text>
-                    </TouchableOpacity>
-                  </>
-                )}
-              </View>
+                  return (
+                    <Rect
+                      key={index}
+                      x={x}
+                      y={y}
+                      width={barWidth}
+                      height={chartHeight - y}
+                      fill="transparent"
+                      onPress={() => handleBarPress(item)}
+                    />
+                  );
+                })}
+              </Svg>
             </View>
-          </Modal>
-        </View>
-      ) : null}
+
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={handleCloseModal}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  {selectedData && (
+                    <>
+                      <Text style={styles.modalTitle}>
+                        Year {selectedData.year}
+                      </Text>
+                      <View style={styles.modalRow}>
+                        <Text style={styles.modalLabel}>Client Total:</Text>
+                        <Text style={styles.modalText}>
+                          ${selectedData.clientTotal.toLocaleString()}
+                        </Text>
+                      </View>
+                      <View style={styles.modalRow}>
+                        <Text style={styles.modalLabel}>Down Date:</Text>
+                        <Text style={styles.modalText}>
+                          {new Date(
+                            selectedData.dataDownDate
+                          ).toLocaleDateString("en-GB")}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.closeButton}
+                        onPress={handleCloseModal}
+                      >
+                        <Text style={styles.closeButtonText}>Close</Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                </View>
+              </View>
+            </Modal>
+          </View>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -234,18 +223,25 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: "#fff",
+      marginTop: height * 0.02,
+      borderRadius: 6,
+    },
+    border: {
+      borderWidth: 1,
+      borderColor: "#1B77BE",
+      borderRadius: 6,
+      paddingHorizontal: width * 0.02,
+    },
+    loader: {
+      fontWeight: "bold",
+      color: "#1B77BE",
+      fontSize: RFPercentage(2.5),
+      marginTop: height * 0.021,
+      marginLeft: height * 0.01,
     },
     chartContainer: {
-      marginVertical: height > width ? height * 0.01 : height * 0.015,
-      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
-      backgroundColor: "white",
-      borderRadius: 10,
-      elevation: 3,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      padding: width * 0.02,
+      marginBottom: height * 0.02,
     },
     loadingContainer: {
       flex: 1,
@@ -255,10 +251,9 @@ const getStyles = (width: number, height: number) =>
     },
     bodyText: {
       fontWeight: "bold",
-      color: "#4A90E2",
-      paddingHorizontal: width * 0.02,
-      marginTop: height * 0.05,
-      fontSize: RFPercentage(3),
+      color: "#1B77BE",
+      marginBottom: height * 0.005,
+      fontSize: RFPercentage(2.5),
     },
     errorContainer: {
       flex: 1,
@@ -269,7 +264,7 @@ const getStyles = (width: number, height: number) =>
     },
     errorText: {
       color: "red",
-      fontSize: RFPercentage(2.5),
+      fontSize: RFPercentage(2),
       textAlign: "center",
     },
     modalContainer: {
@@ -285,9 +280,9 @@ const getStyles = (width: number, height: number) =>
       padding: width * 0.05,
     },
     modalTitle: {
-      fontSize: RFPercentage(3),
+      fontSize: RFPercentage(2.5),
       fontWeight: "bold",
-      color: "#4A90E2",
+      color: "#1B77BE",
       marginBottom: height * 0.02,
       textAlign: "center",
     },
@@ -298,15 +293,15 @@ const getStyles = (width: number, height: number) =>
     modalLabel: {
       fontWeight: "bold",
       width: width * 0.3,
-      fontSize: width * 0.04,
+      fontSize: RFPercentage(2),
     },
     modalText: {
       flex: 1,
-      fontSize: width * 0.04,
+      fontSize: RFPercentage(2),
     },
     closeButton: {
       marginTop: height * 0.02,
-      backgroundColor: "#4A90E2",
+      backgroundColor: "#1B77BE",
       padding: width * 0.03,
       borderRadius: 5,
       alignItems: "center",
@@ -314,5 +309,6 @@ const getStyles = (width: number, height: number) =>
     closeButtonText: {
       color: "white",
       fontWeight: "bold",
+      fontSize: RFPercentage(2),
     },
   });

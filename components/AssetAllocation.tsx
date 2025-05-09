@@ -1,112 +1,58 @@
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { useAuth } from "../src/context/AuthContext";
-import { getAssetAllocationSummary } from "../src/utils/pimsApi";
-import {
-  PortfolioData,
-  ChartData,
-  WindowSize,
-  Props,
-} from "../src/navigation/types";
+import { ChartData, PortfolioData } from "../src/navigation/types";
+import { useWindowSize } from "../hooks/useWindowSize";
 
-export default function AssetAllocation({ refreshTrigger }: Props) {
-  const { userData } = useAuth();
-  const [windowSize, setWindowSize] = useState<WindowSize>(
-    Dimensions.get("window")
-  );
+export default function AssetAllocation({
+  data,
+  loading,
+  error,
+}: {
+  data: PortfolioData | null;
+  loading: boolean;
+  error: string | null;
+}) {
+  const { width, height } = useWindowSize();
   const [chartData, setChartData] = useState<ChartData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [portfolioSummary, setPortfolioSummary] =
-    useState<PortfolioData | null>(null);
 
   useEffect(() => {
-    const updateSize = () => {
-      setWindowSize(Dimensions.get("window"));
-    };
-    const subscription = Dimensions.addEventListener("change", updateSize);
-    return () => subscription.remove();
-  }, []);
+    if (!data) return;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!userData?.authToken || !userData?.accountId) {
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        const response = await getAssetAllocationSummary(
-          userData.authToken,
-          userData.accountId
-        );
-
-        if (!response) {
-          setError("No data received from server");
-          return;
-        }
-
-        setPortfolioSummary(response);
-
-        const processedData: ChartData[] = [];
-        if (response.assetCategories) {
-          response.assetCategories.forEach((category) => {
-            category.assetClasses?.forEach((asset) => {
-              processedData.push({
-                name: asset.assetClass,
-                percentage: asset.percentage,
-                color: getColorForAssetClass(asset.assetClass),
-                legendFontColor: "#333",
-                legendFontSize: RFPercentage(1.8),
-              });
-            });
-          });
-        }
-
-        if (processedData.length > 0) {
-          setChartData(processedData);
-        } else {
-          setError("No asset allocation data available");
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Failed to load asset allocation data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [userData?.authToken, userData?.accountId, refreshTrigger]);
+    const processed: ChartData[] = [];
+    data.assetCategories?.forEach((category) =>
+      category.assetClasses?.forEach((asset) => {
+        processed.push({
+          name: asset.assetClass,
+          percentage: asset.percentage,
+          color: getColorForAssetClass(asset.assetClass),
+          legendFontColor: "#333",
+          legendFontSize: RFPercentage(1.8),
+        });
+      })
+    );
+    setChartData(processed);
+  }, [data]);
 
   const getColorForAssetClass = (assetClass: string) => {
     const colorMap: { [key: string]: string } = {
-      "Cash": "#5DA8A7",
+      Cash: "#5DA8A7",
       "Aust. Equities": "#7AC2E1",
       "Int. Equities": "#677EB5",
-      "Property": "#A46E7E",
-      "Other": "#EDBE72",
+      Property: "#A46E7E",
+      Other: "#EDBE72",
     };
-  
-    return colorMap[assetClass];
-  };  
+    return colorMap[assetClass] || "#999";
+  };
 
-  const { width, height } = windowSize;
   const styles = getStyles(width, height);
 
-  if (!userData || !userData.authToken || !userData.accountId) {
-    return null;
-  }
-
   if (loading) {
-    return <Text style={styles.bodyText}>Loading...</Text>;
+    return <Text style={styles.loader}>Loading...</Text>;
   }
 
-  if (!portfolioSummary || error) {
+  if (!data || error) {
     return (
       <Text style={styles.errorText}>
         {error || "No asset allocation data available"}
@@ -116,45 +62,45 @@ export default function AssetAllocation({ refreshTrigger }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.bodyText}>Asset Allocation</Text>
-
-      {chartData.length > 0 ? (
-        <View style={styles.chartContainer}>
-          <PieChart
-            data={chartData}
-            width={width * 1.71}
-            height={height * 0.3}
-            chartConfig={{
-              backgroundColor: "#ffffff",
-              backgroundGradientFrom: "#ffffff",
-              backgroundGradientTo: "#ffffff",
-              color: (opacity = 1) => `rgba(0, 31, 91, ${opacity})`,
-            }}
-            accessor="percentage"
-            backgroundColor="transparent"
-            paddingLeft="0"
-            absolute
-            hasLegend={false}
-          />
-
-          <View style={styles.legendContainer}>
-            {chartData.map((item, index) => (
-              <View key={index} style={styles.legendItem}>
-                <View
-                  style={[styles.colorBox, { backgroundColor: item.color }]}
-                />
-                <Text style={styles.legendText}>
-                  {item.name}: {item.percentage.toFixed(2)}%
-                </Text>
-              </View>
-            ))}
+      <View style={styles.border}>
+        <Text style={styles.bodyText}>Asset Allocation</Text>
+        {chartData.length > 0 ? (
+          <View style={styles.chartContainer}>
+            <PieChart
+              data={chartData}
+              width={width * 0.9}
+              height={height * 0.32}
+              chartConfig={{
+                backgroundColor: "#ffffff",
+                backgroundGradientFrom: "#ffffff",
+                backgroundGradientTo: "#ffffff",
+                color: (opacity = 1) => `rgba(0, 31, 91, ${opacity})`,
+              }}
+              accessor="percentage"
+              backgroundColor="transparent"
+              paddingLeft="90"
+              absolute
+              hasLegend={false}
+            />
+            <View style={styles.legendContainer}>
+              {chartData.map((item, index) => (
+                <View key={index} style={styles.legendItem}>
+                  <View
+                    style={[styles.colorBox, { backgroundColor: item.color }]}
+                  />
+                  <Text style={styles.legendText}>
+                    {item.name}: {item.percentage.toFixed(2)}%
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
-      ) : (
-        <Text style={styles.noDataText}>
-          No asset allocation data available
-        </Text>
-      )}
+        ) : (
+          <Text style={styles.noDataText}>
+            No asset allocation data available
+          </Text>
+        )}
+      </View>
     </View>
   );
 }
@@ -163,53 +109,46 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: "#fff",
+      borderRadius: 6,
     },
-    loadingContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+    border: {
+      borderWidth: 1,
+      borderColor: "#1B77BE",
+      borderRadius: 6,
+      paddingHorizontal: width * 0.02,
     },
     loader: {
-      marginTop: height * 0.25,
+      fontWeight: "bold",
+      color: "#1B77BE",
+      fontSize: RFPercentage(2.5),
+      marginTop: height * 0.33,
+      marginLeft: height * 0.01,
     },
     bodyText: {
       fontWeight: "bold",
-      color: "#4A90E2",
-      paddingHorizontal: width * 0.02,
-      marginTop: height * 0.05,
-      fontSize: RFPercentage(3),
-    },
-    errorContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      padding: 20,
+      color: "#1B77BE",
+      fontSize: RFPercentage(2.5),
+      marginBottom: -20,
     },
     errorText: {
       color: "red",
-      fontSize: RFPercentage(2.5),
+      fontSize: RFPercentage(2),
+      fontWeight: "bold",
       textAlign: "center",
+      marginTop: height * 0.53,
     },
     noDataText: {
       textAlign: "center",
-      marginTop: 20,
+      marginTop: height * 0.01,
       fontSize: RFPercentage(2),
       color: "#666",
     },
     chartContainer: {
-      marginVertical: height > width ? height * 0.01 : height * 0.015,
-      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
-      backgroundColor: "white",
-      borderRadius: 10,
-      padding: 15,
-      elevation: 3,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
+      alignItems: "center",
     },
     legendContainer: {
-      marginTop: 15,
+      marginBottom: height * 0.01,
       flexDirection: "row",
       flexWrap: "wrap",
       justifyContent: "space-between",
@@ -217,8 +156,7 @@ const getStyles = (width: number, height: number) =>
     legendItem: {
       flexDirection: "row",
       alignItems: "center",
-      width: "48%",
-      marginBottom: 10,
+      width: "50%",
     },
     colorBox: {
       width: 12,
@@ -228,6 +166,6 @@ const getStyles = (width: number, height: number) =>
     },
     legendText: {
       fontSize: RFPercentage(2),
-      color: "#333",
+      color: "#000000",
     },
   });

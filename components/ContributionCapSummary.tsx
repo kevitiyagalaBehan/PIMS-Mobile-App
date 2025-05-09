@@ -1,26 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getContributionCapSummary } from "../src/utils/pimsApi";
-import { WindowSize, ContributionCap, Props } from "../src/navigation/types";
+import { ContributionCap, Props } from "../src/navigation/types";
+import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function ContributionCapSummary({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const [windowSize, setWindowSize] = useState<WindowSize>(
-    Dimensions.get("window")
-  );
+  const { width, height } = useWindowSize();
   const [data, setData] = useState<ContributionCap | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const updateSize = () => {
-      setWindowSize(Dimensions.get("window"));
-    };
-    const subscription = Dimensions.addEventListener("change", updateSize);
-    return () => subscription.remove();
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,17 +44,16 @@ export default function ContributionCapSummary({ refreshTrigger }: Props) {
     fetchData();
   }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
-  const { width, height } = windowSize;
   const styles = getStyles(width, height);
 
   if (loading) {
-    return <Text style={styles.bodyText}>Loading...</Text>;
+    return <Text style={styles.loader}>Loading...</Text>;
   }
 
   if (!data || error) {
     return (
       <View style={styles.errorText}>
-        <Text>{error || "No contribution cap data available"}</Text>
+        <Text>{error || "No contribution data available"}</Text>
       </View>
     );
   }
@@ -81,68 +71,74 @@ export default function ContributionCapSummary({ refreshTrigger }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.bodyText}>
-        Contribution Cap Summary{" "}
-        {formatShortFinancialYear(financialYear.financialYear)}
-      </Text>
+      <View style={styles.border}>
+        <Text style={styles.bodyText}>
+          Contribution Cap Summary{" "}
+          {formatShortFinancialYear(financialYear.financialYear)}
+        </Text>
 
-      <View style={styles.tableContainer}>
-        <View style={styles.tableHeader}>
-          <Text style={[styles.tableHeaderText1, { flex: 2 }]}>Members</Text>
-          {members.map((member) => (
-            <Text
-              key={member.name}
-              style={[styles.tableHeaderText2, styles.rightAlign, { flex: 2 }]}
-            >
-              {member.name}
-            </Text>
-          ))}
+        <View style={styles.tableContainer}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.tableHeaderText1, { flex: 2 }]}>Members</Text>
+            {members.map((member) => (
+              <Text
+                key={member.name}
+                style={[
+                  styles.tableHeaderText2,
+                  styles.rightAlign,
+                  { flex: 2 },
+                ]}
+              >
+                {member.name}
+              </Text>
+            ))}
+          </View>
+          <TableRow
+            label="Age"
+            renderRow={(member) => member.age}
+            members={members}
+            styles={styles}
+            endDate={endDate}
+          />
+          <TableSection label="CONCESSIONAL CONTRIBUTION" styles={styles} />
+          <TableRow
+            label="Paid to date"
+            renderRow={(member) => member.concessionalPaidToDate}
+            members={members}
+            styles={styles}
+          />
+          <TableRow
+            label="Maximum"
+            renderRow={(member) => member.concessionalMaximum}
+            members={members}
+            styles={styles}
+          />
+          <TableRow
+            label="Available"
+            renderRow={(member) => member.concessionalAvailable}
+            members={members}
+            styles={styles}
+          />
+          <TableSection label="NON CONCESSIONAL CONTRIBUTION" styles={styles} />
+          <TableRow
+            label="Paid to date"
+            renderRow={(member) => member.nonConcessionalPaidToDate}
+            members={members}
+            styles={styles}
+          />
+          <TableRow
+            label="Maximum"
+            renderRow={(member) => member.nonConcessionalMaximum}
+            members={members}
+            styles={styles}
+          />
+          <TableRow
+            label="Available"
+            renderRow={(member) => member.nonConcessionalAvailable}
+            members={members}
+            styles={styles}
+          />
         </View>
-        <TableRow
-          label="Age"
-          renderRow={(member) => member.age}
-          members={members}
-          styles={styles}
-          endDate={endDate}
-        />
-        <TableSection label="CONCESSIONAL CONTRIBUTION" styles={styles} />
-        <TableRow
-          label="Paid to date"
-          renderRow={(member) => member.concessionalPaidToDate}
-          members={members}
-          styles={styles}
-        />
-        <TableRow
-          label="Maximum"
-          renderRow={(member) => member.concessionalMaximum}
-          members={members}
-          styles={styles}
-        />
-        <TableRow
-          label="Available"
-          renderRow={(member) => member.concessionalAvailable}
-          members={members}
-          styles={styles}
-        />
-        <TableSection label="NON CONCESSIONAL CONTRIBUTION" styles={styles} />
-        <TableRow
-          label="Paid to date"
-          renderRow={(member) => member.nonConcessionalPaidToDate}
-          members={members}
-          styles={styles}
-        />
-        <TableRow
-          label="Maximum"
-          renderRow={(member) => member.nonConcessionalMaximum}
-          members={members}
-          styles={styles}
-        />
-        <TableRow
-          label="Available"
-          renderRow={(member) => member.nonConcessionalAvailable}
-          members={members}
-          styles={styles}
-        />
       </View>
     </View>
   );
@@ -192,25 +188,38 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: "#fff",
+      marginTop: height * 0.02,
+      borderRadius: 6,
+    },
+    border: {
+      borderWidth: 1,
+      borderColor: "#1B77BE",
+      borderRadius: 6,
+      paddingHorizontal: width * 0.02,
+    },
+    loader: {
+      fontWeight: "bold",
+      color: "#1B77BE",
+      fontSize: RFPercentage(2.5),
+      marginTop: height * 0.021,
+      marginLeft: height * 0.01,
     },
     bodyText: {
       fontWeight: "bold",
-      color: "#4A90E2",
-      paddingHorizontal: width * 0.015,
-      marginTop: height * 0.05,
-      fontSize: RFPercentage(2.9),
+      color: "#1B77BE",
+      marginBottom: height * 0.005,
+      fontSize: RFPercentage(2.5),
     },
     tableContainer: {
-      marginVertical: height > width ? height * 0.005 : height * 0.015,
-      marginHorizontal: height > width ? height * 0.01 : height * 0.015,
+      marginBottom: height * 0.02,
     },
     tableHeader: {
       flexDirection: "row",
-      backgroundColor: "#4A90E2",
-      paddingVertical: height * 0.008,
+      backgroundColor: "#1B77BE",
+      paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
       marginBottom: height * 0.001,
-      borderRadius: 8,
     },
     tableHeaderText1: {
       color: "white",
@@ -226,42 +235,34 @@ const getStyles = (width: number, height: number) =>
     },
     row: {
       flexDirection: "row",
-      paddingVertical: height * 0.008,
+      paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
       borderBottomWidth: 1,
-      borderBottomColor: "#fff",
+      borderBottomColor: "#ccc",
       alignItems: "center",
-      backgroundColor: "#eee",
-      borderRadius: 8,
-      marginBottom: height * 0.001,
+      backgroundColor: "#fff",
     },
     cell: {
-      fontSize: width * 0.035,
+      fontSize: RFPercentage(2),
       color: "#333",
     },
     rightAlign: {
       textAlign: "right",
     },
     sectionHeader: {
-      backgroundColor: "#D0F0FF",
-      paddingVertical: height * 0.01,
+      backgroundColor: "#ddd",
+      paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
-      marginBottom: height * 0.001,
-      borderRadius: 8,
     },
     sectionLabel: {
       fontWeight: "bold",
       fontSize: RFPercentage(2),
     },
-    loader: {
-      marginTop: height * 0.2,
-      alignItems: "center",
-      justifyContent: "center",
-    },
     errorText: {
       color: "red",
-      fontSize: RFPercentage(2.5),
+      fontSize: RFPercentage(2),
+      fontWeight: "bold",
       textAlign: "center",
-      marginTop: height * 0.3,
+      marginTop: height * 0.2,
     },
   });
