@@ -25,7 +25,7 @@ export const loginUser = async (
   password: string
 ): Promise<LoginResponse | null> => {
   try {
-    const response = await fetch(`${apiBaseUrl}/Auth/header`, {
+    const response = await fetch(`${apiBaseUrl}/Auth/mobile/android`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
