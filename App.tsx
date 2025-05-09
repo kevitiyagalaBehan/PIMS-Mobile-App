@@ -1,4 +1,6 @@
 import React from "react";
+import { StatusBar } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
@@ -12,6 +14,7 @@ function AppNavigator() {
 
   return (
     <NavigationContainer>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <Stack.Navigator initialRouteName={userData ? "Main" : "Login"}>
         <Stack.Screen
           name="Login"
@@ -30,8 +33,10 @@ function AppNavigator() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppNavigator />
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <AppNavigator />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
