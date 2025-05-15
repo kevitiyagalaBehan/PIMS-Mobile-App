@@ -12,14 +12,13 @@ const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function BottomTab() {
   const navigation = useNavigation();
-  const { width, height } = useWindowSize();
+  const { height } = useWindowSize();
 
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: { height: height * 0.06, paddingBottom: 5 },
-        tabBarLabelStyle: { fontSize: RFPercentage(1.4), fontWeight: "bold" },
-        tabBarIconStyle: { marginBottom: 0 },
+        tabBarStyle: { height: height * 0.08 },
+        tabBarLabelStyle: { fontSize: RFPercentage(1.4), fontWeight: "bold" }
       }}
     >
       <Tab.Screen
