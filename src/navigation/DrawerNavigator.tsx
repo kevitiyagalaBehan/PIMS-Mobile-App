@@ -11,12 +11,15 @@ import EstimatedMemberStatementScreen from "../screens/EstimatedMemberStatementS
 import CustomDrawerContent from "./CustomDrawerContent";
 import { DrawerParamList } from "./types";
 import { useAuth } from "../context/AuthContext";
+import { useAutoLogout } from "../../hooks/useAutoLogout";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
 export default function DrawerNavigator() {
   const { userData } = useAuth();
+
+  useAutoLogout();
 
   return (
     <Drawer.Navigator
