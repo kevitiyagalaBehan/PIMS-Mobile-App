@@ -4,13 +4,10 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getLinkedUsers } from "../src/utils/pimsApi";
 import { useWindowSize } from "../hooks/useWindowSize";
+import Drawer from "./Drawer";
 
 export default function Header() {
-  const {
-    userData,
-    setCurrentAccountName,
-    currentAccountName,
-  } = useAuth();
+  const { userData, setCurrentAccountName, currentAccountName } = useAuth();
 
   const { width, height } = useWindowSize();
 
@@ -33,7 +30,8 @@ export default function Header() {
   if (!userData?.authToken || !userData?.accountId) return null;
 
   return (
-    <View>
+    <View style={styles.headerSection}>
+      <Drawer />
       <Text style={styles.accountNameText}>
         {currentAccountName || "Loading user..."}
       </Text>
@@ -43,10 +41,14 @@ export default function Header() {
 
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({
+    headerSection: {
+      backgroundColor: "#fff",
+      paddingHorizontal: width * 0.02,
+    },
     accountNameText: {
-      fontSize: RFPercentage(2.9),
+      fontSize: RFPercentage(2.7),
       fontWeight: "bold",
       color: "#1B77BE",
-      marginTop: height * 0.01,
+      marginBottom: height * 0.01,
     },
   });

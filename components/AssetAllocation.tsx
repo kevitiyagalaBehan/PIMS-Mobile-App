@@ -68,8 +68,8 @@ export default function AssetAllocation({
           <View style={styles.chartContainer}>
             <PieChart
               data={chartData}
-              width={width * 0.9}
-              height={height * 0.32}
+              width={width * 1.0}
+              height={Math.min(height * 0.30, 220)}
               chartConfig={{
                 backgroundColor: "#ffffff",
                 backgroundGradientFrom: "#ffffff",
@@ -78,7 +78,7 @@ export default function AssetAllocation({
               }}
               accessor="percentage"
               backgroundColor="transparent"
-              paddingLeft="90"
+              paddingLeft={`${width * 0.25}`}
               absolute
               hasLegend={false}
             />
@@ -121,15 +121,15 @@ const getStyles = (width: number, height: number) =>
     loader: {
       fontWeight: "bold",
       color: "#1B77BE",
-      fontSize: RFPercentage(2.5),
-      marginTop: height * 0.33,
-      marginLeft: height * 0.01,
+      fontSize: RFPercentage(2.6),
+      marginTop: height * 0.37,
+      marginLeft: height * 0.02,
     },
     bodyText: {
       fontWeight: "bold",
       color: "#1B77BE",
-      fontSize: RFPercentage(2.5),
-      marginBottom: -20,
+      fontSize: RFPercentage(2.6),
+      marginBottom: -15,
     },
     errorText: {
       color: "red",

@@ -32,6 +32,7 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginHorizontal: width * 0.02,
+      paddingHorizontal: width * 0.02,
+      backgroundColor: "#eee",
     },
   });

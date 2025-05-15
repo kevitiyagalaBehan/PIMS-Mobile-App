@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, RefreshControl, ScrollView } from "react-native";
+import { StyleSheet, RefreshControl, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header, TopTenInvestments, Drawer } from "../../components";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
@@ -13,17 +13,20 @@ export default function TopTenInvestmentsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Drawer />
-      <Header />
+      <View>
+        <Header />
+      </View>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <TopTenInvestments
-          refreshTrigger={refreshTrigger}
-          refreshing={refreshing}
-        />
+        <View style={styles.bodySection}>
+          <TopTenInvestments
+            refreshTrigger={refreshTrigger}
+            refreshing={refreshing}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -33,6 +36,9 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginHorizontal: width * 0.02,
+    },
+    bodySection: {
+      paddingHorizontal: width * 0.02,
+      backgroundColor: "#eee",
     },
   });

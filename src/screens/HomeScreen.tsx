@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, ScrollView, RefreshControl } from "react-native";
+import { StyleSheet, ScrollView, RefreshControl, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 import { useHomeData } from "../../hooks/useHomeData";
@@ -32,8 +32,10 @@ export default function HomeScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <PortfolioSummary data={data} loading={loading} error={error} />
+<View style={styles.bodySection}>
+          <PortfolioSummary data={data} loading={loading} error={error} />
         <AssetAllocation data={data} loading={loading} error={error} />
+</View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -43,6 +45,9 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginHorizontal: width * 0.02,
+      backgroundColor: "#eee",
     },
+    bodySection: {
+      marginHorizontal: width * 0.02,
+    }
   });

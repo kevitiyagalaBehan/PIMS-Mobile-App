@@ -8,16 +8,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Drawer() {
   const navigation = useNavigation();
-  const { width, height } = useWindowSize();
+  const { height } = useWindowSize();
 
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
         style={{
-          marginTop: height * 0.01,
-          backgroundColor: "#fff",
-          marginRight: width * 0.02,
+          paddingTop: height * 0.02,
         }}
       >
         <Ionicons name="menu" size={30} color="#1B77BE" />
@@ -28,7 +26,6 @@ export default function Drawer() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     alignItems: "flex-end",
   },
 });
