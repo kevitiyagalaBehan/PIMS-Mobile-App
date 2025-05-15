@@ -83,7 +83,7 @@ export default function InvestmentPerformanceChart({ refreshTrigger }: Props) {
     <View style={styles.container}>
       <View style={styles.border}>
         <Text style={styles.bodyText}>Investment Performance</Text>
-        <View style={{ alignItems: "center", marginBottom: height * 0.02 }}>
+        <View style={{ alignItems: "center", paddingBottom: height * 0.01 }}>
           <LineChart
             data={{
               labels: reducedLabels,
