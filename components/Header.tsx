@@ -46,7 +46,7 @@ const getStyles = (width: number, height: number) =>
       paddingHorizontal: width * 0.02,
     },
     accountNameText: {
-      fontSize: RFPercentage(2.7),
+      fontSize: RFPercentage(2.8),
       fontWeight: "bold",
       color: "#1B77BE",
       marginBottom: height * 0.01,
