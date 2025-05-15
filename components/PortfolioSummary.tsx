@@ -151,7 +151,7 @@ const getStyles = (width: number, height: number) =>
       fontSize: RFPercentage(2.6),
     },
     tableContainer: {
-      marginBottom: height * 0.02,
+      marginBottom: height * 0.01,
     },
     errorText: {
       color: "red",

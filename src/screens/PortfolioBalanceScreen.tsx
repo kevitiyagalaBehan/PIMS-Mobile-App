@@ -1,39 +1,43 @@
 import React from "react";
 import { StyleSheet, RefreshControl, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Header, PortfolioBalanceSummary, Drawer } from "../../components";
+import { PortfolioBalanceSummary, HeaderWithMenu } from "../../components";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 import { useWindowSize } from "../../hooks/useWindowSize";
+import { View } from "react-native";
 
 export default function PortfolioBalanceScreen() {
-  const { width, height } = useWindowSize();
+  const { width } = useWindowSize();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
 
-  const styles = getStyles(width, height);
+  const styles = getStyles(width);
 
   return (
     <SafeAreaView style={styles.container}>
-      <Drawer />
-      <Header />
+      <HeaderWithMenu />
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <PortfolioBalanceSummary
-          refreshTrigger={refreshTrigger}
-          refreshing={refreshing}
-        />
+        <View style={styles.bodySection}>
+          <PortfolioBalanceSummary
+            refreshTrigger={refreshTrigger}
+            refreshing={refreshing}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const getStyles = (width: number, height: number) =>
+const getStyles = (width: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: width * 0.02,
       backgroundColor: "#eee",
+    },
+    bodySection: {
+      paddingHorizontal: width * 0.02,
     },
   });

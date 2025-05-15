@@ -32,10 +32,10 @@ export default function HomeScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-<View style={styles.bodySection}>
+        <View style={styles.bodySection}>
           <PortfolioSummary data={data} loading={loading} error={error} />
-        <AssetAllocation data={data} loading={loading} error={error} />
-</View>
+          <AssetAllocation data={data} loading={loading} error={error} />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -48,6 +48,6 @@ const getStyles = (width: number, height: number) =>
       backgroundColor: "#eee",
     },
     bodySection: {
-      marginHorizontal: width * 0.02,
-    }
+      paddingHorizontal: width * 0.02,
+    },
   });

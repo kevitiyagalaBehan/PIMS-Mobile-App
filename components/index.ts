@@ -1,4 +1,5 @@
 export { default as Header } from "./Header";
+export { default as HeaderWithMenu } from "./HeaderWithMenu";
 export { default as PortfolioSummary } from "./PortfolioSummary";
 export { default as AssetAllocation } from "./AssetAllocation";
 export { default as PortfolioBalanceSummary } from "./PortfolioBalanceSummary";

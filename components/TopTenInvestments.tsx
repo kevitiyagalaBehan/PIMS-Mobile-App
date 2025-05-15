@@ -180,17 +180,17 @@ const getStyles = (width: number, height: number) =>
     },
     bodyText: {
       fontWeight: "bold",
-      color: "#4A90E2",
+      color: "#1B77BE",
       marginBottom: height * 0.005,
-      fontSize: RFPercentage(2.5),
+      fontSize: RFPercentage(2.6),
     },
     tableContainer: {
-      marginBottom: height * 0.02,
+      marginBottom: height * 0.01,
     },
     loader: {
       fontWeight: "bold",
       color: "#1B77BE",
-      fontSize: RFPercentage(2.5),
+      fontSize: RFPercentage(2.6),
       marginTop: height * 0.021,
       marginLeft: height * 0.01,
     },

@@ -4,9 +4,11 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getLinkedUsers } from "../src/utils/pimsApi";
 import { useWindowSize } from "../hooks/useWindowSize";
+import Drawer from "./Drawer";
 
 export default function HeaderWithMenu() {
   const { userData, setCurrentAccountName, currentAccountName } = useAuth();
+
   const { width, height } = useWindowSize();
 
   useEffect(() => {
@@ -29,6 +31,7 @@ export default function HeaderWithMenu() {
 
   return (
     <View style={styles.headerSection}>
+      <Drawer />
       <Text style={styles.accountNameText}>
         {currentAccountName || "Loading user..."}
       </Text>
@@ -41,7 +44,6 @@ const getStyles = (width: number, height: number) =>
     headerSection: {
       backgroundColor: "#fff",
       paddingHorizontal: width * 0.02,
-      paddingTop: height * 0.01,
     },
     accountNameText: {
       fontSize: RFPercentage(2.7),
