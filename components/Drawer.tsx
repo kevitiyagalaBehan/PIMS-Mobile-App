@@ -1,20 +1,34 @@
-import { View, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useWindowSize } from "../hooks/useWindowSize";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Drawer() {
   const navigation = useNavigation();
+  const { width, height } = useWindowSize();
 
   return (
-    <View>
+    <SafeAreaView style={styles.container}>
       <TouchableOpacity
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        style={{ marginTop: 10 }}
+        style={{
+          marginTop: height * 0.01,
+          backgroundColor: "#fff",
+          marginRight: width * 0.02,
+        }}
       >
         <Ionicons name="menu" size={30} color="#1B77BE" />
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#fff",
+    alignItems: "flex-end",
+  },
+});
