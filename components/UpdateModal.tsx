@@ -1,15 +1,33 @@
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
+import { useWindowSize } from "../hooks/useWindowSize";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
-export default function UpdateModal({ visible, updateUrl }: { visible: boolean; updateUrl: string }) {
+export default function UpdateModal({
+  visible,
+  updateUrl,
+}: {
+  visible: boolean;
+  updateUrl: string;
+}) {
   const goToStore = () => Linking.openURL(updateUrl);
+  const { width, height } = useWindowSize();
+  const styles = getStyles(width, height);
 
   return (
     <Modal visible={visible} transparent animationType="fade">
-      <View style={styles.backdrop}>
-        <View style={styles.modal}>
-          <Text style={styles.title}>New Update Available!</Text>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>New Update Available!</Text>
           <Text style={styles.message}>
-            A new version of this app is required. Please update to continue using the app.
+            A new version of this app is required. Please update to continue
+            using the app.
           </Text>
           <TouchableOpacity style={styles.button} onPress={goToStore}>
             <Text style={styles.buttonText}>Update Now!</Text>
@@ -20,38 +38,41 @@ export default function UpdateModal({ visible, updateUrl }: { visible: boolean; 
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: '#0009',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modal: {
-    width: '85%',
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  message: {
-    textAlign: 'center',
-    marginBottom: 20,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#007aff',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-});
+const getStyles = (width: number, height: number) =>
+  StyleSheet.create({
+    modalContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0,0,0,0.5)",
+    },
+    modalContent: {
+      width: width * 0.85,
+      backgroundColor: "white",
+      borderRadius: 10,
+      padding: 20,
+      alignItems: "center",
+    },
+    modalTitle: {
+      fontSize: RFPercentage(2.5),
+      fontWeight: "bold",
+      marginBottom: height * 0.02,
+    },
+    message: {
+      textAlign: "center",
+      marginBottom: height * 0.02,
+      fontSize: RFPercentage(2),
+    },
+    button: {
+      marginTop: height * 0.02,
+      backgroundColor: "#00205A",
+      padding: width * 0.03,
+      borderRadius: 10,
+      alignItems: "center",
+    },
+    buttonText: {
+      fontSize: RFPercentage(2),
+      color: "white",
+      fontWeight: "bold",
+    },
+  });

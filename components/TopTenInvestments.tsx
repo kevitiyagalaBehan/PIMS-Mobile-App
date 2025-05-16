@@ -281,9 +281,9 @@ const getStyles = (width: number, height: number) =>
     },
     closeButton: {
       marginTop: height * 0.02,
-      backgroundColor: "#1B77BE",
+      backgroundColor: "#00205A",
       padding: width * 0.03,
-      borderRadius: 5,
+      borderRadius: 10,
       alignItems: "center",
     },
     closeButtonText: {

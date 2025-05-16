@@ -301,7 +301,7 @@ const getStyles = (width: number, height: number) =>
       padding: 12,
       borderWidth: 1,
       borderColor: "#ddd",
-      borderRadius: 8,
+      borderRadius: 10,
       marginBottom: height * 0.01,
       fontSize: RFPercentage(2),
     },
@@ -321,7 +321,7 @@ const getStyles = (width: number, height: number) =>
     },
     button: {
       padding: 12,
-      borderRadius: 5,
+      borderRadius: 10,
       width: "48%",
       alignItems: "center",
     },
