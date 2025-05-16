@@ -5,14 +5,19 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import LoginScreen from "./src/screens/LoginScreen";
 import DrawerNavigator from "./src/navigation/DrawerNavigator";
+import { useVersionCheck } from "./hooks/useVersionCheck";
+import UpdateModal from "./components/UpdateModal";
 
 const Stack = createStackNavigator();
 
 function AppNavigator() {
   const { userData } = useAuth();
+  const { forceBlock, updateUrl } = useVersionCheck();
 
   return (
-    <NavigationContainer>
+    <>
+    <UpdateModal visible={forceBlock} updateUrl={updateUrl} />
+      <NavigationContainer>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <Stack.Navigator initialRouteName={userData ? "Main" : "Login"}>
         <Stack.Screen
@@ -27,6 +32,7 @@ function AppNavigator() {
         />
       </Stack.Navigator>
     </NavigationContainer>
+    </>
   );
 }
 
