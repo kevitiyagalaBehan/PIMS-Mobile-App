@@ -26,7 +26,7 @@ export default function UpdateModal({
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>New Update Available!</Text>
           <Text style={styles.message}>
-            A new version of this app is required. Please update to continue
+            A new version of this app is available. Please update to continue
             using the app.
           </Text>
           <TouchableOpacity style={styles.button} onPress={goToStore}>
