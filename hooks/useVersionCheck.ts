@@ -19,17 +19,14 @@ export const useVersionCheck = () => {
     const check = async () => {
       try {
         const response = await fetch(
-          "https://raw.githubusercontent.com/kevitiyagalaBehan/PIMS-Mobile-App/refs/heads/main/version.json"
+          "https://raw.githubusercontent.com/kevitiyagalaBehan/PIMS-Mobile-App/main/version.json"
         );
         const data = await response.json();
 
         const current = Application.nativeApplicationVersion ?? "0.0.0";
 
-        console.log("Detected app version:", current);
-        console.log(
-          "Minimum required version:",
-          data.minimum_supported_version
-        );
+        //console.log("Detected app version:", current);
+        //console.log("Minimum required version:", data.minimum_supported_version);
 
         if (compareVersions(current, data.minimum_supported_version) < 0) {
           setForceBlock(true);
