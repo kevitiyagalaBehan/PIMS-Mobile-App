@@ -26,7 +26,7 @@ export type RootStackParamList = {
 // Bottom Tab Navigation
 export type BottomTabParamList = {
   Home: { authToken: string; accountId: string };
-  Notifications: { authToken: string; accountId: string };
+  Query: { authToken: string; accountId: string };
   Menu: { authToken: string; accountId: string };
 };
 

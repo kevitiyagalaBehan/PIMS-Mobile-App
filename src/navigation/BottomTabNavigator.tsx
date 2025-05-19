@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import HomeScreen from "../screens/HomeScreen";
-import NotifyScreen from "../screens/NotifyScreen";
+import QueryList from "../screens/QueryListScreen";
 import { BottomTabParamList } from "./types";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -33,8 +33,8 @@ export default function BottomTab() {
         }}
       />
       <Tab.Screen
-        name="Notifications"
-        component={NotifyScreen}
+        name="Query"
+        component={QueryList}
         options={{
           headerShown: false,
           tabBarLabel: "Notifications",
