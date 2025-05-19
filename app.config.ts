@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "PIMS",
     slug: "PIMS",
-    version: "1.0.2",
+    version: "1.0.3",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -13,7 +13,7 @@ export default {
       supportsTablet: true,
     },
     android: {
-      //versionCode: 18,
+      versionCode: 21,
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
