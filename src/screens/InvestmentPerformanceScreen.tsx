@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, RefreshControl, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InvestmentPerformance, HeaderWithMenu } from "../../components";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 import { useWindowSize } from "../../hooks/useWindowSize";
+import * as ScreenOrientation from "expo-screen-orientation";
 
 export default function InvestmentPerformanceScreen() {
   const { width } = useWindowSize();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
   const styles = getStyles(width);
+
+  useEffect(() => {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+
+    return () => {
+      ScreenOrientation.unlockAsync();
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
