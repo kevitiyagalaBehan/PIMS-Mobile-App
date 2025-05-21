@@ -1,6 +1,4 @@
 import { RouteProp } from "@react-navigation/native";
-import { BottomTabNavigationProp as RNBottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { DrawerNavigationProp as RNDrawerNavigationProp } from "@react-navigation/drawer";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ReactNode } from "react";
 
@@ -26,7 +24,7 @@ export type RootStackParamList = {
 // Bottom Tab Navigation
 export type BottomTabParamList = {
   Home: { authToken: string; accountId: string };
-  Query: { authToken: string; accountId: string };
+  Inbox: { authToken: string; accountId: string };
   Menu: { authToken: string; accountId: string };
 };
 
@@ -42,12 +40,16 @@ export type DrawerParamList = {
   EstimatedMemberStatement: { authToken: string; accountId: string };
 };
 
-// Navigation Props
-export type BottomTabNavigationProp<T extends keyof BottomTabParamList> =
-  RNBottomTabNavigationProp<BottomTabParamList, T>;
+export type InboxStackParamList = {
+  InboxList: { authToken: string; accountId: string };
+  InboxDetail: { queryId: string; title: string };
+};
 
-export type DrawerNavigationProp<T extends keyof DrawerParamList> =
-  RNDrawerNavigationProp<DrawerParamList, T>;
+export type InboxStackNavigationProp<T extends keyof InboxStackParamList> =
+  StackNavigationProp<InboxStackParamList, T>;
+
+export type InboxRouteProp<T extends keyof InboxStackParamList> =
+  RouteProp<InboxStackParamList, T>;
 
 export type PortfolioSummaryRouteProp = RouteProp<
 { PortfolioSummary: { authToken: string; accountId: string } },
@@ -218,3 +220,18 @@ export interface ForgotPassword {
   message: string;
   success: boolean;
 }
+
+export interface Comment {
+  id: string;
+  text: string;
+  date: string;
+  author: string;
+}
+
+export interface Inbox {
+  id: string;
+  title: string;
+  lastCommentDate: string;
+  comments: Comment[];
+}
+

@@ -3,10 +3,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import HomeScreen from "../screens/HomeScreen";
-import QueryList from "../screens/QueryListScreen";
 import { BottomTabParamList } from "./types";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import InboxStackNavigator from "./InboxStackNavigator";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -16,6 +16,7 @@ export default function BottomTab() {
 
   return (
     <Tab.Navigator
+    initialRouteName="Home"
       screenOptions={{
         tabBarStyle: { height: height * 0.08 },
         tabBarLabelStyle: { fontSize: RFPercentage(1.4), fontWeight: "bold" }
@@ -33,13 +34,13 @@ export default function BottomTab() {
         }}
       />
       <Tab.Screen
-        name="Query"
-        component={QueryList}
+        name="Inbox"
+        component={InboxStackNavigator}
         options={{
           headerShown: false,
-          tabBarLabel: "Notifications",
+          tabBarLabel: "Inbox",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="notifications" size={size} color={color} />
+            <Ionicons name="chatbox-ellipses" size={size} color={color} />
           ),
         }}
       />

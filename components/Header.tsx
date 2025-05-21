@@ -5,7 +5,7 @@ import { useAuth } from "../src/context/AuthContext";
 import { getLinkedUsers } from "../src/utils/pimsApi";
 import { useWindowSize } from "../hooks/useWindowSize";
 
-export default function HeaderWithMenu() {
+export default function Header() {
   const { userData, setCurrentAccountName, currentAccountName } = useAuth();
   const { width, height } = useWindowSize();
 
@@ -39,14 +39,14 @@ export default function HeaderWithMenu() {
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     headerSection: {
+      height: height * 0.071,
       backgroundColor: "#fff",
-      paddingHorizontal: width * 0.02,
-      paddingTop: height * 0.01,
+      paddingHorizontal: width * 0.04,
+      justifyContent: "center",
     },
     accountNameText: {
       fontSize: RFPercentage(2.7),
       fontWeight: "bold",
       color: "#1B77BE",
-      marginBottom: height * 0.01,
     },
   });

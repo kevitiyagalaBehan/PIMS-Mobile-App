@@ -25,6 +25,7 @@ export default function DrawerNavigator() {
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
+        //drawerType: "back",
         drawerPosition: "right",
         headerShown: false,
         drawerStyle: { width: "75%" },
