@@ -83,6 +83,7 @@ export interface LinkedUsers {
 export interface LoginResponse {
   authToken: string;
   accountId: string;
+  accountType: string;
 }
 
 export interface AssetClass {
