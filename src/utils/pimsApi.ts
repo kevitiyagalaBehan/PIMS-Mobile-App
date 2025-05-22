@@ -36,7 +36,7 @@ export const loginUser = async (
     const data = await response.json();
 
     if (data.success) {
-      return { authToken: data.auth_token, accountId: data.account_id };
+      return { authToken: data.auth_token, accountId: data.account_id, accountType: data.account_type };
     } else {
       throw new Error(data.message);
     }

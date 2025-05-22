@@ -40,9 +40,9 @@ export default function LoginScreen() {
 
       if (!response) throw new Error("Invalid login credentials");
 
-      const { authToken, accountId } = response;
+      const { authToken, accountId, accountType } = response;
 
-      setUserData({ authToken, accountId });
+      setUserData({ authToken, accountId, accountType });
       navigation.replace("Main");
     } catch (error: any) {
       Alert.alert("Login Error", error.message);
