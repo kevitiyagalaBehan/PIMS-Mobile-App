@@ -12,7 +12,7 @@ export default function InvestmentPerformanceScreen() {
   const styles = getStyles(width);
 
   useEffect(() => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.DEFAULT);
 
     return () => {
       ScreenOrientation.unlockAsync();
