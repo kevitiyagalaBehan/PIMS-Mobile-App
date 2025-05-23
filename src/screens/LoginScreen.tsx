@@ -43,7 +43,9 @@ export default function LoginScreen() {
       const { authToken, accountId, accountType } = response;
 
       setUserData({ authToken, accountId, accountType });
-      navigation.replace("Main");
+
+      const targetRoute = accountType === "Family Group" ? "Family" : "Other";
+      navigation.replace(targetRoute);
     } catch (error: any) {
       Alert.alert("Login Error", error.message);
     }
