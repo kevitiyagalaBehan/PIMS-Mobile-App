@@ -1,7 +1,9 @@
 export { default as Header } from "./Header";
 export { default as HeaderWithMenu } from "./HeaderWithMenu";
-export { default as PortfolioSummary } from "./PortfolioSummary";
-export { default as AssetAllocation } from "./AssetAllocation";
+export { default as PortfolioSummaryOther } from "./PortfolioSummaryOther";
+export { default as PortfolioSummaryFamily } from "./PortfolioSummaryFamily";
+export { default as AssetAllocationOther } from "./AssetAllocationOther";
+export { default as AssetAllocationFamily } from "./AssetAllocationFamily";
 export { default as PortfolioBalanceSummary } from "./PortfolioBalanceSummary";
 export { default as TopTenInvestments } from "./TopTenInvestments";
 export { default as ContributionCapSummary } from "./ContributionCapSummary";

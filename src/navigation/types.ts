@@ -18,18 +18,26 @@ export type AuthProviderProps = {
 // Root Stack Navigation
 export type RootStackParamList = {
   Login: undefined;
-  Main: undefined;
+  Other: undefined;
+  Family: undefined;
 };
 
 // Bottom Tab Navigation
-export type BottomTabParamList = {
-  Home: { authToken: string; accountId: string };
+export type BottomTabParamListOther = {
+  HomeOther: { authToken: string; accountId: string };
   Inbox: { authToken: string; accountId: string };
   Menu: { authToken: string; accountId: string };
 };
 
+export type BottomTabParamListFamily = {
+  HomeFamily: { authToken: string; accountId: string };
+  Inbox: { authToken: string; accountId: string };
+  Sign: { authToken: string; accountId: string };
+  Menu: { authToken: string; accountId: string };
+};
+
 // Drawer Navigation
-export type DrawerParamList = {
+export type DrawerParamListOther = {
   MainTabs: { authToken: string; accountId: string };
   PortfolioSummary: { authToken: string; accountId: string };
   TopTenInvestments: { authToken: string; accountId: string };
@@ -40,6 +48,14 @@ export type DrawerParamList = {
   EstimatedMemberStatement: { authToken: string; accountId: string };
 };
 
+export type DrawerParamListFamily = {
+  MainTabs: { authToken: string; accountId: string };
+  AccountList: { authToken: string; accountId: string };
+  ConsolidatedAssetAllocation: { authToken: string; accountId: string };
+  TopTenInvestments: { authToken: string; accountId: string };
+  ConsolidatedAccounts: { authToken: string; accountId: string };
+};
+
 export type InboxStackParamList = {
   InboxList: { authToken: string; accountId: string };
   InboxDetail: { queryId: string; title: string };
@@ -48,17 +64,19 @@ export type InboxStackParamList = {
 export type InboxStackNavigationProp<T extends keyof InboxStackParamList> =
   StackNavigationProp<InboxStackParamList, T>;
 
-export type InboxRouteProp<T extends keyof InboxStackParamList> =
-  RouteProp<InboxStackParamList, T>;
+export type InboxRouteProp<T extends keyof InboxStackParamList> = RouteProp<
+  InboxStackParamList,
+  T
+>;
 
 export type PortfolioSummaryRouteProp = RouteProp<
-{ PortfolioSummary: { authToken: string; accountId: string } },
-"PortfolioSummary"
+  { PortfolioSummary: { authToken: string; accountId: string } },
+  "PortfolioSummary"
 >;
 
 export type SubScreenNavigationProp = StackNavigationProp<
-RootStackParamList,
-"Main"
+  RootStackParamList,
+  "Other" | "Family"
 >;
 
 export type Props = {
@@ -80,10 +98,12 @@ export interface LinkedUsers {
   userId?: string;
 }
 
+export type AccountType = "Family" | string;
+
 export interface LoginResponse {
   authToken: string;
   accountId: string;
-  accountType: string;
+  accountType: AccountType;
 }
 
 export interface AssetClass {
@@ -107,14 +127,10 @@ export interface ChartData {
   legendFontSize: number;
 }
 
-export interface AssetAllocationProps {
-  route: {
-    params: {
-      authToken?: string;
-      accountId?: string;
-    };
-  };
-  navigation: any;
+export interface PortfolioDataOther {
+  assetCategories: AssetCategory[];
+  totalMarketValue: number;
+  totalPercentage: number;
 }
 
 export interface WindowSize {
@@ -122,15 +138,7 @@ export interface WindowSize {
   height: number;
 }
 
-export interface PortfolioData {
-  assetCategories: AssetCategory[];
-  totalMarketValue: number;
-  totalPercentage: number;
-}
-
-export interface PortfolioSummaryProps {
-  route: PortfolioSummaryRouteProp;
-}
+//export type PortfolioDataFamily = AssetItem[];
 
 export interface SuperFundDetails {
   dataDownDate: string;
@@ -235,4 +243,3 @@ export interface Inbox {
   lastCommentDate: string;
   comments: Comment[];
 }
-

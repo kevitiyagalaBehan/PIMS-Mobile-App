@@ -4,7 +4,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import LoginScreen from "./src/screens/LoginScreen";
-import DrawerNavigator from "./src/navigation/DrawerNavigator";
+import DrawerNavigatorSMSF from "./src/navigation/DrawerNavigatorOther";
+import DrawerNavigatorFamily from "./src/navigation/DrawerNavigatorFamily";
 import { useVersionCheck } from "./hooks/useVersionCheck";
 import UpdateModal from "./components/UpdateModal";
 
@@ -14,20 +15,30 @@ function AppNavigator() {
   const { userData } = useAuth();
   const { forceBlock, updateUrl } = useVersionCheck();
 
+  const getInitialScreen = () => {
+    if (!userData) return "Login";
+    return userData.accountType === "Family Group" ? "Family" : "Other";
+  };
+
   return (
     <>
     <UpdateModal visible={forceBlock} updateUrl={updateUrl} />
       <NavigationContainer>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <Stack.Navigator initialRouteName={userData ? "Main" : "Login"}>
+      <Stack.Navigator initialRouteName={getInitialScreen()}>
         <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Main"
-          component={DrawerNavigator}
+          name="Other"
+          component={DrawerNavigatorSMSF}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Family"
+          component={DrawerNavigatorFamily}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
