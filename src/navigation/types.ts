@@ -119,18 +119,18 @@ export interface AssetCategory {
   assetClasses?: AssetClass[];
 }
 
+export interface PortfolioData {
+  assetCategories: AssetCategory[];
+  totalMarketValue: number;
+  totalPercentage: number;
+}
+
 export interface ChartData {
   name: string;
   percentage: number;
   color: string;
   legendFontColor: string;
   legendFontSize: number;
-}
-
-export interface PortfolioDataOther {
-  assetCategories: AssetCategory[];
-  totalMarketValue: number;
-  totalPercentage: number;
 }
 
 export interface WindowSize {

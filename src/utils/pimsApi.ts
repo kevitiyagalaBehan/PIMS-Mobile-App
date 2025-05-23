@@ -10,7 +10,7 @@ import {
   InvestmentPerformanceDetails,
   ForgotPassword,
 } from "../navigation/types";
-import Constants from 'expo-constants';
+import Constants from "expo-constants";
 
 const apiBaseUrl = Constants.expoConfig?.extra?.apiBaseUrl as string;
 const appEnv = Constants.expoConfig?.extra?.appEnv as string;
@@ -36,7 +36,11 @@ export const loginUser = async (
     const data = await response.json();
 
     if (data.success) {
-      return { authToken: data.auth_token, accountId: data.account_id, accountType: data.account_type };
+      return {
+        authToken: data.auth_token,
+        accountId: data.account_id,
+        accountType: data.account_type,
+      };
     } else {
       throw new Error(data.message);
     }
@@ -94,7 +98,7 @@ export const getLinkedUsers = async (
   }
 };
 
-export const getAssetAllocationSummary = async (
+export const getAssetAllocationSummaryOther = async (
   authToken: string,
   accountId: string
 ): Promise<PortfolioData | null> => {
@@ -115,7 +119,36 @@ export const getAssetAllocationSummary = async (
     }
 
     const data: PortfolioData = await response.json();
-    return data.assetCategories ? data : null;
+    //console.log("Raw API response:", data);
+    return data;
+  } catch (error) {
+    console.error("Fetch failed:", error);
+    return null;
+  }
+};
+
+export const getAssetAllocationSummaryFamily = async (
+  authToken: string,
+  accountId: string
+): Promise<PortfolioData[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/FamilyGroupDashboard/AssetAllocationSummary/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data: PortfolioData[] = await response.json();
+    return data;
   } catch (error) {
     console.error("Fetch failed:", error);
     return null;
@@ -185,10 +218,7 @@ export const getTopTenInvestmentDetails = async (
 
     return data as TopTenInvestmentDetails[];
   } catch (error) {
-    console.error(
-      "Fetch failed:",
-      error instanceof Error ? error.message : String(error)
-    );
+    console.error("Fetch failed:", error);
     return null;
   }
 };
