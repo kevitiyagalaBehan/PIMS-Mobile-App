@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { getAssetAllocationSummaryFamily } from "../src/utils/pimsApi";
-import { AssetCategory, PortfolioDataOther } from "../src/navigation/types";
+import { AssetCategory, PortfolioData } from "../src/navigation/types";
 
 export function useHomeData(
   authToken: string,
   accountId: string,
   refreshTrigger: number
 ) {
-  const [data, setData] = useState<PortfolioDataOther | null>(null);
+  const [data, setData] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
