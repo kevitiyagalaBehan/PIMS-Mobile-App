@@ -1,28 +1,43 @@
 import { NavigationProp } from "@react-navigation/native";
 import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const handleLogout = (
+export const handleLogout = async (
   navigation: NavigationProp<any>,
-  showConfirmation: boolean = true
+  showConfirmation: boolean = true,
+  authContextReset?: () => void
 ) => {
   if (showConfirmation) {
     Alert.alert("Logout", "Are you sure you want to log out?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Logout",
-        onPress: () => {
-          performLogout(navigation);
+        onPress: async () => {
+          await performLogout(navigation, authContextReset);
         },
       },
     ]);
   } else {
-    performLogout(navigation);
+    await performLogout(navigation, authContextReset);
   }
 };
 
-const performLogout = (navigation: NavigationProp<any>) => {
-  navigation.reset({
-    index: 0,
-    routes: [{ name: "Login" }],
-  });
+const performLogout = async (
+  navigation: NavigationProp<any>,
+  authContextReset?: () => void
+) => {
+  try {
+    await AsyncStorage.clear();
+
+    if (authContextReset) {
+      authContextReset();
+    }
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
 };
