@@ -2,28 +2,36 @@ import { View, Text, StyleSheet } from "react-native";
 import React, { useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
-import { getLinkedUsers } from "../src/utils/pimsApi";
+import { getSuperFundName } from "../src/utils/pimsApi";
 import { useWindowSize } from "../hooks/useWindowSize";
 import Drawer from "./Drawer";
 
 export default function HeaderWithMenu() {
-  const { userData, setCurrentAccountName, currentAccountName } = useAuth();
+  const { userData, setUserData, currentAccountName, setCurrentAccountName } =
+    useAuth();
 
   const { width, height } = useWindowSize();
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!userData?.authToken) {
+      if (!userData?.authToken || !userData?.accountId) {
         setCurrentAccountName(null);
         return;
       }
+      const accountDetails = await getSuperFundName(
+        userData.authToken,
+        userData.accountId
+      );
 
-      const accountName = await getLinkedUsers(userData.authToken);
-      setCurrentAccountName(accountName?.assignedAccount || "User not found");
+      if (accountDetails && accountDetails.length > 0) {
+        setCurrentAccountName(accountDetails[0].superFundName);
+      } else {
+        setCurrentAccountName("User not found");
+      }
     };
 
     fetchUserData();
-  }, [userData?.authToken]);
+  }, [userData?.authToken, userData?.accountId]);
 
   const styles = getStyles(width, height);
 
@@ -43,7 +51,9 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     headerSection: {
       backgroundColor: "#fff",
-      paddingHorizontal: width * 0.02,
+      paddingHorizontal: width * 0.04,
+      paddingTop: height * 0.02,
+      paddingBottom: height * 0.015,
     },
     accountNameText: {
       fontSize: RFPercentage(2.7),
