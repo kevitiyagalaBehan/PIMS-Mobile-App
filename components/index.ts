@@ -11,5 +11,4 @@ export { default as PensionLimitSummary } from "./PensionLimitSummary";
 export { default as EstimatedMemberStatement } from "./EstimatedMemberStatement";
 export { default as InvestmentPerformance } from "./InvestmentPerformance";
 export { default as Drawer } from "./Drawer";
-export { default as DropDown } from "./DropDown";
 
