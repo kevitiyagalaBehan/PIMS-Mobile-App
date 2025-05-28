@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { PortfolioDataOther } from "../src/navigation/types";
+import { PortfolioData } from "../src/navigation/types";
 import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function PortfolioSummaryFamily({
@@ -9,7 +9,7 @@ export default function PortfolioSummaryFamily({
   loading,
   error,
 }: {
-  data: PortfolioDataOther | null;
+  data: PortfolioData | null;
   loading: boolean;
   error: string | null;
 }) {
