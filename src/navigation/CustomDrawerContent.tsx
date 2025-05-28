@@ -12,29 +12,30 @@ import { useWindowSize } from "../../hooks/useWindowSize";
 import { getLinkedUsers } from "../utils/pimsApi";
 
 export default function CustomDrawerContent(props: any) {
-  const { userData, setCurrentUserName, currentUserName } = useAuth();
+  const { userData, setCurrentUserName, currentUserName, resetAuthState } =
+    useAuth();
+  const { navigation } = props;
   const { width, height } = useWindowSize();
+  const styles = getStyles(width, height);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!userData?.authToken) {
-        setCurrentUserName(null);
-        return;
-      }
+      try {
+        if (!userData?.authToken) {
+          setCurrentUserName(null);
+          return;
+        }
 
-      const userName = await getLinkedUsers(userData.authToken);
-
-      if (userName && userName.fullName) {
-        setCurrentUserName(userName.fullName);
-      } else {
-        setCurrentUserName("User not found");
+        const userName = await getLinkedUsers(userData.authToken);
+        setCurrentUserName(userName?.fullName || "User");
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        setCurrentUserName("Error loading user");
       }
     };
 
     fetchUserData();
   }, [userData?.authToken]);
-
-  const styles = getStyles(width, height);
 
   return (
     <DrawerContentScrollView {...props}>
@@ -53,7 +54,7 @@ export default function CustomDrawerContent(props: any) {
 
       <TouchableOpacity
         style={styles.logoutButton}
-        onPress={() => handleLogout(props.navigation)}
+        onPress={() => handleLogout(navigation, true, resetAuthState)}
       >
         <Ionicons name="log-out" size={30} color="red" />
         <Text style={styles.logoutText}>Logout</Text>
