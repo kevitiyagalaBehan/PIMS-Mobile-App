@@ -9,6 +9,10 @@ export type AuthContextType = {
   setCurrentUserName: React.Dispatch<React.SetStateAction<string | null>>;
   currentAccountName: string | null;
   setCurrentAccountName: React.Dispatch<React.SetStateAction<string | null>>;
+  entityAccounts: AccountEntity[];
+  setEntityAccounts: React.Dispatch<React.SetStateAction<AccountEntity[]>>;
+  
+  resetAuthState: () => void;
 };
 
 export type AuthProviderProps = {
@@ -26,6 +30,7 @@ export type RootStackParamList = {
 export type BottomTabParamListOther = {
   HomeOther: { authToken: string; accountId: string };
   Inbox: { authToken: string; accountId: string };
+  Sign: { authToken: string; accountId: string };
   Menu: { authToken: string; accountId: string };
 };
 
@@ -88,22 +93,34 @@ export type NavigationProps = {
   replace: (screen: string) => void;
 };
 
+export interface ClientAccountDetails {
+  superFundName: string;
+}
+
 export interface LinkedUsers {
   fullName: string;
   isCurrent: boolean;
-  assignedAccount: string;
+  //assignedAccount: string;
   assignedAccountType?: string;
   emailAddress?: string;
   role?: string;
   userId?: string;
 }
 
-export type AccountType = "Family" | string;
+//export type AccountType = "Family" | string;
 
 export interface LoginResponse {
   authToken: string;
   accountId: string;
-  accountType: AccountType;
+  accountType: string;
+}
+
+export interface AssetAllocationSummary {
+  assetCategory: string;
+  assetClass: string;
+  marketValue: number;
+  marketPercentage: number;
+  order: number;
 }
 
 export interface AssetClass {
@@ -137,8 +154,6 @@ export interface WindowSize {
   width: number;
   height: number;
 }
-
-//export type PortfolioDataFamily = AssetItem[];
 
 export interface SuperFundDetails {
   dataDownDate: string;
@@ -242,4 +257,20 @@ export interface Inbox {
   title: string;
   lastCommentDate: string;
   comments: Comment[];
+}
+
+export interface AccountEntity {
+  abn: string | null;
+  accountCode: string;
+  accountName: string;
+  accountSource: string;
+  accountType: string;
+  activePortfolio: string;
+  id: string;
+  tfn: string;
+}
+
+export interface AccountEntityResponse {
+  entities: AccountEntity[];
+  individuals: any[];
 }
