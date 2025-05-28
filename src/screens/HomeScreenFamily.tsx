@@ -4,23 +4,23 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 import { useHomeData } from "../../hooks/useHomeDataFamily";
 import {
-  Header,
   PortfolioSummaryFamily,
   AssetAllocationFamily,
+  Header,
 } from "../../components";
 import { useAuth } from "../context/AuthContext";
 import { useWindowSize } from "../../hooks/useWindowSize";
 
-export default function HomeScreenOther() {
+export default function HomeScreenFamily() {
   const { width, height } = useWindowSize();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
   const { userData } = useAuth();
-  const { authToken, accountId } = userData ?? {};
-  const { data, loading, error } =
-    authToken && accountId
-      ? useHomeData(authToken, accountId, refreshTrigger)
-      : { data: null, loading: true, error: null };
-
+  const { authToken = "", accountId = "" } = userData ?? {};
+  const { data, loading, error } = useHomeData(
+    authToken,
+    accountId,
+    refreshTrigger
+  );
   const styles = getStyles(width, height);
 
   return (
