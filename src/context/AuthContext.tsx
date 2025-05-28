@@ -1,16 +1,53 @@
 import React, { createContext, useState, useContext } from "react";
-import { LoginResponse, AuthContextType, AuthProviderProps } from "../navigation/types";
+import {
+  LoginResponse,
+  AuthContextType,
+  AuthProviderProps,
+  AccountEntity,
+} from "../navigation/types";
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  userData: null,
+  setUserData: () => console.warn("setUserData called without AuthProvider"),
+  currentUserName: null,
+  setCurrentUserName: () =>
+    console.warn("setCurrentUserName called without AuthProvider"),
+  currentAccountName: null,
+  setCurrentAccountName: () =>
+    console.warn("setCurrentAccountName called without AuthProvider"),
+  entityAccounts: [],
+  setEntityAccounts: () =>
+    console.warn("setEntityAccounts called without AuthProvider"),
+  resetAuthState: () =>
+    console.warn("resetAuthState called without AuthProvider"),
+});
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userData, setUserData] = useState<LoginResponse | null>(null);
   const [currentUserName, setCurrentUserName] = useState<string | null>(null);
-  const [currentAccountName, setCurrentAccountName] = useState<string | null>(null);
+  const [currentAccountName, setCurrentAccountName] = useState<string | null>(
+    null
+  );
+  const [entityAccounts, setEntityAccounts] = useState<AccountEntity[]>([]);
+  const resetAuthState = () => {
+    setUserData(null);
+    setCurrentUserName(null);
+    setCurrentAccountName(null);
+  };
 
   return (
     <AuthContext.Provider
-      value={{ userData, setUserData, currentUserName, setCurrentUserName, currentAccountName, setCurrentAccountName }}
+      value={{
+        userData,
+        setUserData,
+        currentUserName,
+        setCurrentUserName,
+        currentAccountName,
+        setCurrentAccountName,
+        entityAccounts,
+        setEntityAccounts,
+        resetAuthState,
+      }}
     >
       {children}
     </AuthContext.Provider>
