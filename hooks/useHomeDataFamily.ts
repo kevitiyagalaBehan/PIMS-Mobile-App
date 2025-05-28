@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { getAssetAllocationSummaryFamily } from "../src/utils/pimsApi";
-import { AssetCategory, PortfolioData } from "../src/navigation/types";
+import {
+  AssetCategory,
+  PortfolioData,
+  AssetAllocationSummary,
+} from "../src/navigation/types";
 
 export function useHomeData(
   authToken: string,
@@ -12,6 +16,12 @@ export function useHomeData(
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!authToken || !accountId) {
+      setLoading(false);
+      setError("Missing credentials");
+      return;
+    }
+
     const fetchData = async () => {
       setLoading(true);
       setError(null);
