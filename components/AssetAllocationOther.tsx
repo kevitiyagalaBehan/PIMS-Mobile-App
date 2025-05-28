@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { ChartData, PortfolioDataOther } from "../src/navigation/types";
+import { ChartData, PortfolioData } from "../src/navigation/types";
 import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function AssetAllocationOther({
@@ -10,7 +10,7 @@ export default function AssetAllocationOther({
   loading,
   error,
 }: {
-  data: PortfolioDataOther | null;
+  data: PortfolioData | null;
   loading: boolean;
   error: string | null;
 }) {

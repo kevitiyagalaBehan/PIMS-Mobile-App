@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import LoginScreen from "./src/screens/LoginScreen";
-import DrawerNavigatorSMSF from "./src/navigation/DrawerNavigatorOther";
+import DrawerNavigatorOther from "./src/navigation/DrawerNavigatorOther";
 import DrawerNavigatorFamily from "./src/navigation/DrawerNavigatorFamily";
 import { useVersionCheck } from "./hooks/useVersionCheck";
 import UpdateModal from "./components/UpdateModal";
@@ -33,7 +33,7 @@ function AppNavigator() {
         />
         <Stack.Screen
           name="Other"
-          component={DrawerNavigatorSMSF}
+          component={DrawerNavigatorOther}
           options={{ headerShown: false }}
         />
         <Stack.Screen
