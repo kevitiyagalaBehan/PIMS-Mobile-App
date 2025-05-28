@@ -4,11 +4,15 @@ import {
   SuperFundDetails,
   TopTenInvestmentDetails,
   PortfolioData,
+  AssetAllocationSummary,
   ContributionCap,
   PensionLimitDetails,
   EstimatedMemberDetails,
   InvestmentPerformanceDetails,
   ForgotPassword,
+  AccountEntityResponse,
+  AccountEntity,
+  ClientAccountDetails,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -73,10 +77,40 @@ export const requestPasswordReset = async (
   }
 };
 
+export const getSuperFundName = async (
+  authToken: string,
+  accountId: string
+): Promise<ClientAccountDetails[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/ClientAccountDetails/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch linked users");
+    }
+
+    const data: ClientAccountDetails[] = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching linked users:", error);
+    return null;
+  }
+};
+
 export const getLinkedUsers = async (
   authToken: string
 ): Promise<LinkedUsers | null> => {
   try {
+    //console.log("Fetching linked users with token:", authToken);
     const response = await fetch(`${apiBaseUrl}/Auth/LinkedUsers`, {
       method: "GET",
       headers: {
@@ -95,6 +129,49 @@ export const getLinkedUsers = async (
   } catch (error) {
     console.error("Error fetching linked users:", error);
     return null;
+  }
+};
+
+export const getEntityAccounts = async (
+  authToken: string,
+  accountId: string
+): Promise<AccountEntity[]> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/FamilyGroupDashboard/AccountList/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch account entities");
+    }
+
+    const data: AccountEntityResponse = await response.json();
+
+    const filteredEntities =
+      data.entities?.filter((entity) => entity.activePortfolio === "Yes") || [];
+
+    const hardcodedItem: AccountEntity = {
+      accountName: "Demo Family Group",
+      accountType: "Family Group",
+      activePortfolio: "Yes",
+      id: "demo_family_group",
+      abn: null,
+      accountCode: "",
+      accountSource: "",
+      tfn: ""
+    };
+
+    return [hardcodedItem, ...filteredEntities];
+  } catch (error) {
+    console.error("Error fetching account entities:", error);
+    return [];
   }
 };
 
@@ -130,7 +207,7 @@ export const getAssetAllocationSummaryOther = async (
 export const getAssetAllocationSummaryFamily = async (
   authToken: string,
   accountId: string
-): Promise<PortfolioData[] | null> => {
+): Promise<AssetAllocationSummary[] | null> => {
   try {
     const response = await fetch(
       `${apiBaseUrl}/FamilyGroupDashboard/AssetAllocationSummary/${accountId}`,
@@ -147,7 +224,7 @@ export const getAssetAllocationSummaryFamily = async (
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data: PortfolioData[] = await response.json();
+    const data: AssetAllocationSummary[] = await response.json();
     return data;
   } catch (error) {
     console.error("Fetch failed:", error);
