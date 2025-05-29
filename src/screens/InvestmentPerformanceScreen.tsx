@@ -7,9 +7,9 @@ import { useWindowSize } from "../../hooks/useWindowSize";
 import * as ScreenOrientation from "expo-screen-orientation";
 
 export default function InvestmentPerformanceScreen() {
-  const { width } = useWindowSize();
+  const { width, height } = useWindowSize();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
-  const styles = getStyles(width);
+  const styles = getStyles(width, height);
 
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.DEFAULT);
@@ -26,6 +26,11 @@ export default function InvestmentPerformanceScreen() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: height * 0.1,
+        }}
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.bodySection}>
           <InvestmentPerformance
@@ -38,7 +43,7 @@ export default function InvestmentPerformanceScreen() {
   );
 }
 
-const getStyles = (width: number) =>
+const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,

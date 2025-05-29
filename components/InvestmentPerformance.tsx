@@ -9,7 +9,7 @@ import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function InvestmentPerformanceChart({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height, isPortrait } = useWindowSize();
   const [data, setData] = useState<InvestmentPerformanceDetails[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,7 +96,7 @@ export default function InvestmentPerformanceChart({ refreshTrigger }: Props) {
               ],
             }}
             width={width * 0.9}
-            height={height * 0.4}
+            height={isPortrait ? height * 0.4 : height * 0.9}
             yAxisInterval={1}
             withDots={false}
             withShadow={false}
@@ -125,45 +125,6 @@ export default function InvestmentPerformanceChart({ refreshTrigger }: Props) {
             }}
             bezier
           />
-
-          {/* Horizontal zero line + label */}
-          {Math.min(...values) < 0 && Math.max(...values) > 0 && (
-            <>
-              <View
-                style={{
-                  position: "absolute",
-                  left: 67,
-                  right: 4,
-                  top:
-                    height *
-                    0.45 *
-                    (1 -
-                      (0 - Math.min(...values)) /
-                        (Math.max(...values) - Math.min(...values))),
-                  height: 1,
-                  backgroundColor: "#FF0000",
-                }}
-              />
-              <Text
-                style={{
-                  position: "absolute",
-                  left: 41,
-                  top:
-                    height *
-                      0.45 *
-                      (1 -
-                        (0 - Math.min(...values)) /
-                          (Math.max(...values) - Math.min(...values))) -
-                    RFPercentage(1),
-                  fontSize: RFPercentage(1.5),
-                  color: "#000",
-                  paddingLeft: 4,
-                }}
-              >
-                0
-              </Text>
-            </>
-          )}
         </View>
       </View>
     </View>
