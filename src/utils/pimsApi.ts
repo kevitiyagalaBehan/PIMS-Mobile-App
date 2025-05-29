@@ -134,7 +134,8 @@ export const getLinkedUsers = async (
 
 export const getEntityAccounts = async (
   authToken: string,
-  accountId: string
+  accountId: string,
+  parentAccount?: AccountEntity
 ): Promise<AccountEntity[]> => {
   try {
     const response = await fetch(
@@ -157,21 +158,14 @@ export const getEntityAccounts = async (
     const filteredEntities =
       data.entities?.filter((entity) => entity.activePortfolio === "Yes") || [];
 
-    const hardcodedItem: AccountEntity = {
-      accountName: "Demo Family Group",
-      accountType: "Family Group",
-      activePortfolio: "Yes",
-      id: "demo_family_group",
-      abn: null,
-      accountCode: "",
-      accountSource: "",
-      tfn: ""
-    };
+    if (parentAccount) {
+      return [parentAccount, ...filteredEntities];
+    }
 
-    return [hardcodedItem, ...filteredEntities];
+    return filteredEntities;
   } catch (error) {
     console.error("Error fetching account entities:", error);
-    return [];
+    return parentAccount ? [parentAccount] : [];
   }
 };
 
