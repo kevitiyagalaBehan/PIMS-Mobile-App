@@ -11,7 +11,7 @@ import { useWindowSize } from "../hooks/useWindowSize";
 import { SelectList } from "react-native-dropdown-select-list";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../src/navigation/types";
+import { RootStackParamList, AccountOption } from "../src/navigation/types";
 
 export default function Header() {
   const [userAccountType, setUserAccountType] = useState<string | null>(null);
@@ -23,11 +23,7 @@ export default function Header() {
     entityAccounts,
     setEntityAccounts,
   } = useAuth();
-  const [selected, setSelected] = useState("");
-  const [accountOptions, setAccountOptions] = useState<
-    { key: string; value: string }[]
-  >([]);
-
+  const [accountOptions, setAccountOptions] = useState<AccountOption[]>([]);
   const { width, height } = useWindowSize();
   const styles = getStyles(width, height);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -56,9 +52,17 @@ export default function Header() {
       }
 
       if (entityAccounts.length === 0) {
+        const parentEntity = {
+          id: userData.accountId,
+          accountName: currentAccountName || "Demo Family Group",
+          accountType: userData.accountType,
+          activePortfolio: "Yes",
+        };
+
         const entities = await getEntityAccounts(
           userData.authToken,
-          userData.accountId
+          userData.accountId,
+          parentEntity
         );
         setEntityAccounts(entities);
       }
@@ -68,20 +72,39 @@ export default function Header() {
   }, [userData?.authToken, userData?.accountId]);
 
   useEffect(() => {
-    const formatted = entityAccounts.map((acc) => ({
+    if (!userData?.accountId || !currentAccountName || !userData.accountType)
+      return;
+
+    const initialAccount: AccountOption = {
+      key: userData.accountId,
+      value: `${currentAccountName} - ${userData.accountType}`,
+      accountType: userData.accountType,
+    };
+
+    const formattedEntities: AccountOption[] = entityAccounts.map((acc) => ({
       key: acc.id,
       value: `${acc.accountName} - ${acc.accountType}`,
+      accountType: acc.accountType,
     }));
-    setAccountOptions(formatted);
-  }, [entityAccounts]);
 
-  const handleAccountChange = (val: string) => {
-    setSelected(val);
-    const selectedItem = accountOptions.find((item) => item.value === val);
+    const combined = [
+      initialAccount,
+      ...formattedEntities.filter((e) => e.key !== userData.accountId),
+    ];
+
+    setAccountOptions(combined);
+  }, [
+    entityAccounts,
+    currentAccountName,
+    userData?.accountId,
+    userData?.accountType,
+  ]);
+
+  const handleAccountChange = (accountId: string) => {
+    const selectedItem = accountOptions.find((item) => item.key === accountId);
     if (!selectedItem) return;
 
-    const accountType = selectedItem.value.split(" - ")[1];
-    const accountId = selectedItem.key;
+    const { accountType } = selectedItem;
 
     setUserData((prev) =>
       prev
@@ -110,10 +133,11 @@ export default function Header() {
         <SelectList
           setSelected={handleAccountChange}
           data={accountOptions}
-          save="value"
+          save="key"
           placeholder="Select account..."
           boxStyles={styles.dropDownBox}
           dropdownStyles={styles.dropDownList}
+          dropdownItemStyles={styles.dropdownItem}
         />
       )}
     </View>
@@ -138,6 +162,9 @@ const getStyles = (width: number, height: number) =>
       backgroundColor: "#eee",
     },
     dropDownList: {
-      backgroundColor: "#fff",
+      backgroundColor: "#eee",
+    },
+    dropdownItem: {
+      paddingHorizontal: width * 0.06,
     },
   });
