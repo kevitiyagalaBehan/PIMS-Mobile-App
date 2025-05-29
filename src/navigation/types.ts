@@ -11,7 +11,7 @@ export type AuthContextType = {
   setCurrentAccountName: React.Dispatch<React.SetStateAction<string | null>>;
   entityAccounts: AccountEntity[];
   setEntityAccounts: React.Dispatch<React.SetStateAction<AccountEntity[]>>;
-  
+
   resetAuthState: () => void;
 };
 
@@ -260,17 +260,19 @@ export interface Inbox {
 }
 
 export interface AccountEntity {
-  abn: string | null;
-  accountCode: string;
   accountName: string;
-  accountSource: string;
   accountType: string;
   activePortfolio: string;
   id: string;
-  tfn: string;
 }
 
 export interface AccountEntityResponse {
   entities: AccountEntity[];
   individuals: any[];
+}
+
+export interface AccountOption {
+  key: string;
+  value: string;
+  accountType: string;
 }

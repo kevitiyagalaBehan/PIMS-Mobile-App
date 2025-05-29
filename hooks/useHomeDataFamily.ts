@@ -3,7 +3,6 @@ import { getAssetAllocationSummaryFamily } from "../src/utils/pimsApi";
 import {
   AssetCategory,
   PortfolioData,
-  AssetAllocationSummary,
 } from "../src/navigation/types";
 
 export function useHomeData(
