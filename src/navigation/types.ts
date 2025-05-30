@@ -272,11 +272,22 @@ export interface AccountEntity {
   accountType: string;
   activePortfolio: string;
   id: string;
+  tfn: string;
+  abn: string;
 }
 
-export interface AccountEntityResponse {
+export interface AccountIndividual {
+  accountName: string;
+  accountCode: string;
+  dob: string;
+  email: string;
+  id: string;
+  relationship: string;
+}
+
+export interface AccountListResponse {
   entities: AccountEntity[];
-  individuals: any[];
+  individuals: AccountIndividual[];
 }
 
 export interface AccountOption {
