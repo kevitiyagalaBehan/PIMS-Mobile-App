@@ -163,8 +163,8 @@ const getStyles = (width: number, height: number) =>
     container: {
       flex: 1,
       marginTop: height * 0.02,
-      backgroundColor: "#fff",
       borderRadius: 6,
+      backgroundColor: "#fff",
     },
     border: {
       borderWidth: 1,
@@ -254,7 +254,7 @@ const getStyles = (width: number, height: number) =>
       padding: width * 0.05,
     },
     modalTitle: {
-      fontSize: RFPercentage(2),
+      fontSize: RFPercentage(2.5),
       fontWeight: "bold",
       color: "#4A90E2",
       marginBottom: height * 0.02,

@@ -4,9 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 import { useHomeData } from "../../hooks/useHomeDataFamily";
 import {
-  PortfolioSummaryFamily,
   AssetAllocationFamily,
   Header,
+  ConsolidatedAssetAllocation,
 } from "../../components";
 import { useAuth } from "../context/AuthContext";
 import { useWindowSize } from "../../hooks/useWindowSize";
@@ -37,7 +37,11 @@ export default function HomeScreenFamily() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.bodySection}>
-          <PortfolioSummaryFamily data={data} loading={loading} error={error} />
+          <ConsolidatedAssetAllocation
+            data={data}
+            loading={loading}
+            error={error}
+          />
           <AssetAllocationFamily data={data} loading={loading} error={error} />
         </View>
       </ScrollView>

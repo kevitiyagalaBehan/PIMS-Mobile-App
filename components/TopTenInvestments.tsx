@@ -260,7 +260,7 @@ const getStyles = (width: number, height: number) =>
       padding: width * 0.05,
     },
     modalTitle: {
-      fontSize: RFPercentage(2),
+      fontSize: RFPercentage(2.5),
       fontWeight: "bold",
       color: "#4A90E2",
       marginBottom: height * 0.02,

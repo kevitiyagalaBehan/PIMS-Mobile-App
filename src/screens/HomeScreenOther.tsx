@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 import { useHomeData } from "../../hooks/useHomeDataOther";
 import {
-  PortfolioSummaryOther,
+  PortfolioSummary,
   AssetAllocationOther,
   Header,
 } from "../../components";
@@ -38,7 +38,7 @@ export default function HomeScreenOther() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.bodySection}>
-          <PortfolioSummaryOther data={data} loading={loading} error={error} />
+          <PortfolioSummary data={data} loading={loading} error={error} />
           <AssetAllocationOther data={data} loading={loading} error={error} />
         </View>
       </ScrollView>
