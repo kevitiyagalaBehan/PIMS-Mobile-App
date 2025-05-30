@@ -3,6 +3,7 @@ import {
   LinkedUsers,
   SuperFundDetails,
   TopTenInvestmentDetails,
+  TopTenInvestmentDetailsFamily,
   PortfolioData,
   AssetAllocationSummary,
   ContributionCap,
@@ -13,6 +14,7 @@ import {
   AccountEntityResponse,
   AccountEntity,
   ClientAccountDetails,
+  ConsolidateData,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -294,6 +296,39 @@ export const getTopTenInvestmentDetails = async (
   }
 };
 
+export const getTopTenInvestmentDetailsFamily = async (
+  authToken: string,
+  accountId: string
+): Promise<TopTenInvestmentDetailsFamily[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/FamilyGroupDashboard/TopTenInvestments/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) {
+      throw new Error("Expected array response");
+    }
+
+    return data as TopTenInvestmentDetailsFamily[];
+  } catch (error) {
+    console.error("Fetch failed:", error);
+    return null;
+  }
+};
+
 export const getContributionCapSummary = async (
   authToken: string,
   accountId: string
@@ -414,6 +449,39 @@ export const getInvestmentPerformance = async (
       "Fetch failed:",
       error instanceof Error ? error.message : String(error)
     );
+    return null;
+  }
+};
+
+export const getConsolidateData = async (
+  authToken: string,
+  accountId: string
+): Promise<ConsolidateData[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/FamilyGroupDashboard/ConsolidateData/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) {
+      throw new Error("Expected array response");
+    }
+
+    return data as ConsolidateData[];
+  } catch (error) {
+    console.error("Fetch failed:", error);
     return null;
   }
 };
