@@ -9,14 +9,14 @@ import { useWindowSize } from "../hooks/useWindowSize";
 export default function ConsolidatedAccounts({ refreshTrigger }: Props) {
   const { userData } = useAuth();
   const { width, height } = useWindowSize();
-  const [accounts, setAccounts] = useState<
-    ConsolidateData[] | null
-  >(null);
+  const [accounts, setAccounts] = useState<ConsolidateData[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] =
-    useState<ConsolidateData | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ConsolidateData | null>(
+    null
+  );
   const [modalVisible, setModalVisible] = useState(false);
+  const styles = getStyles(width, height);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,8 +47,6 @@ export default function ConsolidatedAccounts({ refreshTrigger }: Props) {
     setModalVisible(true);
   };
 
-  const styles = getStyles(width, height);
-
   if (!accounts || error) {
     return (
       <Text style={styles.errorText}>
@@ -60,6 +58,16 @@ export default function ConsolidatedAccounts({ refreshTrigger }: Props) {
   if (loading) {
     return <Text style={styles.loader}>Loading...</Text>;
   }
+
+  const totalPortfolioValue = accounts?.reduce(
+    (sum, item) => sum + item.portfolioValue,
+    0
+  );
+
+  const totalPortfolioPercentage = accounts?.reduce(
+    (sum, item) => sum + item.portfolioPercentage,
+    0
+  );
 
   return (
     <View style={styles.container}>
@@ -111,6 +119,38 @@ export default function ConsolidatedAccounts({ refreshTrigger }: Props) {
               </Text>
             </View>
           ))}
+          <View style={[styles.dataRow, { backgroundColor: "#D3EAFD" }]}>
+            <Text
+              style={[
+                styles.dataCell,
+                styles.boldText,
+                styles.leftAlign,
+                { flex: 1 },
+              ]}
+            >
+              Total
+            </Text>
+            <Text
+              style={[
+                styles.dataCell,
+                styles.boldText,
+                styles.rightAlign,
+                { flex: 1 },
+              ]}
+            >
+              {totalPortfolioValue?.toLocaleString()}
+            </Text>
+            <Text
+              style={[
+                styles.dataCell,
+                styles.boldText,
+                styles.rightAlign,
+                { flex: 1 },
+              ]}
+            >
+              {totalPortfolioPercentage?.toFixed(2)}%
+            </Text>
+          </View>
         </View>
 
         <Modal
@@ -123,7 +163,9 @@ export default function ConsolidatedAccounts({ refreshTrigger }: Props) {
             <View style={styles.modalContent}>
               {selectedItem && (
                 <>
-                  <Text style={styles.modalTitle}>{selectedItem.clientCode}</Text>
+                  <Text style={styles.modalTitle}>
+                    {selectedItem.clientCode}
+                  </Text>
                   <View style={styles.modalRow}>
                     <Text style={styles.modalLabel}>Name:</Text>
                     <Text style={styles.modalText}>
