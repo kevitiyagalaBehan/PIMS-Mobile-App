@@ -57,7 +57,7 @@ export type DrawerParamListFamily = {
   MainTabs: { authToken: string; accountId: string };
   AccountList: { authToken: string; accountId: string };
   ConsolidatedAssetAllocation: { authToken: string; accountId: string };
-  TopTenInvestments: { authToken: string; accountId: string };
+  TopTenInvestmentsFamily: { authToken: string; accountId: string };
   ConsolidatedAccounts: { authToken: string; accountId: string };
 };
 
@@ -169,6 +169,14 @@ export interface TopTenInvestmentDetails {
   percentage: number;
 }
 
+export interface TopTenInvestmentDetailsFamily {
+  code: string;
+  id: string;
+  owner: string;
+  marketValue: number;
+  marketPercentage: number;
+}
+
 export type PortfolioItem = {
   year: number;
   value: number;
@@ -275,4 +283,13 @@ export interface AccountOption {
   key: string;
   value: string;
   accountType: string;
+}
+
+export interface ConsolidateData {
+  clientCode: string;
+  clientId: string;
+  clientName: string;
+  entityType: string;
+  portfolioPercentage: number;
+  portfolioValue: number;
 }
