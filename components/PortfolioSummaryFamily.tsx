@@ -41,7 +41,7 @@ export default function PortfolioSummaryFamily({
   return (
     <View style={styles.container}>
       <View style={styles.border}>
-        <Text style={styles.bodyText}>Portfolio Summary</Text>
+        <Text style={styles.bodyText}>Consolidated Asset Allocation</Text>
         <View style={styles.tableContainer}>
           <View style={styles.tableHeader}>
             <Text style={[styles.tableHeaderText1, { flex: 1 }]}>
