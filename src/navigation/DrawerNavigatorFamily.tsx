@@ -3,7 +3,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import BottomTabFamily from "./BottomTabNavigatorFamily";
 import ConsolidatedAssetAllocationScreen from "../screens/ConsolidatedAssetAllocationScreen";
-import TopTenInvestmentsScreen from "../screens/TopTenInvestmentsScreen";
+import TopTenInvestmentsScreenFamily from "../screens/TopTenInvestmentsScreenFamily";
 import ConsolidatedAccountsScreen from "../screens/ConsolidatedAccountsScreen";
 import CustomDrawerContent from "./CustomDrawerContent";
 import { DrawerParamListFamily } from "./types";
@@ -64,8 +64,8 @@ export default function DrawerNavigatorFamily() {
         }}
       />
       <Drawer.Screen
-        name="TopTenInvestments"
-        component={TopTenInvestmentsScreen}
+        name="TopTenInvestmentsFamily"
+        component={TopTenInvestmentsScreenFamily}
         initialParams={{
           authToken: userData?.authToken,
           accountId: userData?.accountId,
