@@ -2,7 +2,6 @@ import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import BottomTabFamily from "./BottomTabNavigatorFamily";
-import ConsolidatedAssetAllocationScreen from "../screens/ConsolidatedAssetAllocationScreen";
 import TopTenInvestmentsScreenFamily from "../screens/TopTenInvestmentsScreenFamily";
 import ConsolidatedAccountsScreen from "../screens/ConsolidatedAccountsScreen";
 import CustomDrawerContent from "./CustomDrawerContent";
@@ -10,6 +9,7 @@ import { DrawerParamListFamily } from "./types";
 import { useAuth } from "../context/AuthContext";
 import { useAutoLogout } from "../../hooks/useAutoLogout";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import AccountListScreen from "../screens/AccountListScreen";
 
 const Drawer = createDrawerNavigator<DrawerParamListFamily>();
 
@@ -50,14 +50,14 @@ export default function DrawerNavigatorFamily() {
         }}
       />
       <Drawer.Screen
-        name="ConsolidatedAssetAllocation"
-        component={ConsolidatedAssetAllocationScreen}
+        name="AccountList"
+        component={AccountListScreen}
         initialParams={{
           authToken: userData?.authToken,
           accountId: userData?.accountId,
         }}
         options={{
-          drawerLabel: "Consolidated Asset Allocation",
+          drawerLabel: "Account List",
           drawerIcon: ({ color }) => (
             <Ionicons name="trending-up" size={30} color={color} />
           ),
