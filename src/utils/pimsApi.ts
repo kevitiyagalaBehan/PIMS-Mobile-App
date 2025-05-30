@@ -11,10 +11,11 @@ import {
   EstimatedMemberDetails,
   InvestmentPerformanceDetails,
   ForgotPassword,
-  AccountEntityResponse,
   AccountEntity,
   ClientAccountDetails,
   ConsolidateData,
+  AccountListResponse,
+  AccountIndividual,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -155,7 +156,7 @@ export const getEntityAccounts = async (
       throw new Error("Failed to fetch account entities");
     }
 
-    const data: AccountEntityResponse = await response.json();
+    const data: AccountListResponse = await response.json();
 
     const filteredEntities =
       data.entities?.filter((entity) => entity.activePortfolio === "Yes") || [];
@@ -168,6 +169,45 @@ export const getEntityAccounts = async (
   } catch (error) {
     console.error("Error fetching account entities:", error);
     return parentAccount ? [parentAccount] : [];
+  }
+};
+
+export const getAccountList = async (
+  authToken: string,
+  accountId: string
+): Promise<{
+  entities: AccountEntity[];
+  individuals: AccountIndividual[];
+}> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/FamilyGroupDashboard/AccountList/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch account list");
+    }
+
+    const data: AccountListResponse = await response.json();
+
+    return {
+      entities: data.entities || [],
+      individuals: data.individuals || [],
+    };
+  } catch (error) {
+    console.error("Error fetching account list:", error);
+
+    return {
+      entities: [],
+      individuals: [],
+    };
   }
 };
 
