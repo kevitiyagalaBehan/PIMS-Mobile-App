@@ -6,9 +6,11 @@ export { default as AssetAllocationOther } from "./AssetAllocationOther";
 export { default as AssetAllocationFamily } from "./AssetAllocationFamily";
 export { default as PortfolioBalanceSummary } from "./PortfolioBalanceSummary";
 export { default as TopTenInvestments } from "./TopTenInvestments";
+export { default as TopTenInvestmentsFamily } from "./TopTenInvestmentsFamily";
 export { default as ContributionCapSummary } from "./ContributionCapSummary";
 export { default as PensionLimitSummary } from "./PensionLimitSummary";
 export { default as EstimatedMemberStatement } from "./EstimatedMemberStatement";
 export { default as InvestmentPerformance } from "./InvestmentPerformance";
+export { default as ConsolidatedAccounts } from "./ConsolidatedAccounts";
 export { default as Drawer } from "./Drawer";
 
