@@ -1,7 +1,7 @@
 export { default as Header } from "./Header";
 export { default as HeaderWithMenu } from "./HeaderWithMenu";
-export { default as PortfolioSummaryOther } from "./PortfolioSummaryOther";
-export { default as PortfolioSummaryFamily } from "./PortfolioSummaryFamily";
+export { default as PortfolioSummary } from "./PortfolioSummary";
+export { default as ConsolidatedAssetAllocation } from "./ConsolidatedAssetAllocation";
 export { default as AssetAllocationOther } from "./AssetAllocationOther";
 export { default as AssetAllocationFamily } from "./AssetAllocationFamily";
 export { default as PortfolioBalanceSummary } from "./PortfolioBalanceSummary";
@@ -12,5 +12,6 @@ export { default as PensionLimitSummary } from "./PensionLimitSummary";
 export { default as EstimatedMemberStatement } from "./EstimatedMemberStatement";
 export { default as InvestmentPerformance } from "./InvestmentPerformance";
 export { default as ConsolidatedAccounts } from "./ConsolidatedAccounts";
+export { default as AccountList } from "./AccountList";
 export { default as Drawer } from "./Drawer";
 
