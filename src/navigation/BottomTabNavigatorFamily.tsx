@@ -50,7 +50,7 @@ export default function BottomTabFamily() {
         component={SignScreen}
         options={{
           headerShown: false,
-          tabBarLabel: "Sign",
+          tabBarLabel: "Signing",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="document-text" size={size} color={color} />
           ),

@@ -17,10 +17,10 @@ export default function BottomTabOther() {
 
   return (
     <Tab.Navigator
-    initialRouteName="HomeOther"
+      initialRouteName="HomeOther"
       screenOptions={{
         tabBarStyle: { height: height * 0.08 },
-        tabBarLabelStyle: { fontSize: RFPercentage(1.4), fontWeight: "bold" }
+        tabBarLabelStyle: { fontSize: RFPercentage(1.4), fontWeight: "bold" },
       }}
     >
       <Tab.Screen
@@ -46,23 +46,23 @@ export default function BottomTabOther() {
         }}
       />
       <Tab.Screen
-              name="Sign"
-              component={SignScreen}
-              options={{
-                headerShown: false,
-                tabBarLabel: "Sign",
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="document-text" size={size} color={color} />
-                ),
-              }}
-            />
+        name="Sign"
+        component={SignScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: "Signing",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="create" size={size} color={color} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Menu"
         component={HomeScreenOther}
         options={{
           tabBarLabel: "Menu",
           tabBarIcon: ({ color, size }) => (
-              <Ionicons name="menu" size={size} color={color} />
+            <Ionicons name="menu" size={size} color={color} />
           ),
         }}
         listeners={{
