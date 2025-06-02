@@ -525,3 +525,36 @@ export const getConsolidateData = async (
     return null;
   }
 };
+
+export const getClientAccountDetails = async (
+  authToken: string,
+  accountId: string
+): Promise<ClientAccountDetails[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/ClientAccountDetails/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) {
+      throw new Error("Expected array response");
+    }
+
+    return data as ClientAccountDetails[];
+  } catch (error) {
+    console.error("Fetch failed:", error);
+    return null;
+  }
+};
