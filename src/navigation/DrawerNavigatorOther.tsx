@@ -13,6 +13,7 @@ import { DrawerParamListOther } from "./types";
 import { useAuth } from "../context/AuthContext";
 import { useAutoLogout } from "../../hooks/useAutoLogout";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import DetailsScreen from "../screens/DetailsScreen";
 
 const Drawer = createDrawerNavigator<DrawerParamListOther>();
 
@@ -51,6 +52,20 @@ export default function DrawerNavigatorOther() {
           //drawerItemStyle: { display: "none" },
           drawerIcon: ({ color }) => (
             <Ionicons name="home" size={30} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Details"
+        component={DetailsScreen}
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
+        }}
+        options={{
+          drawerLabel: "Details",
+          drawerIcon: ({ color }) => (
+            <Ionicons name="list-circle" size={30} color={color} />
           ),
         }}
       />
