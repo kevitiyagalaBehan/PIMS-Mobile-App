@@ -44,6 +44,7 @@ export type BottomTabParamListFamily = {
 // Drawer Navigation
 export type DrawerParamListOther = {
   MainTabs: { authToken: string; accountId: string };
+  Details: { authToken: string; accountId: string };
   PortfolioSummary: { authToken: string; accountId: string };
   TopTenInvestments: { authToken: string; accountId: string };
   InvestmentPerformance: { authToken: string; accountId: string };
@@ -303,4 +304,20 @@ export interface ConsolidateData {
   entityType: string;
   portfolioPercentage: number;
   portfolioValue: number;
+}
+
+export interface ClientAccountDetails {
+  superFundCode: string;
+  superFundName: string;
+  legalType: string;
+  portfolioType: string;
+  fundABN: string;
+  soaDate: string;
+  fundTFN: string;
+  fundStartDate: string;
+  trusteeName: string;
+  jobType: string;
+  reportTagName: string;
+  adviserName: string;
+  adviserNameLast: string;
 }
