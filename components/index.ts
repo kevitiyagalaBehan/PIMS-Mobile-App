@@ -13,5 +13,6 @@ export { default as EstimatedMemberStatement } from "./EstimatedMemberStatement"
 export { default as InvestmentPerformance } from "./InvestmentPerformance";
 export { default as ConsolidatedAccounts } from "./ConsolidatedAccounts";
 export { default as AccountList } from "./AccountList";
+export { default as Details } from "./Details";
 export { default as Drawer } from "./Drawer";
 
