@@ -228,7 +228,7 @@ const getStyles = (width: number, height: number) =>
       color: "#1B77BE",
       fontSize: RFPercentage(2.6),
       marginTop: height * 0.021,
-      marginLeft: height * 0.01,
+      marginLeft: height * 0.013,
     },
     bodyText: {
       fontWeight: "bold",
