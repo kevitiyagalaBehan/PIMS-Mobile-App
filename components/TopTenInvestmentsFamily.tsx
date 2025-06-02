@@ -179,7 +179,7 @@ const getStyles = (width: number, height: number) =>
       fontSize: RFPercentage(2.6),
     },
     tableContainer: {
-      marginBottom: height * 0.01,
+      paddingBottom: height * 0.01,
     },
     loader: {
       fontWeight: "bold",

@@ -141,8 +141,8 @@ const getStyles = (width: number, height: number) =>
       fontWeight: "bold",
       color: "#1B77BE",
       fontSize: RFPercentage(2.6),
-      marginTop: height * 0.021,
-      marginLeft: height * 0.01,
+      marginTop: height * 0.01,
+      marginLeft: height * 0.012,
     },
     bodyText: {
       fontWeight: "bold",
