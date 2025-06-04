@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { InboxStackNavigationProp } from "../navigation/types";
@@ -16,8 +16,12 @@ export default function InboxList() {
   const styles = getStyles(width, height);
 
   return (
-    <View style={styles.container}>
-      {dummyQueries.length === 0 ? (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+              <Text style={styles.headerText}>Inbox</Text>
+            </View>
+      <View style={styles.bodySection}>
+        {dummyQueries.length === 0 ? (
         <Text style={styles.emptyText}>No queries found.</Text>
       ) : (
         <FlatList
@@ -34,7 +38,8 @@ export default function InboxList() {
           )}
         />
       )}
-    </View>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -42,6 +47,19 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
+    },
+    header: {
+      height: height * 0.08,
+      justifyContent: "center",
+      paddingHorizontal: 16,
+      backgroundColor: "#fff",
+    },
+    headerText: {
+      fontSize: RFPercentage(2.6),
+      fontWeight: "bold",
+      color: "#1B77BE",
+    },
+    bodySection: {
       paddingHorizontal: width * 0.02,
     },
     item: {
