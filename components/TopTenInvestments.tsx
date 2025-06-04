@@ -233,7 +233,7 @@ const getStyles = (width: number, height: number) =>
     },
     underlineText: {
       textDecorationLine: "underline",
-      color: "#4A90E2",
+      color: "#1B77BE",
     },
     leftAlign: {
       textAlign: "left",
