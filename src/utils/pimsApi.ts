@@ -16,6 +16,7 @@ import {
   ConsolidateData,
   AccountListResponse,
   AccountIndividual,
+  EsignDocument,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -556,5 +557,32 @@ export const getClientAccountDetails = async (
   } catch (error) {
     console.error("Fetch failed:", error);
     return null;
+  }
+};
+
+export const getEsignDocuments = async (
+  authToken: string,
+  accountId: string
+): Promise<EsignDocument[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/Esigning/CurrentUserV3/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch documents: ${response.status}`);
+    }
+    const data = await response.json();
+    //console.log("Data:", data);
+    return data as EsignDocument[];
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
   }
 };
