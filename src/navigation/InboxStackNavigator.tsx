@@ -11,9 +11,9 @@ export default function InboxStackNavigator() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: true,
+        //headerShown: true,
         headerTitleStyle: {
-          fontSize: RFPercentage(2.7),
+          fontSize: RFPercentage(2.6),
           color: "#1B77BE",
           fontWeight: "bold",
         },
@@ -27,7 +27,9 @@ export default function InboxStackNavigator() {
       <Stack.Screen
         name="InboxList"
         component={InboxList}
-        options={{ title: "Inbox" }}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name="InboxDetail"
