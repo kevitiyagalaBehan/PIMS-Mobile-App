@@ -3,11 +3,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import HomeScreenOther from "../screens/HomeScreenOther";
+import ESigningScreen from "../screens/ESigningScreen";
 import { BottomTabParamListOther } from "./types";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import InboxStackNavigator from "./InboxStackNavigator";
-import SignScreen from "../screens/SignScreen";
 
 const Tab = createBottomTabNavigator<BottomTabParamListOther>();
 
@@ -46,8 +46,8 @@ export default function BottomTabOther() {
         }}
       />
       <Tab.Screen
-        name="Sign"
-        component={SignScreen}
+        name="ESigning"
+        component={ESigningScreen}
         options={{
           headerShown: false,
           tabBarLabel: "Signing",
