@@ -59,8 +59,7 @@ export default function Details({ refreshTrigger }: Props) {
 
   const rows = [
     { label: "Portfolio Code", value: account.superFundCode },
-    { label: "Portfolio Name", value: account.superFundName },
-    { label: "Portfolio Type", value: account.portfolioType.toUpperCase() },
+    { label: "Account Name", value: account.superFundName },
     { label: "Legal Type", value: account.legalType },
     { label: "Trustee(s)", value: account.trusteeName },
     { label: "Job Type", value: account.jobType },
@@ -68,14 +67,7 @@ export default function Details({ refreshTrigger }: Props) {
     { label: "TFN", value: account.fundTFN || "<<Recorded>>" },
     { label: "SOA Date", value: formatDate(account.soaDate) },
     { label: "Fund Start Date", value: formatDate(account.fundStartDate) },
-    { label: "Report Pack Tag", value: account.reportTagName },
-    {
-      label: "Adviser",
-      value:
-        account.adviserName && account.adviserNameLast
-          ? `${account.adviserName} ${account.adviserNameLast}`
-          : "",
-    },
+    { label: "Adviser", value: account.adviserName },
   ];
 
   return (

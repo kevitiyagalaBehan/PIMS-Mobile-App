@@ -41,6 +41,7 @@ export default {
     extra: {
       apiBaseUrl: process.env.API_BASE_URL,
       appEnv: process.env.APP_ENV,
+      eSigningBaseUrl: process.env.E_SIGNING_BASE_URL,
       eas: {
         projectId: "3a492d15-b6a8-427d-afb2-a5dbcba5c041"
       }

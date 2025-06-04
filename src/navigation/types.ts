@@ -30,14 +30,14 @@ export type RootStackParamList = {
 export type BottomTabParamListOther = {
   HomeOther: { authToken: string; accountId: string };
   Inbox: { authToken: string; accountId: string };
-  Sign: { authToken: string; accountId: string };
+  ESigning: { authToken: string; accountId: string };
   Menu: { authToken: string; accountId: string };
 };
 
 export type BottomTabParamListFamily = {
   HomeFamily: { authToken: string; accountId: string };
   Inbox: { authToken: string; accountId: string };
-  Sign: { authToken: string; accountId: string };
+  ESigning: { authToken: string; accountId: string };
   Menu: { authToken: string; accountId: string };
 };
 
@@ -321,3 +321,33 @@ export interface ClientAccountDetails {
   adviserName: string;
   adviserNameLast: string;
 }
+
+export interface Signatory {
+  esigningDetailId: string | null;
+  esigningStatus: "Signed" | null;
+  signatoryEmail: string;
+  signatoryName: string;
+}
+
+export interface DocumentFile {
+  documentName: string;
+  documentPath: string;
+}
+
+export interface EsignDocument {
+  accountId: string;
+  accountName: string;
+  companyId: string;
+  companyName: string;
+  documentPath: string;
+  documents: DocumentFile[];
+  dueDate: string; 
+  esigningCode: string;
+  esigningId: string;
+  sentBy: string;
+  sentDate: string;
+  signatories: Signatory[];
+  subject: string;
+  tags: string;
+}
+
