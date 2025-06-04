@@ -8,7 +8,6 @@ import { useWindowSize } from "../../hooks/useWindowSize";
 export default function TopTenInvestmentsScreen() {
   const { width } = useWindowSize();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
-
   const styles = getStyles(width);
 
   return (
