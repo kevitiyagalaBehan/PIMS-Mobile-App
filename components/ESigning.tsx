@@ -7,48 +7,52 @@ import {
   FlatList,
   Modal,
   Linking,
+  useWindowDimensions,
 } from "react-native";
 import { getEsignDocuments } from "../src/utils/pimsApi";
-import { EsignDocument, Props } from "../src/navigation/types";
+import { EsignDocument } from "../src/navigation/types";
 import { useAuth } from "../src/context/AuthContext";
-import { useWindowSize } from "../hooks/useWindowSize";
+import { useRefreshTrigger } from "../hooks/useRefreshTrigger";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Constants from "expo-constants";
 
 const eSigningBaseUrl = Constants.expoConfig?.extra?.eSigningBaseUrl as string;
 
-export default function ESigning({ refreshTrigger }: Props) {
+export default function ESigning() {
   const { userData } = useAuth();
   const [documents, setDocuments] = useState<EsignDocument[]>([]);
   const [selectedTab, setSelectedTab] = useState<"toSign" | "signed">("toSign");
   const [selectedDocument, setSelectedDocument] =
     useState<EsignDocument | null>(null);
   const [loading, setLoading] = useState(true);
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
+  const fetchData = async () => {
+    if (!userData?.authToken || !userData?.accountId) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const data = await getEsignDocuments(
+        userData.authToken,
+        userData.accountId
+      );
+      setDocuments(data || []);
+    } catch (err) {
+      console.error("Failed to load documents:", err);
+      setDocuments([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const { refreshTrigger, refreshing, onRefresh } =
+    useRefreshTrigger(fetchData);
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (!userData?.authToken || !userData?.accountId) {
-        setLoading(false);
-        return;
-      }
-      setLoading(true);
-
-      try {
-        const data = await getEsignDocuments(
-          userData.authToken,
-          userData.accountId
-        );
-        setDocuments(data || []);
-      } catch (err) {
-        console.error("Failed to load documents:", err);
-        setDocuments([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
@@ -151,132 +155,148 @@ export default function ESigning({ refreshTrigger }: Props) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.border}>
-        <Text style={styles.bodyText}>E-Signing Documents</Text>
+      <View style={styles.container}>
+        <View style={styles.border}>
+          <Text style={styles.bodyText}>E-Signing Documents</Text>
 
-        <View style={styles.tabContainer}>
-          <TouchableOpacity
-            style={[styles.tab, selectedTab === "toSign" && styles.activeTab]}
-            onPress={() => setSelectedTab("toSign")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                selectedTab === "toSign" && styles.activeTabText,
-              ]}
+          <View style={styles.tabContainer}>
+            <TouchableOpacity
+              style={[styles.tab, selectedTab === "toSign" && styles.activeTab]}
+              onPress={() => setSelectedTab("toSign")}
             >
-              To Be Signed ({toBeSignedCount})
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, selectedTab === "signed" && styles.activeTab]}
-            onPress={() => setSelectedTab("signed")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                selectedTab === "signed" && styles.activeTabText,
-              ]}
+              <Text
+                style={[
+                  styles.tabText,
+                  selectedTab === "toSign" && styles.activeTabText,
+                ]}
+              >
+                To Be Signed ({toBeSignedCount})
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, selectedTab === "signed" && styles.activeTab]}
+              onPress={() => setSelectedTab("signed")}
             >
-              Signed ({signedCount})
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.tableContainer}>
-          <View style={styles.tableHeader}>
-            <Text style={[styles.headerCell, { flex: 1.3 }]}>Subject</Text>
-            <Text style={[styles.headerCell, { flex: 1.5 }]}>Signatories</Text>
-            <Text style={[styles.headerCell, { flex: 1, textAlign: "center" }]}>
-              Action
-            </Text>
+              <Text
+                style={[
+                  styles.tabText,
+                  selectedTab === "signed" && styles.activeTabText,
+                ]}
+              >
+                Signed ({signedCount})
+              </Text>
+            </TouchableOpacity>
           </View>
-
-          {filteredDocs.length > 0 ? (
-            <FlatList
-              data={filteredDocs}
-              renderItem={({ item, index }) => renderItem({ item, index })}
-              keyExtractor={(_, i) => i.toString()}
-            />
-          ) : (
-            <Text style={styles.noData}>No documents available</Text>
-          )}
-
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={!!selectedDocument}
-            onRequestClose={() => setSelectedDocument(null)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>
-                  {selectedDocument?.subject}
+          <View>
+            <View style={styles.tableContainer}>
+              <View style={styles.tableHeader}>
+                <Text style={[styles.headerCell, { flex: 1.3 }]}>Subject</Text>
+                <Text style={[styles.headerCell, { flex: 1.5 }]}>
+                  Signatories
                 </Text>
-                <View style={styles.modalRow}>
-                  <Text style={styles.modalLabel}>Code:</Text>
-                  <Text style={styles.modalText}>
-                    {selectedDocument?.esigningCode || "N/A"}
-                  </Text>
-                </View>
-                <View style={styles.modalRow}>
-                  <Text style={styles.modalLabel}>Sent Date:</Text>
-                  <Text style={styles.modalText}>
-                    {selectedDocument?.sentDate
-                      ? new Date(selectedDocument.sentDate).toLocaleDateString()
-                      : "N/A"}
-                  </Text>
-                </View>
-                <View style={styles.modalRow}>
-                  <Text style={styles.modalLabel}>Account:</Text>
-                  <Text style={styles.modalText}>
-                    {selectedDocument?.accountName || "N/A"}
-                  </Text>
-                </View>
-                <View style={styles.modalRow}>
-                  <Text style={styles.modalLabel}>Sent By:</Text>
-                  <Text style={styles.modalText}>
-                    {selectedDocument?.sentBy || "N/A"}
-                  </Text>
-                </View>
-                <View style={styles.modalRow}>
-                  <Text style={styles.modalLabel}>Signatories: </Text>
-                  <Text style={styles.modalText}>
-                    {selectedDocument?.signatories
-                      .map((s) => s.signatoryName)
-                      .join(", ")}
-                  </Text>
-                </View>
-
-                <View style={styles.modalRow}>
-                  <Text style={styles.modalLabel}>Due Date:</Text>
-                  <Text style={styles.modalText}>
-                    {selectedDocument?.dueDate
-                      ? new Date(selectedDocument.dueDate).toLocaleDateString()
-                      : "N/A"}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setSelectedDocument(null)}
+                <Text
+                  style={[styles.headerCell, { flex: 1, textAlign: "center" }]}
                 >
-                  <Text style={styles.closeButtonText}>Close</Text>
-                </TouchableOpacity>
+                  Action
+                </Text>
               </View>
+
+              {filteredDocs.length > 0 ? (
+                <FlatList
+                  data={filteredDocs}
+                  renderItem={renderItem}
+                  keyExtractor={(_, i) => i.toString()}
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              ) : (
+                <Text style={styles.noData}>No documents available</Text>
+              )}
             </View>
-          </Modal>
+
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={!!selectedDocument}
+              onRequestClose={() => setSelectedDocument(null)}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>
+                    {selectedDocument?.subject}
+                  </Text>
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Code:</Text>
+                    <Text style={styles.modalText}>
+                      {selectedDocument?.esigningCode || "N/A"}
+                    </Text>
+                  </View>
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Sent Date:</Text>
+                    <Text style={styles.modalText}>
+                      {selectedDocument?.sentDate
+                        ? new Date(
+                            selectedDocument.sentDate
+                          ).toLocaleDateString()
+                        : "N/A"}
+                    </Text>
+                  </View>
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Account:</Text>
+                    <Text style={styles.modalText}>
+                      {selectedDocument?.accountName || "N/A"}
+                    </Text>
+                  </View>
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Sent By:</Text>
+                    <Text style={styles.modalText}>
+                      {selectedDocument?.sentBy || "N/A"}
+                    </Text>
+                  </View>
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Signatories: </Text>
+                    <Text style={styles.modalText}>
+                      {selectedDocument?.signatories
+                        .map((s) => s.signatoryName)
+                        .join(", ")}
+                    </Text>
+                  </View>
+
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Due Date:</Text>
+                    <Text style={styles.modalText}>
+                      {selectedDocument?.dueDate
+                        ? new Date(
+                            selectedDocument.dueDate
+                          ).toLocaleDateString()
+                        : "N/A"}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={() => setSelectedDocument(null)}
+                  >
+                    <Text style={styles.closeButtonText}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          </View>
         </View>
       </View>
-    </View>
   );
 }
 
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
-      marginTop: height * 0.02,
       backgroundColor: "#fff",
+      marginTop: height * 0.02,
       borderRadius: 6,
+    },
+    tableContainer: {
+      flexGrow: 1,
+      paddingBottom: height * 0.01,
     },
     loader: {
       fontWeight: "bold",
@@ -316,9 +336,6 @@ const getStyles = (width: number, height: number) =>
     },
     activeTabText: {
       color: "#fff",
-    },
-    tableContainer: {
-      paddingBottom: height * 0.01,
     },
     tableHeader: {
       flexDirection: "row",
