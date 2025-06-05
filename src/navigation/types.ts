@@ -45,6 +45,7 @@ export type BottomTabParamListFamily = {
 export type DrawerParamListOther = {
   MainTabs: { authToken: string; accountId: string };
   Details: { authToken: string; accountId: string };
+  CashTransactions: { authToken: string; accountId: string };
   PortfolioSummary: { authToken: string; accountId: string };
   TopTenInvestments: { authToken: string; accountId: string };
   InvestmentPerformance: { authToken: string; accountId: string };
@@ -273,8 +274,8 @@ export interface AccountEntity {
   accountType: string;
   activePortfolio: string;
   id: string;
-  tfn: string;
-  abn: string;
+  tfn?: string;
+  abn?: string;
 }
 
 export interface AccountIndividual {
@@ -341,7 +342,7 @@ export interface EsignDocument {
   companyName: string;
   documentPath: string;
   documents: DocumentFile[];
-  dueDate: string; 
+  dueDate: string;
   esigningCode: string;
   esigningId: string;
   sentBy: string;
@@ -351,3 +352,16 @@ export interface EsignDocument {
   tags: string;
 }
 
+export interface CashTransactions {
+  balance: number;
+  classification: string;
+  credit: number | null;
+  debit: number | null;
+  holdingCode: string;
+  holdingDescription: string;
+  id: string;
+  isDefault: boolean;
+  transactionAmount: number;
+  transactionDate: string;
+  transactionDescription: string;
+}
