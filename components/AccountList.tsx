@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -15,11 +16,10 @@ import {
   AccountIndividual,
   Props,
 } from "../src/navigation/types";
-import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function AccountTables({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const [entities, setEntities] = useState<AccountEntity[]>([]);
   const [individuals, setIndividuals] = useState<AccountIndividual[]>([]);
   const [loading, setLoading] = useState(true);
@@ -158,7 +158,6 @@ export default function AccountTables({ refreshTrigger }: Props) {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
         <View style={styles.border}>
           <Text style={styles.bodyText}>Account List</Text>
 
@@ -224,7 +223,6 @@ export default function AccountTables({ refreshTrigger }: Props) {
         </View>
         {renderIndividualModal()}
         {renderEntityModal()}
-      </ScrollView>
     </View>
   );
 }

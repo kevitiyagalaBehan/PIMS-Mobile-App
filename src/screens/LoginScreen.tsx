@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
+  useWindowDimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -16,11 +17,10 @@ import { loginUser, requestPasswordReset } from "../utils/pimsApi";
 import { NavigationProps } from "../navigation/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { useWindowSize } from "../../hooks/useWindowSize";
 
 export default function LoginScreen() {
   const { setUserData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);

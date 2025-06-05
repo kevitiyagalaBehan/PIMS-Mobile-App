@@ -1,14 +1,13 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, useWindowDimensions } from "react-native";
 import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getTopTenInvestmentDetails } from "../src/utils/pimsApi";
 import { TopTenInvestmentDetails, Props } from "../src/navigation/types";
-import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function TopTenInvestments({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const [investments, setInvestments] = useState<
     TopTenInvestmentDetails[] | null
   >(null);

@@ -3,19 +3,25 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { Text, View, TouchableOpacity, Image, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAuth } from "../context/AuthContext";
 import { handleLogout } from "../utils/logout";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import { getLinkedUsers } from "../utils/pimsApi";
 
 export default function CustomDrawerContent(props: any) {
   const { userData, setCurrentUserName, currentUserName, resetAuthState } =
     useAuth();
   const { navigation } = props;
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
   useEffect(() => {

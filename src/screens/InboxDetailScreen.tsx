@@ -8,9 +8,9 @@ import {
   Platform,
   StyleSheet,
   TouchableOpacity,
+  useWindowDimensions,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import { InboxRouteProp } from "../navigation/types";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
@@ -28,7 +28,7 @@ export default function InboxDetail() {
   const navigation = useNavigation();
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState(dummyComments);
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
   const handleSend = () => {
     if (!newComment.trim()) return;

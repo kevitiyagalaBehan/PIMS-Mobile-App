@@ -1,14 +1,13 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, useWindowDimensions } from "react-native";
 import React from "react";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useWindowSize } from "../hooks/useWindowSize";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Drawer() {
   const navigation = useNavigation();
-  const { height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
 
   return (
     <SafeAreaView style={styles.container}>

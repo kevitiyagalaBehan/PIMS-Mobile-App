@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
-import { StyleSheet, RefreshControl, ScrollView, View } from "react-native";
+import { StyleSheet, RefreshControl, ScrollView, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InvestmentPerformance, HeaderWithMenu } from "../../components";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import * as ScreenOrientation from "expo-screen-orientation";
 
 export default function InvestmentPerformanceScreen() {
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
   const styles = getStyles(width, height);
 

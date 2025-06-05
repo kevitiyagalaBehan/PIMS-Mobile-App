@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import React from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { PortfolioData } from "../src/navigation/types";
-import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function PortfolioSummaryOther({
   data,
@@ -13,8 +12,7 @@ export default function PortfolioSummaryOther({
   loading: boolean;
   error: string | null;
 }) {
-
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
   if (loading) {
@@ -22,7 +20,11 @@ export default function PortfolioSummaryOther({
   }
 
   if (!data || error) {
-    return <Text style={styles.errorText}>{error || "No portfolio data available"}</Text>;
+    return (
+      <Text style={styles.errorText}>
+        {error || "No portfolio data available"}
+      </Text>
+    );
   }
 
   const dataWithTotal = [

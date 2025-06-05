@@ -5,15 +5,15 @@ import { DrawerActions, useNavigation } from "@react-navigation/native";
 import HomeScreenOther from "../screens/HomeScreenOther";
 import ESigningScreen from "../screens/ESigningScreen";
 import { BottomTabParamListOther } from "./types";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import InboxStackNavigator from "./InboxStackNavigator";
+import { useWindowDimensions } from "react-native";
 
 const Tab = createBottomTabNavigator<BottomTabParamListOther>();
 
 export default function BottomTabOther() {
   const navigation = useNavigation();
-  const { height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
 
   return (
     <Tab.Navigator

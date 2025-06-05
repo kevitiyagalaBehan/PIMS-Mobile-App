@@ -1,12 +1,17 @@
 import React from "react";
-import { StyleSheet, RefreshControl, ScrollView, View } from "react-native";
+import {
+  StyleSheet,
+  RefreshControl,
+  ScrollView,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Details, HeaderWithMenu } from "../../components";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
-import { useWindowSize } from "../../hooks/useWindowSize";
 
 export default function TopTenInvestmentsScreen() {
-  const { width } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
 
   const styles = getStyles(width);
@@ -20,10 +25,7 @@ export default function TopTenInvestmentsScreen() {
         }
       >
         <View style={styles.bodySection}>
-          <Details
-            refreshTrigger={refreshTrigger}
-            refreshing={refreshing}
-          />
+          <Details refreshTrigger={refreshTrigger} refreshing={refreshing} />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,16 +1,14 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import React, { useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getSuperFundName } from "../src/utils/pimsApi";
-import { useWindowSize } from "../hooks/useWindowSize";
 import Drawer from "./Drawer";
 
 export default function HeaderWithMenu() {
-  const { userData, setUserData, currentAccountName, setCurrentAccountName } =
-    useAuth();
+  const { userData, currentAccountName, setCurrentAccountName } = useAuth();
 
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
 
   useEffect(() => {
     const fetchUserData = async () => {

@@ -8,12 +8,13 @@ import PortfolioBalanceScreen from "../screens/PortfolioBalanceScreen";
 import ContributionCapScreen from "../screens/ContributionCapScreen";
 import PensionLimitScreen from "../screens/PensionLimitSummaryScreen";
 import EstimatedMemberStatementScreen from "../screens/EstimatedMemberStatementScreen";
+import DetailsScreen from "../screens/DetailsScreen";
 import CustomDrawerContent from "./CustomDrawerContent";
 import { DrawerParamListOther } from "./types";
 import { useAuth } from "../context/AuthContext";
 import { useAutoLogout } from "../../hooks/useAutoLogout";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import DetailsScreen from "../screens/DetailsScreen";
+import CashTransactionsScreen from "../screens/CashTransactionsScreen";
 
 const Drawer = createDrawerNavigator<DrawerParamListOther>();
 
@@ -66,6 +67,20 @@ export default function DrawerNavigatorOther() {
           drawerLabel: "Details",
           drawerIcon: ({ color }) => (
             <Ionicons name="list-circle" size={30} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="CashTransactions"
+        component={CashTransactionsScreen}
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
+        }}
+        options={{
+          drawerLabel: "Bank",
+          drawerIcon: ({ color }) => (
+            <Ionicons name="card" size={30} color={color} />
           ),
         }}
       />

@@ -1,14 +1,13 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, useWindowDimensions } from "react-native";
 import { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getConsolidateData } from "../src/utils/pimsApi";
 import { ConsolidateData, Props } from "../src/navigation/types";
-import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function ConsolidatedAccounts({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const [accounts, setAccounts] = useState<ConsolidateData[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

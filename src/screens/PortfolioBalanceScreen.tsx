@@ -1,13 +1,17 @@
 import React from "react";
-import { StyleSheet, RefreshControl, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  RefreshControl,
+  ScrollView,
+  useWindowDimensions,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PortfolioBalanceSummary, HeaderWithMenu } from "../../components";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import { View } from "react-native";
 
 export default function PortfolioBalanceScreen() {
-  const { width } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
 
   const styles = getStyles(width);

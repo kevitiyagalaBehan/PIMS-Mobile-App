@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getPensionLimitSummary } from "../src/utils/pimsApi";
-import {
-  Props,
-  PensionLimitDetails,
-} from "../src/navigation/types";
-import { useWindowSize } from "../hooks/useWindowSize";
+import { Props, PensionLimitDetails } from "../src/navigation/types";
 
 export default function PensionLimitSummary({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const [pensionLimitSummary, setPensionLimitSummary] =
     useState<PensionLimitDetails | null>(null);
   const [loading, setLoading] = useState(true);

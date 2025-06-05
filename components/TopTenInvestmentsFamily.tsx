@@ -1,14 +1,20 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  useWindowDimensions,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getTopTenInvestmentDetailsFamily } from "../src/utils/pimsApi";
 import { TopTenInvestmentDetailsFamily, Props } from "../src/navigation/types";
-import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function TopTenInvestmentsFamily({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const [investments, setInvestments] = useState<
     TopTenInvestmentDetailsFamily[] | null
   >(null);
@@ -126,9 +132,7 @@ export default function TopTenInvestmentsFamily({ refreshTrigger }: Props) {
                   <Text style={styles.modalTitle}>{selectedItem.code}</Text>
                   <View style={styles.modalRow}>
                     <Text style={styles.modalLabel}>Owner:</Text>
-                    <Text style={styles.modalText}>
-                      {selectedItem.owner}
-                    </Text>
+                    <Text style={styles.modalText}>{selectedItem.owner}</Text>
                   </View>
                   <View style={styles.modalRow}>
                     <Text style={styles.modalLabel}>Value:</Text>

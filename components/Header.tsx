@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import { useEffect, useState } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
@@ -7,7 +7,6 @@ import {
   getLinkedUsers,
   getEntityAccounts,
 } from "../src/utils/pimsApi";
-import { useWindowSize } from "../hooks/useWindowSize";
 import { SelectList } from "react-native-dropdown-select-list";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -24,7 +23,7 @@ export default function Header() {
     setEntityAccounts,
   } = useAuth();
   const [accountOptions, setAccountOptions] = useState<AccountOption[]>([]);
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 

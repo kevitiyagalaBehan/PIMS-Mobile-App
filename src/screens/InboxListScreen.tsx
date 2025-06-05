@@ -1,47 +1,63 @@
 import React from "react";
-import { Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, View } from "react-native";
+import {
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import { InboxStackNavigationProp } from "../navigation/types";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 const dummyQueries = [
-  { id: "1", title: "Account Statement Request", lastCommentDate: "2025-05-10" },
+  {
+    id: "1",
+    title: "Account Statement Request",
+    lastCommentDate: "2025-05-10",
+  },
   { id: "2", title: "Incorrect Balance Issue", lastCommentDate: "2025-05-12" },
 ];
 
 export default function InboxList() {
   const navigation = useNavigation<InboxStackNavigationProp<"InboxList">>();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-              <Text style={styles.headerText}>Inbox</Text>
-            </View>
+        <Text style={styles.headerText}>Inbox</Text>
+      </View>
       <View style={styles.bodySection}>
         {dummyQueries.length === 0 ? (
-        <Text style={styles.emptyText}>No queries found.</Text>
-      ) : (
-        <FlatList
-          data={dummyQueries}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.item}
-              onPress={() => navigation.navigate("InboxDetail", { queryId: item.id, title: item.title })}
-            >
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.date}>{item.lastCommentDate}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      )}
+          <Text style={styles.emptyText}>No queries found.</Text>
+        ) : (
+          <FlatList
+            data={dummyQueries}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.item}
+                onPress={() =>
+                  navigation.navigate("InboxDetail", {
+                    queryId: item.id,
+                    title: item.title,
+                  })
+                }
+              >
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.date}>{item.lastCommentDate}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
-};
+}
 
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({

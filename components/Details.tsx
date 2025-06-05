@@ -1,14 +1,13 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../src/context/AuthContext";
 import { getClientAccountDetails } from "../src/utils/pimsApi";
 import { ClientAccountDetails, Props } from "../src/navigation/types";
-import { useWindowSize } from "../hooks/useWindowSize";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 export default function Details({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const [loading, setLoading] = useState(true);
   const [details, setDetails] = useState<ClientAccountDetails[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -72,7 +71,6 @@ export default function Details({ refreshTrigger }: Props) {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
         <View style={styles.border}>
           <Text style={styles.bodyText}>Account Details</Text>
           {rows.map((item, index) => (
@@ -86,7 +84,6 @@ export default function Details({ refreshTrigger }: Props) {
             </View>
           ))}
         </View>
-      </ScrollView>
     </View>
   );
 }

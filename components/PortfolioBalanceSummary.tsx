@@ -5,23 +5,19 @@ import {
   StyleSheet,
   Modal,
   TouchableOpacity,
+  useWindowDimensions,
 } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import Svg, { Rect } from "react-native-svg";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getSuperFundDetails } from "../src/utils/pimsApi";
-import {
-  Props,
-  PortfolioItem,
-  SelectedData,
-} from "../src/navigation/types";
+import { Props, PortfolioItem, SelectedData } from "../src/navigation/types";
 import { useIsFocused } from "@react-navigation/native";
-import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const [portfolioData, setPortfolioData] = useState<PortfolioItem[] | null>(
     null
   );

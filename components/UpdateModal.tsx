@@ -5,8 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Linking,
+  useWindowDimensions,
 } from "react-native";
-import { useWindowSize } from "../hooks/useWindowSize";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 export default function UpdateModal({
@@ -17,7 +17,7 @@ export default function UpdateModal({
   updateUrl: string;
 }) {
   const goToStore = () => Linking.openURL(updateUrl);
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
   return (

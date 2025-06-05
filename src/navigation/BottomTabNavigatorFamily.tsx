@@ -5,22 +5,22 @@ import { DrawerActions, useNavigation } from "@react-navigation/native";
 import HomeScreenFamily from "../screens/HomeScreenFamily";
 import ESigningScreen from "../screens/ESigningScreen";
 import { BottomTabParamListFamily } from "./types";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import InboxStackNavigator from "./InboxStackNavigator";
+import { useWindowDimensions } from "react-native";
 
 const Tab = createBottomTabNavigator<BottomTabParamListFamily>();
 
 export default function BottomTabFamily() {
   const navigation = useNavigation();
-  const { height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
 
   return (
     <Tab.Navigator
-    initialRouteName="HomeFamily"
+      initialRouteName="HomeFamily"
       screenOptions={{
         tabBarStyle: { height: height * 0.08 },
-        tabBarLabelStyle: { fontSize: RFPercentage(1.4), fontWeight: "bold" }
+        tabBarLabelStyle: { fontSize: RFPercentage(1.4), fontWeight: "bold" },
       }}
     >
       <Tab.Screen
@@ -62,7 +62,7 @@ export default function BottomTabFamily() {
         options={{
           tabBarLabel: "Menu",
           tabBarIcon: ({ color, size }) => (
-              <Ionicons name="menu" size={size} color={color} />
+            <Ionicons name="menu" size={size} color={color} />
           ),
         }}
         listeners={{

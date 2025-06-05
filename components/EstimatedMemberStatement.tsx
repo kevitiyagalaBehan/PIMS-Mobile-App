@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getEstimatedMemberStatement } from "../src/utils/pimsApi";
 import { EstimatedMemberDetails, Props } from "../src/navigation/types";
-import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
   const { userData } = useAuth();
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const [estimatedMemberStatement, setEstimatedMemberStatement] = useState<
     EstimatedMemberDetails[] | null
   >(null);

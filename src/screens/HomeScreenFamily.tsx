@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, ScrollView, RefreshControl, View } from "react-native";
+import {
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 import { useHomeData } from "../../hooks/useHomeDataFamily";
@@ -9,10 +15,9 @@ import {
   ConsolidatedAssetAllocation,
 } from "../../components";
 import { useAuth } from "../context/AuthContext";
-import { useWindowSize } from "../../hooks/useWindowSize";
 
 export default function HomeScreenFamily() {
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
   const { userData } = useAuth();
   const { authToken = "", accountId = "" } = userData ?? {};

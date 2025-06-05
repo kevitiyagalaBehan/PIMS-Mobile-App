@@ -1,13 +1,18 @@
 import React from "react";
-import { StyleSheet, RefreshControl, ScrollView, View } from "react-native";
+import {
+  StyleSheet,
+  RefreshControl,
+  ScrollView,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ContributionCapSummary } from "../../components";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import HeaderWithMenu from "../../components/HeaderWithMenu";
 
 export default function ContributionCapSummaryScreen() {
-  const { width } = useWindowSize();
+  const { width, height } = useWindowDimensions();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
 
   const styles = getStyles(width);
