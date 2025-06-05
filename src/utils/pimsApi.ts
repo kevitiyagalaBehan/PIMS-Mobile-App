@@ -17,6 +17,7 @@ import {
   AccountListResponse,
   AccountIndividual,
   EsignDocument,
+  CashTransactions,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -581,6 +582,33 @@ export const getEsignDocuments = async (
     const data = await response.json();
     //console.log("Data:", data);
     return data as EsignDocument[];
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+};
+
+export const getCashTransactions = async (
+  authToken: string,
+  accountId: string
+): Promise<CashTransactions[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/CashTransactionsV2/${accountId}/2024-06-05/2025-06-05`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch documents: ${response.status}`);
+    }
+    const data = await response.json();
+    //console.log("Data:", data);
+    return data as CashTransactions[];
   } catch (error) {
     console.error("API Error:", error);
     throw error;
