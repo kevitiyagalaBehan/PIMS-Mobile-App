@@ -44,12 +44,12 @@ export default function InvestmentPerformanceChart({ refreshTrigger }: Props) {
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
-  if (!data || error) {
-    return (
-      <Text style={styles.errorText}>
-        {error || "No investment performance data available"}
-      </Text>
-    );
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (!data || data.length === 0) {
+    return <Text style={styles.errorText}>No investment data available</Text>;
   }
 
   const labels = data.map((item) => {

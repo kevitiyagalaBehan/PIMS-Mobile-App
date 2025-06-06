@@ -71,7 +71,7 @@ export default function DrawerNavigatorOther() {
         }}
       />
       <Drawer.Screen
-        name="CashTransactions"
+        name="Transactions"
         component={CashTransactionsScreen}
         initialParams={{
           authToken: userData?.authToken,

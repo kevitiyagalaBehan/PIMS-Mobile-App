@@ -134,8 +134,8 @@ export default function Header() {
           data={accountOptions}
           save="key"
           placeholder="Select account..."
-          boxStyles={styles.dropDownBox}
-          dropdownStyles={styles.dropDownList}
+          //boxStyles={styles.dropDownBox}
+          //dropdownStyles={styles.dropDownList}
           dropdownItemStyles={styles.dropdownItem}
         />
       )}
@@ -158,10 +158,10 @@ const getStyles = (width: number, height: number) =>
       marginBottom: 10,
     },
     dropDownBox: {
-      backgroundColor: "#eee",
+      //backgroundColor: "#eee",
     },
     dropDownList: {
-      backgroundColor: "#eee",
+      //backgroundColor: "#eee",
     },
     dropdownItem: {
       paddingHorizontal: width * 0.06,

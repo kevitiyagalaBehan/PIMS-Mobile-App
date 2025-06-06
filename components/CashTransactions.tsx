@@ -14,7 +14,7 @@ import { getCashTransactions } from "../src/utils/pimsApi";
 import { CashTransactions } from "../src/navigation/types";
 import { useRefreshTrigger } from "../hooks/useRefreshTrigger";
 
-export default function TopTenInvestments() {
+export default function Transactions() {
   const { userData } = useAuth();
   const { width, height } = useWindowDimensions();
   const [transactions, setTransactions] = useState<CashTransactions[] | null>(
@@ -61,16 +61,16 @@ export default function TopTenInvestments() {
 
   const styles = getStyles(width, height);
 
-  if (!transactions || error) {
-    return (
-      <Text style={styles.errorText}>
-        {error || "No transactions data available"}
-      </Text>
-    );
-  }
-
   if (loading) {
     return <Text style={styles.loader}>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (!transactions || transactions.length === 0) {
+    return <Text style={styles.errorText}>No transactions data available</Text>;
   }
 
   return (
@@ -103,7 +103,6 @@ export default function TopTenInvestments() {
                     <Text
                       style={[
                         styles.dataCell,
-                        styles.boldText,
                         styles.leftAlign,
                         styles.underlineText,
                       ]}
@@ -162,7 +161,9 @@ export default function TopTenInvestments() {
                   <View style={styles.modalRow}>
                     <Text style={styles.modalLabel}>Date:</Text>
                     <Text style={styles.modalText}>
-                      {selectedItem.transactionDate}
+                      {new Date(selectedItem.transactionDate).toLocaleDateString(
+                        "en-GB"
+                      )}
                     </Text>
                   </View>
                   <View style={styles.modalRow}>
@@ -226,7 +227,7 @@ const getStyles = (width: number, height: number) =>
       paddingHorizontal: width * 0.02,
     },
     bodyText: {
-      fontWeight: "bold",
+      //fontWeight: "bold",
       color: "#1B77BE",
       marginBottom: height * 0.005,
       fontSize: RFPercentage(2.6),
