@@ -45,7 +45,7 @@ export type BottomTabParamListFamily = {
 export type DrawerParamListOther = {
   MainTabs: { authToken: string; accountId: string };
   Details: { authToken: string; accountId: string };
-  CashTransactions: { authToken: string; accountId: string };
+  Transactions: { authToken: string; accountId: string };
   PortfolioSummary: { authToken: string; accountId: string };
   TopTenInvestments: { authToken: string; accountId: string };
   InvestmentPerformance: { authToken: string; accountId: string };

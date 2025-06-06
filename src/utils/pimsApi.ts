@@ -593,8 +593,17 @@ export const getCashTransactions = async (
   accountId: string
 ): Promise<CashTransactions[] | null> => {
   try {
+    const today = new Date();
+    const lastYear = new Date();
+    lastYear.setFullYear(today.getFullYear() - 1);
+
+    const formatDate = (date: Date) => date.toISOString().split("T")[0];
+
+    const startDate = formatDate(lastYear);
+    const endDate = formatDate(today);
+
     const response = await fetch(
-      `${apiBaseUrl}/CashTransactionsV2/${accountId}/2024-06-05/2025-06-05`,
+      `${apiBaseUrl}/CashTransactionsV2/${accountId}/${startDate}/${endDate}`,
       {
         method: "GET",
         headers: {
@@ -603,11 +612,12 @@ export const getCashTransactions = async (
         },
       }
     );
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch documents: ${response.status}`);
+      throw new Error(`Failed to fetch transactions: ${response.status}`);
     }
+
     const data = await response.json();
-    //console.log("Data:", data);
     return data as CashTransactions[];
   } catch (error) {
     console.error("API Error:", error);
