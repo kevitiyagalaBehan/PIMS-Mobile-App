@@ -365,3 +365,27 @@ export interface CashTransactions {
   transactionDate: string;
   transactionDescription: string;
 }
+
+export interface Messages {
+  commentCount: number;
+  description: string;
+  fileCount: number;
+  fromPIMS: boolean;
+  id: string;
+  uploadedBy: string;
+  uploadedById: string;
+  uploadedByLevel: string;
+  uploadedDate: number;
+}
+
+export interface Comments {
+  commentCount: number;
+  description: string;
+  fileCount: number;
+  fromPIMS: boolean;
+  id: string;
+  uploadedBy: string;
+  uploadedById: string;
+  uploadedByLevel: string;
+  uploadedDate: number;
+}
