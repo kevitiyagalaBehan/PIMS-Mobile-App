@@ -43,11 +43,6 @@ export default function Details({ refreshTrigger }: Props) {
     fetchData();
   }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return isNaN(date.getTime()) ? "-" : date.toLocaleDateString("en-GB");
-  };
-
   if (loading) {
     return <Text style={styles.loader}>Loading...</Text>;
   }
@@ -70,8 +65,22 @@ export default function Details({ refreshTrigger }: Props) {
     { label: "Job Type", value: account.jobType },
     { label: "ABN", value: account.fundABN },
     { label: "TFN", value: account.fundTFN || "<<Recorded>>" },
-    { label: "SOA Date", value: formatDate(account.soaDate) },
-    { label: "Fund Start Date", value: formatDate(account.fundStartDate) },
+    {
+      label: "SOA Date",
+      value: new Date(account.soaDate).toLocaleDateString("en-AU", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+    },
+    {
+      label: "Fund Start Date",
+      value: new Date(account.fundStartDate).toLocaleDateString("en-AU", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+    },
     { label: "Adviser", value: account.adviserName },
   ];
 
@@ -110,7 +119,7 @@ const getStyles = (width: number, height: number) =>
       paddingBottom: height * 0.01,
     },
     bodyText: {
-      fontWeight: "bold",
+      //fontWeight: "bold",
       color: "#1B77BE",
       marginBottom: height * 0.01,
       fontSize: RFPercentage(2.6),

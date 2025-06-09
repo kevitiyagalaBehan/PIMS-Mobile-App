@@ -319,7 +319,7 @@ const getStyles = (width: number, height: number) =>
       paddingHorizontal: width * 0.02,
     },
     bodyText: {
-      fontWeight: "bold",
+      //fontWeight: "bold",
       color: "#1B77BE",
       fontSize: RFPercentage(2.6),
       marginBottom: height * 0.005,

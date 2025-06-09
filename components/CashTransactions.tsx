@@ -39,6 +39,17 @@ export default function Transactions() {
         userData.authToken,
         userData.accountId
       );
+
+      const classificationOptions = Array.from(
+        new Set(transactions?.map((t) => t.classification))
+      );
+      const cashAccountOptions = Array.from(
+        new Set(transactions?.map((t) => t.holdingDescription))
+      );
+
+      //console.log("Classifications:", classificationOptions);
+      //console.log("Description:", cashAccountOptions);
+
       setTransactions(data);
     } catch (err) {
       setError("Failed to load transaction details");
@@ -80,10 +91,11 @@ export default function Transactions() {
 
         <View style={styles.tableContainer}>
           <View style={styles.tableHeader}>
-            <Text style={[styles.headerCell1, { flex: 1 }]}>Date</Text>
-            <Text style={[styles.headerCell2, { flex: 1 }]}>Withdrawal</Text>
-            <Text style={[styles.headerCell2, { flex: 1 }]}>Deposit</Text>
-            <Text style={[styles.headerCell2, { flex: 1 }]}>Balance</Text>
+            <Text style={[styles.headerCell1, { flex: 1.5 }]}>
+              Date Description
+            </Text>
+            <Text style={[styles.headerCell2, { flex: 1 }]}>Amount $</Text>
+            <Text style={[styles.headerCell2, { flex: 1 }]}>Balance $</Text>
           </View>
           {transactions.length > 0 ? (
             <FlatList
@@ -98,20 +110,29 @@ export default function Transactions() {
                 >
                   <TouchableOpacity
                     onPress={() => handleCodePress(item)}
-                    style={{ flex: 1 }}
+                    style={{ flex: 1.5 }}
                   >
-                    <Text
-                      style={[
-                        styles.dataCell,
-                        styles.leftAlign,
-                        styles.underlineText,
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {new Date(item.transactionDate).toLocaleDateString(
-                        "en-GB"
-                      )}
-                    </Text>
+                    <View style={{ flexDirection: "column" }}>
+                      <Text style={[styles.dataCell, styles.leftAlign]}>
+                        {new Date(item.transactionDate).toLocaleDateString(
+                          "en-AU",
+                          {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          }
+                        )}
+                      </Text>
+                      <Text style={[styles.dataCell, styles.leftAlign]}>
+                        {item.transactionDescription?.includes(
+                          "Closing Balance"
+                        )
+                          ? item.transactionDescription
+                              .replace("Closing Balance", "")
+                              .trim()
+                          : item.transactionDescription}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
 
                   <Text
@@ -120,14 +141,6 @@ export default function Transactions() {
                   >
                     {item.debit != null ? item.debit.toLocaleString() : ""}
                   </Text>
-
-                  <Text
-                    style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
-                    numberOfLines={1}
-                  >
-                    {item.credit != null ? item.credit.toLocaleString() : ""}
-                  </Text>
-
                   <Text
                     style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
                     numberOfLines={1}
@@ -161,9 +174,9 @@ export default function Transactions() {
                   <View style={styles.modalRow}>
                     <Text style={styles.modalLabel}>Date:</Text>
                     <Text style={styles.modalText}>
-                      {new Date(selectedItem.transactionDate).toLocaleDateString(
-                        "en-GB"
-                      )}
+                      {new Date(
+                        selectedItem.transactionDate
+                      ).toLocaleDateString("en-GB")}
                     </Text>
                   </View>
                   <View style={styles.modalRow}>

@@ -58,8 +58,8 @@ export default function ContributionCapSummary({ refreshTrigger }: Props) {
   }
 
   const { financialYear, members } = data;
-  const endDate = new Date(financialYear.endDate).toLocaleDateString("en-US", {
-    month: "long",
+  const endDate = new Date(financialYear.endDate).toLocaleDateString("en-AU", {
+    month: "short",
     day: "numeric",
     year: "numeric",
   });
@@ -205,7 +205,7 @@ const getStyles = (width: number, height: number) =>
       marginLeft: height * 0.01,
     },
     bodyText: {
-      fontWeight: "bold",
+      //fontWeight: "bold",
       color: "#1B77BE",
       marginBottom: height * 0.005,
       fontSize: RFPercentage(2.6),
