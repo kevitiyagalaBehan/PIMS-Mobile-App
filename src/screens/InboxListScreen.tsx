@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   FlatList,
@@ -9,22 +9,55 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { InboxStackNavigationProp } from "../navigation/types";
+import { InboxStackNavigationProp, Messages, Props } from "../navigation/types";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { useAuth } from "../context/AuthContext";
+import { getMessages } from "../utils/pimsApi";
 
-const dummyQueries = [
-  {
-    id: "1",
-    title: "Account Statement Request",
-    lastCommentDate: "2025-05-10",
-  },
-  { id: "2", title: "Incorrect Balance Issue", lastCommentDate: "2025-05-12" },
-];
-
-export default function InboxList() {
+export default function InboxList({ refreshTrigger }: Props) {
+  const { userData } = useAuth();
   const navigation = useNavigation<InboxStackNavigationProp<"InboxList">>();
+  const [messages, setMessages] = useState<Messages[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userData?.authToken || !userData?.accountId) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const messages = await getMessages(
+          userData.authToken,
+          userData.accountId
+        );
+        setMessages(messages);
+      } catch (err) {
+        setError("Failed to load messages");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userData?.authToken, userData?.accountId, refreshTrigger]);
+
+  if (loading) {
+    return <Text style={styles.loader}>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (!messages || messages.length === 0) {
+    return <Text style={styles.errorText}>No messages available</Text>;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -32,11 +65,11 @@ export default function InboxList() {
         <Text style={styles.headerText}>Inbox</Text>
       </View>
       <View style={styles.bodySection}>
-        {dummyQueries.length === 0 ? (
+        {messages.length === 0 ? (
           <Text style={styles.emptyText}>No queries found.</Text>
         ) : (
           <FlatList
-            data={dummyQueries}
+            data={messages}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -44,12 +77,14 @@ export default function InboxList() {
                 onPress={() =>
                   navigation.navigate("InboxDetail", {
                     queryId: item.id,
-                    title: item.title,
+                    title: item.description,
                   })
                 }
               >
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.date}>{item.lastCommentDate}</Text>
+                <Text style={styles.title}>{item.description}</Text>
+                <Text style={styles.date}>
+                  {new Date(item.uploadedDate).toLocaleDateString("en-GB")}
+                </Text>
               </TouchableOpacity>
             )}
           />
@@ -77,6 +112,19 @@ const getStyles = (width: number, height: number) =>
     },
     bodySection: {
       paddingHorizontal: width * 0.02,
+    },
+    errorText: {
+      color: "red",
+      fontSize: RFPercentage(2),
+      textAlign: "center",
+      marginTop: height * 0.3,
+    },
+    loader: {
+      fontWeight: "bold",
+      color: "#1B77BE",
+      fontSize: RFPercentage(2.6),
+      marginTop: height * 0.021,
+      marginLeft: height * 0.01,
     },
     item: {
       paddingVertical: height * 0.02,
