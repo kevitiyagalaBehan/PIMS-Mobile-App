@@ -18,6 +18,8 @@ import {
   AccountIndividual,
   EsignDocument,
   CashTransactions,
+  Messages,
+  Comments,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -619,6 +621,33 @@ export const getCashTransactions = async (
 
     const data = await response.json();
     return data as CashTransactions[];
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+};
+
+export const getMessages = async (
+  authToken: string,
+  accountId: string
+): Promise<Messages[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/ClientDocumentUpload/${accountId}/Inbox/V2`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch messages: ${response.status}`);
+    }
+    const data = await response.json();
+    //console.log("Data:", data);
+    return data as Messages[];
   } catch (error) {
     console.error("API Error:", error);
     throw error;
