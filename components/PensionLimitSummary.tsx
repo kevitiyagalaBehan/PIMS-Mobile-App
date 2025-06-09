@@ -50,12 +50,12 @@ export default function PensionLimitSummary({ refreshTrigger }: Props) {
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
   if (!pensionLimitSummary || error) {
-    return (
-      <View style={styles.errorText}>
-        <Text>{error || "No pension data available"}</Text>
-      </View>
-    );
+    return <Text style={styles.errorText}>No pension data available</Text>;
   }
 
   const { financialYear, members } = pensionLimitSummary;

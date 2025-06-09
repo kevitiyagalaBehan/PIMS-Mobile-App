@@ -72,6 +72,10 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
   const chartHeight = width * 0.8;
   const styles = getStyles(width, height);
 
+  if (loading) {
+    return <Text style={styles.loader}>Loading...</Text>;
+  }
+
   if (!userData || !userData.authToken || !userData.accountId) {
     return (
       <View style={styles.errorContainer}>
@@ -80,16 +84,8 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
     );
   }
 
-  if (loading) {
-    return <Text style={styles.loader}>Loading...</Text>;
-  }
-
-  if (!portfolioData || error) {
-    return (
-      <Text style={styles.errorText}>
-        {error || "No portfolio data available"}
-      </Text>
-    );
+  if (!portfolioData || portfolioData.length === 0) {
+    return <Text style={styles.errorText}>No portfolio data available</Text>;
   }
 
   const handleBarPress = (item: PortfolioItem) => {

@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  useWindowDimensions,
+} from "react-native";
 import { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
@@ -46,16 +53,16 @@ export default function ConsolidatedAccounts({ refreshTrigger }: Props) {
     setModalVisible(true);
   };
 
-  if (!accounts || error) {
-    return (
-      <Text style={styles.errorText}>
-        {error || "No consolidate data available"}
-      </Text>
-    );
-  }
-
   if (loading) {
     return <Text style={styles.loader}>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (!accounts || accounts.length === 0) {
+    return <Text style={styles.errorText}>No consolidate data available</Text>;
   }
 
   const totalPortfolioValue = accounts?.reduce(

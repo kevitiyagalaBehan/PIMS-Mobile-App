@@ -51,11 +51,13 @@ export default function AssetAllocationFamily({
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
   if (!data || error) {
     return (
-      <Text style={styles.errorText}>
-        {error || "No asset allocation data available"}
-      </Text>
+      <Text style={styles.errorText}>No asset allocation data available</Text>
     );
   }
 
@@ -68,7 +70,7 @@ export default function AssetAllocationFamily({
             <PieChart
               data={chartData}
               width={width * 1.0}
-              height={Math.min(height * 0.30, 220)}
+              height={Math.min(height * 0.3, 220)}
               chartConfig={{
                 backgroundColor: "#ffffff",
                 backgroundGradientFrom: "#ffffff",

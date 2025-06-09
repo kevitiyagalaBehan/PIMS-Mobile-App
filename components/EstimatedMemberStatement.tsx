@@ -56,8 +56,12 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
-  if (!estimatedMemberStatement || error) {
-    return <Text style={styles.errorText}>{error || "No data available"}</Text>;
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (!estimatedMemberStatement || estimatedMemberStatement.length === 0) {
+    return <Text style={styles.errorText}>No estimated data available</Text>;
   }
 
   const members = estimatedMemberStatement;

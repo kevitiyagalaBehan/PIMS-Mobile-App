@@ -23,6 +23,7 @@ export default function ESigning({ refreshTrigger }: Props) {
   const [selectedDocument, setSelectedDocument] =
     useState<EsignDocument | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
@@ -41,7 +42,7 @@ export default function ESigning({ refreshTrigger }: Props) {
         );
         setDocuments(data || []);
       } catch (err) {
-        console.error("Failed to load documents:", err);
+        setError("Failed to load documents");
         setDocuments([]);
       } finally {
         setLoading(false);
@@ -71,8 +72,16 @@ export default function ESigning({ refreshTrigger }: Props) {
   };
 
   if (loading) {
-    return <Text style={styles.loader}>Loading...</Text>;
-  }
+      return <Text style={styles.loader}>Loading...</Text>;
+    }
+  
+    if (error) {
+      return <Text style={styles.errorText}>{error}</Text>;
+    }
+  
+    if (!documents || documents.length === 0) {
+      return <Text style={styles.errorText}>No investments data available</Text>;
+    }
 
   return (
     <View style={styles.container}>
@@ -296,6 +305,12 @@ const getStyles = (width: number, height: number) =>
       fontSize: RFPercentage(2.6),
       marginTop: height * 0.021,
       marginLeft: height * 0.013,
+    },
+    errorText: {
+      color: "red",
+      fontSize: RFPercentage(2),
+      textAlign: "center",
+      marginTop: height * 0.3,
     },
     border: {
       borderWidth: 1,

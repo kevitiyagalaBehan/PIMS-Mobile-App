@@ -49,12 +49,12 @@ export default function ContributionCapSummary({ refreshTrigger }: Props) {
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
   if (!data || error) {
-    return (
-      <View style={styles.errorText}>
-        <Text>{error || "No contribution data available"}</Text>
-      </View>
-    );
+    return <Text style={styles.errorText}>No contribution data available</Text>;
   }
 
   const { financialYear, members } = data;

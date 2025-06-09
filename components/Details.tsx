@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  useWindowDimensions,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../src/context/AuthContext";
 import { getClientAccountDetails } from "../src/utils/pimsApi";
@@ -42,16 +48,16 @@ export default function Details({ refreshTrigger }: Props) {
     return isNaN(date.getTime()) ? "-" : date.toLocaleDateString("en-GB");
   };
 
-  if (!details || error) {
-    return (
-      <Text style={styles.errorText}>
-        {error || "No account details available"}
-      </Text>
-    );
-  }
-
   if (loading) {
     return <Text style={styles.loader}>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (!details || details.length === 0) {
+    return <Text style={styles.errorText}>No account details available</Text>;
   }
 
   const account = details[0];
@@ -71,19 +77,19 @@ export default function Details({ refreshTrigger }: Props) {
 
   return (
     <View style={styles.container}>
-        <View style={styles.border}>
-          <Text style={styles.bodyText}>Account Details</Text>
-          {rows.map((item, index) => (
-            <View key={index} style={styles.row}>
-              <View style={styles.labelCell}>
-                <Text style={styles.labelText}>{item.label}</Text>
-              </View>
-              <View style={styles.valueCell}>
-                <Text style={styles.valueText}>{item.value}</Text>
-              </View>
+      <View style={styles.border}>
+        <Text style={styles.bodyText}>Account Details</Text>
+        {rows.map((item, index) => (
+          <View key={index} style={styles.row}>
+            <View style={styles.labelCell}>
+              <Text style={styles.labelText}>{item.label}</Text>
             </View>
-          ))}
-        </View>
+            <View style={styles.valueCell}>
+              <Text style={styles.valueText}>{item.value}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
     </View>
   );
 }

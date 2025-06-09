@@ -22,6 +22,7 @@ export default function AccountTables({ refreshTrigger }: Props) {
   const { width, height } = useWindowDimensions();
   const [entities, setEntities] = useState<AccountEntity[]>([]);
   const [individuals, setIndividuals] = useState<AccountIndividual[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedIndividual, setSelectedIndividual] = useState<any>(null);
   const [selectedEntity, setSelectedEntity] = useState<any>(null);
@@ -45,7 +46,7 @@ export default function AccountTables({ refreshTrigger }: Props) {
         setEntities(entities);
         setIndividuals(individuals);
       } catch (err) {
-        console.error("Failed to fetch account list:", err);
+        setError("Failed to load client account details");
       } finally {
         setLoading(false);
       }
@@ -153,8 +154,19 @@ export default function AccountTables({ refreshTrigger }: Props) {
   );
 
   if (loading) {
-    return <Text style={styles.loader}>Loading...</Text>;
-  }
+      return <Text style={styles.loader}>Loading...</Text>;
+    }
+  
+    if (error) {
+      return <Text style={styles.errorText}>{error}</Text>;
+    }
+  
+    if (!entities || entities.length === 0) {
+      return <Text style={styles.errorText}>No client account details available</Text>;
+    }
+    if (!individuals || individuals.length === 0) {
+      return <Text style={styles.errorText}>No client account details available</Text>;
+    }
 
   return (
     <View style={styles.container}>
@@ -271,6 +283,12 @@ const getStyles = (width: number, height: number) =>
       textDecorationLine: "underline",
       color: "#4A90E2",
       fontWeight: "bold",
+    },
+    errorText: {
+      color: "red",
+      fontSize: RFPercentage(2),
+      textAlign: "center",
+      marginTop: height * 0.3,
     },
     loader: {
       fontWeight: "bold",

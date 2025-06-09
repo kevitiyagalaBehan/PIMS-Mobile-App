@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  useWindowDimensions,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
@@ -48,16 +55,16 @@ export default function TopTenInvestments({ refreshTrigger }: Props) {
 
   const styles = getStyles(width, height);
 
-  if (!investments || error) {
-    return (
-      <Text style={styles.errorText}>
-        {error || "No investments data available"}
-      </Text>
-    );
-  }
-
   if (loading) {
     return <Text style={styles.loader}>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (!investments || investments.length === 0) {
+    return <Text style={styles.errorText}>No investments data available</Text>;
   }
 
   return (
