@@ -53,16 +53,18 @@ export default function ContributionCapSummary({ refreshTrigger }: Props) {
     return <Text style={styles.errorText}>{error}</Text>;
   }
 
-  if (!data || error) {
+  if (!data || !data.financialYear || !data.members || error) {
     return <Text style={styles.errorText}>No contribution data available</Text>;
   }
 
   const { financialYear, members } = data;
+
   const endDate = new Date(financialYear.endDate).toLocaleDateString("en-AU", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
+
   const formatShortFinancialYear = (fy: string) => {
     const [start, end] = fy.split("/");
     return `${start.slice(-2)}/${end.slice(-2)}`;
@@ -188,7 +190,7 @@ const getStyles = (width: number, height: number) =>
     container: {
       flex: 1,
       backgroundColor: "#fff",
-      marginTop: height * 0.02,
+      marginTop: height * 0.01,
       borderRadius: 6,
     },
     border: {

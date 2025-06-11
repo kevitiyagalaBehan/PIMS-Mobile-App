@@ -161,7 +161,7 @@ const getStyles = (width: number, height: number) =>
     container: {
       flex: 1,
       backgroundColor: "#fff",
-      marginTop: height * 0.02,
+      marginTop: height * 0.01,
       borderRadius: 6,
     },
     border: {

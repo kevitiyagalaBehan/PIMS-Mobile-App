@@ -79,7 +79,11 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
       <View style={styles.border}>
         <Text style={styles.bodyText}>
           Estimated Member Statement As At{" "}
-          {new Date().toLocaleDateString("en-GB")}
+          {new Date().toLocaleDateString("en-AU", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })}
         </Text>
 
         <View style={styles.tableContainer}>
@@ -122,7 +126,7 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
             styles={styles}
           />
           <TableRow
-            label={`TOTAL AS AT ${new Date().toLocaleDateString("en-GB")}`}
+            label={`TOTAL`}
             renderRow={(member) =>
               (member.accumulation + member.pension).toLocaleString(undefined, {
                 minimumFractionDigits: 2,
@@ -217,7 +221,7 @@ const getStyles = (width: number, height: number) =>
     container: {
       flex: 1,
       backgroundColor: "#fff",
-      marginTop: height * 0.02,
+      marginTop: height * 0.01,
       borderRadius: 6,
     },
     border: {
@@ -297,3 +301,21 @@ const getStyles = (width: number, height: number) =>
       marginTop: height * 0.2,
     },
   });
+
+{/*
+  <TableRow
+            label={`TOTAL AS AT ${new Date().toLocaleDateString("en-AU", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}`}
+            renderRow={(member) =>
+              (member.accumulation + member.pension).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+              })
+            }
+            members={members}
+            styles={styles}
+            bold
+          />
+  */}

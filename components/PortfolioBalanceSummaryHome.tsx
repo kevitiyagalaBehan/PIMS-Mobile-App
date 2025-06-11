@@ -15,7 +15,7 @@ import { getSuperFundDetails } from "../src/utils/pimsApi";
 import { Props, PortfolioItem, SelectedData } from "../src/navigation/types";
 import { useIsFocused } from "@react-navigation/native";
 
-export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
+export default function PortfolioBalanceSummaryHome({ refreshTrigger }: Props) {
   const { userData } = useAuth();
   const { width, height } = useWindowDimensions();
   const [portfolioData, setPortfolioData] = useState<PortfolioItem[] | null>(
@@ -186,7 +186,7 @@ export default function PortfolioBalanceSummary({ refreshTrigger }: Props) {
                     <Text style={styles.modalLabel}>Down Date:</Text>
                     <Text style={styles.modalText}>
                       {new Date(selectedData.dataDownDate).toLocaleDateString(
-                        "en-AU"
+                        "en-GB"
                       )}
                     </Text>
                   </View>
@@ -212,6 +212,7 @@ const getStyles = (width: number, height: number) =>
       flex: 1,
       backgroundColor: "#fff",
       borderRadius: 6,
+      marginTop: height * 0.01,
     },
     border: {
       borderWidth: 1,

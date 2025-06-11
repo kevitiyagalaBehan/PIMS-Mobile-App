@@ -7,7 +7,7 @@ import { getInvestmentPerformance } from "../src/utils/pimsApi";
 import { InvestmentPerformanceDetails, Props } from "../src/navigation/types";
 import { useWindowSize } from "../hooks/useWindowSize";
 
-export default function InvestmentPerformanceChart({ refreshTrigger }: Props) {
+export default function InvestmentPerformance({ refreshTrigger }: Props) {
   const { userData } = useAuth();
   const { width, height, isPortrait } = useWindowSize();
   const [data, setData] = useState<InvestmentPerformanceDetails[] | null>(null);
@@ -62,22 +62,24 @@ export default function InvestmentPerformanceChart({ refreshTrigger }: Props) {
 
   const values = data.map((item) => item.cumulativePercent);
 
-  const reducedLabels = labels.map(() => "");
+  const parsedDates = data
+    .map((item, index) => ({ date: new Date(item.date), index }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  const fixedDates = [
-    "01-12-24",
-    "01-01-25",
-    "01-02-25",
-    "01-03-25",
-    "01-04-25",
-  ];
+  const reducedLabels = new Array(labels.length).fill("");
 
-  fixedDates.forEach((targetDate) => {
-    const index = labels.findIndex((label) => label === targetDate);
-    if (index !== -1) {
-      reducedLabels[index] = targetDate;
-    }
-  });
+  if (parsedDates.length > 0) {
+    const firstDate = parsedDates[0].date;
+    let nextLabelDate = new Date(firstDate);
+
+    parsedDates.forEach(({ date, index }) => {
+      if (date >= nextLabelDate) {
+        reducedLabels[index] = labels[index];
+        nextLabelDate = new Date(date);
+        nextLabelDate.setMonth(nextLabelDate.getMonth() + 2);
+      }
+    });
+  }
 
   return (
     <View style={styles.container}>
