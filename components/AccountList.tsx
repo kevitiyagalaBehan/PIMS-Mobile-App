@@ -17,7 +17,7 @@ import {
   Props,
 } from "../src/navigation/types";
 
-export default function AccountTables({ refreshTrigger }: Props) {
+export default function AccountList({ refreshTrigger }: Props) {
   const { userData } = useAuth();
   const { width, height } = useWindowDimensions();
   const [entities, setEntities] = useState<AccountEntity[]>([]);
@@ -243,7 +243,7 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: height * 0.02,
+      marginTop: height * 0.01,
       borderRadius: 6,
       backgroundColor: "#fff",
     },
