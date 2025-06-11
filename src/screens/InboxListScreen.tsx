@@ -13,8 +13,9 @@ import { InboxStackNavigationProp, Messages, Props } from "../navigation/types";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../context/AuthContext";
 import { getMessages } from "../utils/pimsApi";
+import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 
-export default function InboxList({ refreshTrigger }: Props) {
+export default function InboxList() {
   const { userData } = useAuth();
   const navigation = useNavigation<InboxStackNavigationProp<"InboxList">>();
   const [messages, setMessages] = useState<Messages[] | null>(null);
@@ -23,50 +24,47 @@ export default function InboxList({ refreshTrigger }: Props) {
   const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
+  const fetchData = async () => {
+    if (!userData?.authToken || !userData?.accountId) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const messages = await getMessages(
+        userData.authToken,
+        userData.accountId
+      );
+      setMessages(messages);
+    } catch (err) {
+      setError("Failed to load messages");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const { refreshTrigger, refreshing, onRefresh } =
+    useRefreshTrigger(fetchData);
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (!userData?.authToken || !userData?.accountId) {
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const messages = await getMessages(
-          userData.authToken,
-          userData.accountId
-        );
-        setMessages(messages);
-      } catch (err) {
-        setError("Failed to load messages");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
-  if (loading) {
-    return <Text style={styles.loader}>Loading...</Text>;
-  }
-
-  if (error) {
-    return <Text style={styles.errorText}>{error}</Text>;
-  }
-
-  if (!messages || messages.length === 0) {
-    return <Text style={styles.errorText}>No messages available</Text>;
-  }
+  const Header = () => (
+    <View style={styles.header}>
+      <Text style={styles.headerText}>Inbox</Text>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Inbox</Text>
-      </View>
+      <Header />
       <View style={styles.bodySection}>
-        {messages.length === 0 ? (
-          <Text style={styles.emptyText}>No queries found.</Text>
+        {loading ? (
+          <Text style={styles.loader}>Loading...</Text>
+        ) : error ? (
+          <Text style={styles.errorText}>{error}</Text>
         ) : (
           <FlatList
             data={messages}
@@ -83,9 +81,22 @@ export default function InboxList({ refreshTrigger }: Props) {
               >
                 <Text style={styles.title}>{item.description}</Text>
                 <Text style={styles.date}>
-                  {new Date(item.uploadedDate).toLocaleDateString("en-GB")}
+                  {new Date(item.uploadedDate).toLocaleDateString("en-AU", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </Text>
               </TouchableOpacity>
+            )}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: height * 0.08,
+            }}
+            ListEmptyComponent={() => (
+              <Text style={styles.emptyText}>No messages available</Text>
             )}
           />
         )}
@@ -111,7 +122,7 @@ const getStyles = (width: number, height: number) =>
       color: "#1B77BE",
     },
     bodySection: {
-      paddingHorizontal: width * 0.02,
+      paddingHorizontal: width * 0.04,
     },
     errorText: {
       color: "red",
@@ -127,7 +138,7 @@ const getStyles = (width: number, height: number) =>
       marginLeft: height * 0.01,
     },
     item: {
-      paddingVertical: height * 0.02,
+      paddingVertical: height * 0.01,
       borderBottomWidth: 1,
       borderBottomColor: "#ccc",
     },
@@ -142,7 +153,7 @@ const getStyles = (width: number, height: number) =>
       marginTop: 4,
     },
     emptyText: {
-      fontSize: RFPercentage(2.2),
+      fontSize: RFPercentage(2),
       color: "#999",
       textAlign: "center",
       marginTop: height * 0.2,
