@@ -4,6 +4,7 @@ import {
   AuthContextType,
   AuthProviderProps,
   AccountEntity,
+  LinkedUsers,
 } from "../navigation/types";
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,10 +21,14 @@ const AuthContext = createContext<AuthContextType>({
     console.warn("setEntityAccounts called without AuthProvider"),
   resetAuthState: () =>
     console.warn("resetAuthState called without AuthProvider"),
+  loggedInUser: null,
+  setLoggedInUser: () =>
+    console.warn("setLoggedInUser called without AuthProvider"),
 });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userData, setUserData] = useState<LoginResponse | null>(null);
+  const [loggedInUser, setLoggedInUser] = useState<LinkedUsers | null>(null);
   const [currentUserName, setCurrentUserName] = useState<string | null>(null);
   const [currentAccountName, setCurrentAccountName] = useState<string | null>(
     null
@@ -47,6 +52,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         entityAccounts,
         setEntityAccounts,
         resetAuthState,
+        loggedInUser,
+        setLoggedInUser,
       }}
     >
       {children}
