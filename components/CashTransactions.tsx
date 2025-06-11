@@ -151,7 +151,10 @@ export default function Transactions() {
               )}
               refreshing={refreshing}
               onRefresh={onRefresh}
-              style={styles.listContentContainer}
+              contentContainerStyle={{
+                flexGrow: 1,
+                paddingBottom: height * 0.5,
+              }}
             />
           ) : (
             <Text style={styles.noData}>No transactions available</Text>
@@ -256,7 +259,7 @@ const getStyles = (width: number, height: number) =>
       marginLeft: height * 0.01,
     },
     errorText: {
-      color: "red",
+      color: "black",
       fontSize: RFPercentage(2),
       textAlign: "center",
       marginTop: height * 0.3,
