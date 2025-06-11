@@ -2,14 +2,11 @@ import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import BottomTabFamily from "./BottomTabNavigatorFamily";
-import TopTenInvestmentsScreenFamily from "../screens/TopTenInvestmentsScreenFamily";
-import ConsolidatedAccountsScreen from "../screens/ConsolidatedAccountsScreen";
 import CustomDrawerContent from "./CustomDrawerContent";
 import { DrawerParamListFamily } from "./types";
 import { useAuth } from "../context/AuthContext";
 import { useAutoLogout } from "../../hooks/useAutoLogout";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import AccountListScreen from "../screens/AccountListScreen";
 
 const Drawer = createDrawerNavigator<DrawerParamListFamily>();
 
@@ -46,48 +43,6 @@ export default function DrawerNavigatorFamily() {
           drawerLabel: "Home",
           drawerIcon: ({ color }) => (
             <Ionicons name="home" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="AccountList"
-        component={AccountListScreen}
-        initialParams={{
-          authToken: userData?.authToken,
-          accountId: userData?.accountId,
-        }}
-        options={{
-          drawerLabel: "Account List",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="trending-up" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="TopTenInvestmentsFamily"
-        component={TopTenInvestmentsScreenFamily}
-        initialParams={{
-          authToken: userData?.authToken,
-          accountId: userData?.accountId,
-        }}
-        options={{
-          drawerLabel: "Top Ten Investments",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="speedometer" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="ConsolidatedAccounts"
-        component={ConsolidatedAccountsScreen}
-        initialParams={{
-          authToken: userData?.authToken,
-          accountId: userData?.accountId,
-        }}
-        options={{
-          drawerLabel: "Consolidated Accounts",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="bar-chart" size={30} color={color} />
           ),
         }}
       />

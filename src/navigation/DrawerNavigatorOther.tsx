@@ -2,12 +2,6 @@ import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import BottomTabOther from "./BottomTabNavigatorOther";
-import InvestmentPerformanceScreen from "../screens/InvestmentPerformanceScreen";
-import TopTenInvestmentsScreen from "../screens/TopTenInvestmentsScreen";
-import PortfolioBalanceScreen from "../screens/PortfolioBalanceScreen";
-import ContributionCapScreen from "../screens/ContributionCapScreen";
-import PensionLimitScreen from "../screens/PensionLimitSummaryScreen";
-import EstimatedMemberStatementScreen from "../screens/EstimatedMemberStatementScreen";
 import DetailsScreen from "../screens/DetailsScreen";
 import CustomDrawerContent from "./CustomDrawerContent";
 import { DrawerParamListOther } from "./types";
@@ -81,90 +75,6 @@ export default function DrawerNavigatorOther() {
           drawerLabel: "Bank",
           drawerIcon: ({ color }) => (
             <Ionicons name="card" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="TopTenInvestments"
-        component={TopTenInvestmentsScreen}
-        initialParams={{
-          authToken: userData?.authToken,
-          accountId: userData?.accountId,
-        }}
-        options={{
-          drawerLabel: "Top Ten Investments",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="trending-up" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="InvestmentPerformance"
-        component={InvestmentPerformanceScreen}
-        initialParams={{
-          authToken: userData?.authToken,
-          accountId: userData?.accountId,
-        }}
-        options={{
-          drawerLabel: "Investment Performance",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="speedometer" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="PortfolioBalance"
-        component={PortfolioBalanceScreen}
-        initialParams={{
-          authToken: userData?.authToken,
-          accountId: userData?.accountId,
-        }}
-        options={{
-          drawerLabel: "Portfolio Balance Summary",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="bar-chart" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="ContributionCap"
-        component={ContributionCapScreen}
-        initialParams={{
-          authToken: userData?.authToken,
-          accountId: userData?.accountId,
-        }}
-        options={{
-          drawerLabel: "Contribution Cap Summary",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="checkmark-circle" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="PensionLimit"
-        component={PensionLimitScreen}
-        initialParams={{
-          authToken: userData?.authToken,
-          accountId: userData?.accountId,
-        }}
-        options={{
-          drawerLabel: "Pension Limit Summary",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="briefcase" size={30} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="EstimatedMemberStatement"
-        component={EstimatedMemberStatementScreen}
-        initialParams={{
-          authToken: userData?.authToken,
-          accountId: userData?.accountId,
-        }}
-        options={{
-          drawerLabel: "Estimated Member Statement",
-          drawerIcon: ({ color }) => (
-            <Ionicons name="document-text" size={30} color={color} />
           ),
         }}
       />
