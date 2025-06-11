@@ -5,6 +5,7 @@ export { default as ConsolidatedAssetAllocation } from "./ConsolidatedAssetAlloc
 export { default as AssetAllocationOther } from "./AssetAllocationOther";
 export { default as AssetAllocationFamily } from "./AssetAllocationFamily";
 export { default as PortfolioBalanceSummary } from "./PortfolioBalanceSummary";
+export { default as PortfolioBalanceSummaryHome } from "./PortfolioBalanceSummaryHome";
 export { default as TopTenInvestments } from "./TopTenInvestments";
 export { default as TopTenInvestmentsFamily } from "./TopTenInvestmentsFamily";
 export { default as ContributionCapSummary } from "./ContributionCapSummary";
