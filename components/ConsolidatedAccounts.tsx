@@ -216,7 +216,7 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: height * 0.02,
+      marginTop: height * 0.01,
       backgroundColor: "#fff",
       borderRadius: 6,
     },
