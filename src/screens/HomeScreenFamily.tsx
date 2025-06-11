@@ -13,6 +13,9 @@ import {
   AssetAllocationFamily,
   Header,
   ConsolidatedAssetAllocation,
+  AccountList,
+  TopTenInvestmentsFamily,
+  ConsolidatedAccounts,
 } from "../../components";
 import { useAuth } from "../context/AuthContext";
 
@@ -37,7 +40,7 @@ export default function HomeScreenFamily() {
         }
         contentContainerStyle={{
           flexGrow: 1,
-          paddingBottom: height * 0.1,
+          paddingBottom: height * 0.01,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -48,6 +51,15 @@ export default function HomeScreenFamily() {
             error={error}
           />
           <AssetAllocationFamily data={data} loading={loading} error={error} />
+          <AccountList refreshTrigger={refreshTrigger} refreshing={false} />
+          <TopTenInvestmentsFamily
+            refreshTrigger={refreshTrigger}
+            refreshing={false}
+          />
+          <ConsolidatedAccounts
+            refreshTrigger={refreshTrigger}
+            refreshing={false}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

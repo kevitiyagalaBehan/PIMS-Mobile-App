@@ -13,6 +13,11 @@ import {
   PortfolioSummary,
   AssetAllocationOther,
   Header,
+  PortfolioBalanceSummaryHome,
+  ContributionCapSummary,
+  PensionLimitSummary,
+  EstimatedMemberStatement,
+  TopTenInvestments,
 } from "../../components";
 import { useAuth } from "../context/AuthContext";
 
@@ -38,13 +43,33 @@ export default function HomeScreenOther() {
         }
         contentContainerStyle={{
           flexGrow: 1,
-          paddingBottom: height * 0.1,
+          paddingBottom: height * 0.02,
         }}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.bodySection}>
           <PortfolioSummary data={data} loading={loading} error={error} />
           <AssetAllocationOther data={data} loading={loading} error={error} />
+          <PortfolioBalanceSummaryHome
+            refreshTrigger={refreshTrigger}
+            refreshing={false}
+          />
+          <TopTenInvestments
+            refreshTrigger={refreshTrigger}
+            refreshing={false}
+          />
+          <ContributionCapSummary
+            refreshTrigger={refreshTrigger}
+            refreshing={false}
+          />
+          <PensionLimitSummary
+            refreshTrigger={refreshTrigger}
+            refreshing={false}
+          />
+          <EstimatedMemberStatement
+            refreshTrigger={refreshTrigger}
+            refreshing={false}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
