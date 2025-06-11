@@ -148,7 +148,7 @@ const getStyles = (width: number, height: number) =>
     headerSection: {
       backgroundColor: "#fff",
       paddingHorizontal: width * 0.04,
-      paddingTop: height * 0.02,
+      paddingTop: height * 0.023,
       paddingBottom: height * 0.015,
     },
     accountNameText: {
