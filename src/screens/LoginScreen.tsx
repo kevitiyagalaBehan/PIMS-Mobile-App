@@ -13,13 +13,17 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
-import { loginUser, requestPasswordReset } from "../utils/pimsApi";
+import {
+  loginUser,
+  requestPasswordReset,
+  getLinkedUsers,
+} from "../utils/pimsApi";
 import { NavigationProps } from "../navigation/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 export default function LoginScreen() {
-  const { setUserData } = useAuth();
+  const { setUserData, setLoggedInUser } = useAuth();
   const { width, height } = useWindowDimensions();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -43,6 +47,13 @@ export default function LoginScreen() {
       const { authToken, accountId, accountType } = response;
 
       setUserData({ authToken, accountId, accountType });
+
+      const linkedUser = await getLinkedUsers(authToken);
+      if (linkedUser) {
+        setLoggedInUser(linkedUser);
+      } else {
+        console.warn("No linked user found!");
+      }
 
       const targetRoute = accountType === "Family Group" ? "Family" : "Other";
       navigation.replace(targetRoute);
