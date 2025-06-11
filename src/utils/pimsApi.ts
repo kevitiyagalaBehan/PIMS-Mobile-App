@@ -293,13 +293,13 @@ export const getSuperFundDetails = async (
     }
 
     const data = await response.json();
-
     //console.log("Super Fund Data:", data);
 
     if (Array.isArray(data) && data.length > 0) {
       return data;
     } else {
-      throw new Error("Invalid response structure");
+      //console.warn("Unexpected API structure", data);
+      return null;
     }
   } catch (error) {
     console.error("Error fetching portfolio balance summary:", error);
@@ -596,12 +596,12 @@ export const getCashTransactions = async (
 ): Promise<CashTransactions[] | null> => {
   try {
     const today = new Date();
-    const lastYear = new Date();
-    lastYear.setFullYear(today.getFullYear() - 1);
+    const lastMonth = new Date();
+    lastMonth.setMonth(today.getMonth() - 1);
 
     const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
-    const startDate = formatDate(lastYear);
+    const startDate = formatDate(lastMonth);
     const endDate = formatDate(today);
 
     const response = await fetch(
@@ -651,5 +651,91 @@ export const getMessages = async (
   } catch (error) {
     console.error("API Error:", error);
     throw error;
+  }
+};
+
+export const loadComments = async (
+  authToken: string,
+  accountId: string,
+  id: string
+): Promise<Comments[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/ClientDocumentUpload/${accountId}/UploadedDocuments/${id}/Comments`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch comments: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data as Comments[];
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+};
+
+export const sendComment = async (
+  authToken: string,
+  accountId: string,
+  id: string,
+  comment: string,
+  userId: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/ClientDocumentUpload/${accountId}/UploadedDocuments/${id}/AddComment`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ commentText: comment, UserId: userId }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to send comment: ${response.status}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("API Error:", error);
+    return false;
+  }
+};
+
+export const deleteComment = async (
+  authToken: string,
+  accountId: string,
+  commentId: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/ClientDocumentUpload/${accountId}/RemoveDocumentComment/${commentId}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ commentId }),
+      }
+    );
+
+    return response.ok;
+  } catch (error) {
+    console.error("API Error:", error);
+    return false;
   }
 };
