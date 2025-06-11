@@ -26,8 +26,8 @@ export default function AssetAllocationOther({
           name: asset.assetClass,
           percentage: asset.percentage,
           color: getColorForAssetClass(asset.assetClass),
-          legendFontColor: "#333",
-          legendFontSize: RFPercentage(1.8),
+          legendFontColor: "#000000",
+          legendFontSize: RFPercentage(2),
         });
       })
     );
@@ -112,6 +112,8 @@ const getStyles = (width: number, height: number) =>
       flex: 1,
       backgroundColor: "#fff",
       borderRadius: 6,
+      //marginBottom: height * 0.01,
+      marginTop: height * 0.01,
     },
     border: {
       borderWidth: 1,
@@ -150,9 +152,10 @@ const getStyles = (width: number, height: number) =>
     },
     legendContainer: {
       marginBottom: height * 0.01,
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
+      //flexDirection: "row",
+      //flexWrap: "wrap",
+      //justifyContent: "center",
+      alignItems: "flex-start",
     },
     legendItem: {
       flexDirection: "row",

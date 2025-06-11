@@ -112,6 +112,7 @@ const getStyles = (width: number, height: number) =>
       flex: 1,
       backgroundColor: "#fff",
       borderRadius: 6,
+      marginTop: height * 0.01,
     },
     border: {
       borderWidth: 1,
@@ -150,9 +151,10 @@ const getStyles = (width: number, height: number) =>
     },
     legendContainer: {
       marginBottom: height * 0.01,
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
+      //flexDirection: "row",
+      //flexWrap: "wrap",
+      //justifyContent: "center",
+      alignItems: "flex-start",
     },
     legendItem: {
       flexDirection: "row",
