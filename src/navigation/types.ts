@@ -11,6 +11,8 @@ export type AuthContextType = {
   setCurrentAccountName: React.Dispatch<React.SetStateAction<string | null>>;
   entityAccounts: AccountEntity[];
   setEntityAccounts: React.Dispatch<React.SetStateAction<AccountEntity[]>>;
+  loggedInUser: LinkedUsers | null;
+  setLoggedInUser: (user: LinkedUsers | null) => void;
 
   resetAuthState: () => void;
 };
@@ -46,7 +48,7 @@ export type DrawerParamListOther = {
   MainTabs: { authToken: string; accountId: string };
   Details: { authToken: string; accountId: string };
   Transactions: { authToken: string; accountId: string };
-  PortfolioSummary: { authToken: string; accountId: string };
+  //PortfolioSummary: { authToken: string; accountId: string };
   TopTenInvestments: { authToken: string; accountId: string };
   InvestmentPerformance: { authToken: string; accountId: string };
   PortfolioBalance: { authToken: string; accountId: string };
@@ -74,11 +76,6 @@ export type InboxStackNavigationProp<T extends keyof InboxStackParamList> =
 export type InboxRouteProp<T extends keyof InboxStackParamList> = RouteProp<
   InboxStackParamList,
   T
->;
-
-export type PortfolioSummaryRouteProp = RouteProp<
-  { PortfolioSummary: { authToken: string; accountId: string } },
-  "PortfolioSummary"
 >;
 
 export type SubScreenNavigationProp = StackNavigationProp<
@@ -379,13 +376,11 @@ export interface Messages {
 }
 
 export interface Comments {
-  commentCount: number;
-  description: string;
-  fileCount: number;
-  fromPIMS: boolean;
+  author: string;
+  comment: string;
+  date: number;
   id: string;
-  uploadedBy: string;
-  uploadedById: string;
-  uploadedByLevel: string;
-  uploadedDate: number;
+  isCurrentUser: boolean;
+  isFirst: boolean;
+  userId: string;
 }
