@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,38 +9,98 @@ import {
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
+  Alert,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { InboxRouteProp } from "../navigation/types";
 import { RFPercentage } from "react-native-responsive-fontsize";
-
-const dummyComments = [
-  {
-    id: "101",
-    text: "Please send your latest account statement.",
-    date: "2025-05-09",
-    author: "Peter",
-  },
-];
+import { useAuth } from "../context/AuthContext";
+import { loadComments, sendComment, deleteComment } from "../utils/pimsApi";
+import { Comments } from "../navigation/types";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function InboxDetail() {
+  const { userData, loggedInUser } = useAuth();
   const route = useRoute<InboxRouteProp<"InboxDetail">>();
   const navigation = useNavigation();
   const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState(dummyComments);
+  const [comments, setComments] = useState<Comments[]>([]);
+  const [sending, setSending] = useState(false);
   const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
-  const handleSend = () => {
-    if (!newComment.trim()) return;
-    const comment = {
-      id: String(Date.now()),
-      text: newComment,
-      date: new Date().toISOString().split("T")[0],
-      author: "Behan",
-    };
-    setComments((prev) => [...prev, comment]);
-    setNewComment("");
+
+  const messageId = route.params.queryId;
+
+  if (!userData) {
+    return null;
+  }
+
+  const fetchComments = async () => {
+    if (!userData?.authToken || !userData?.accountId || !messageId) return;
+
+    try {
+      const response = await loadComments(
+        userData.authToken,
+        userData.accountId,
+        messageId
+      );
+      if (response) {
+        setComments(response);
+      }
+    } catch (error) {
+      console.error("Failed to fetch comments:", error);
+    }
   };
+
+  const handleSend = async () => {
+    if (!newComment.trim()) return;
+
+    if (!userData?.authToken || !userData?.accountId) return;
+
+    setSending(true);
+
+    const success = await sendComment(
+      userData.authToken,
+      userData.accountId,
+      messageId,
+      newComment.trim(),
+      loggedInUser?.userId || ""
+    );
+
+    if (success) {
+      setNewComment("");
+      fetchComments();
+    } else {
+      Alert.alert("Error", "Failed to send comment.");
+    }
+
+    setSending(false);
+  };
+
+  const handleDelete = async (commentId: string) => {
+    if (!userData?.authToken || !userData?.accountId) return;
+
+    try {
+      const response = await deleteComment(
+        userData.authToken,
+        userData.accountId,
+        commentId
+      );
+
+      if (response) {
+        setComments((prev) => prev.filter((c) => c.id !== commentId));
+      } else {
+        Alert.alert("Error", "Failed to delete comment.");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      Alert.alert("Error", "Something went wrong.");
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, [userData?.authToken, userData?.accountId, messageId]);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: route.params.title });
@@ -56,7 +116,8 @@ export default function InboxDetail() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.commentList}
         renderItem={({ item }) => {
-          const isSent = item.author === "Behan";
+          const isSent = item.author === loggedInUser?.fullName;
+
           return (
             <View
               style={[
@@ -64,13 +125,44 @@ export default function InboxDetail() {
                 isSent ? styles.sentComment : styles.receivedComment,
               ]}
             >
+              {isSent && (
+                <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert(
+                      "Delete Comment",
+                      "Are you sure you want to delete this comment?",
+                      [
+                        { text: "Cancel", style: "cancel" },
+                        {
+                          text: "Delete",
+                          onPress: () => handleDelete(item.id),
+                          style: "destructive",
+                        },
+                      ]
+                    )
+                  }
+                  style={styles.deleteIcon}
+                >
+                  <FontAwesome name="trash" size={18} color="red" />
+                </TouchableOpacity>
+              )}
+
               {!isSent && <Text style={styles.author}>{item.author}</Text>}
-              <Text style={styles.text}>{item.text}</Text>
-              <Text style={styles.date}>{item.date}</Text>
+              <Text style={styles.text}>{item.comment}</Text>
+              <Text style={styles.date}>
+                {new Date(item.date).toLocaleString("en-AU", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </Text>
             </View>
           );
         }}
       />
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -78,8 +170,14 @@ export default function InboxDetail() {
           value={newComment}
           onChangeText={setNewComment}
         />
-        <TouchableOpacity style={styles.button} onPress={handleSend}>
-          <Text style={styles.buttonText}>Send</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSend}
+          disabled={sending}
+        >
+          <Text style={styles.buttonText}>
+            {sending ? "Sending..." : "Send"}
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -123,6 +221,13 @@ const getStyles = (width: number, height: number) =>
     date: {
       fontSize: RFPercentage(1.8),
       color: "#888",
+    },
+    deleteIcon: {
+      position: "absolute",
+      top: 13,
+      right: 7,
+      zIndex: 1,
+      padding: 4,
     },
     inputContainer: {
       borderTopWidth: 1,
