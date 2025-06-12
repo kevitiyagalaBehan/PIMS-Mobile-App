@@ -9,6 +9,7 @@ import { useAuth } from "../context/AuthContext";
 import { useAutoLogout } from "../../hooks/useAutoLogout";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import CashTransactionsScreen from "../screens/CashTransactionsScreen";
+import PortfolioScreen from "../screens/PortfolioScreen";
 
 const Drawer = createDrawerNavigator<DrawerParamListOther>();
 
@@ -73,6 +74,20 @@ export default function DrawerNavigatorOther() {
         }}
         options={{
           drawerLabel: "Bank",
+          drawerIcon: ({ color }) => (
+            <Ionicons name="card" size={30} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Portfolio"
+        component={PortfolioScreen}
+        initialParams={{
+          authToken: userData?.authToken,
+          accountId: userData?.accountId,
+        }}
+        options={{
+          drawerLabel: "Portfolio",
           drawerIcon: ({ color }) => (
             <Ionicons name="card" size={30} color={color} />
           ),
