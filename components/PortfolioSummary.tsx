@@ -19,10 +19,6 @@ export default function PortfolioSummaryOther({
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
-  if (error) {
-    return <Text style={styles.errorText}>{error}</Text>;
-  }
-
   if (!data || error) {
     return <Text style={styles.errorText}>No portfolio data available</Text>;
   }

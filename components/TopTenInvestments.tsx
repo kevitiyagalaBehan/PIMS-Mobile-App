@@ -94,7 +94,6 @@ export default function TopTenInvestments({ refreshTrigger }: Props) {
                 <Text
                   style={[
                     styles.dataCell,
-                    styles.boldText,
                     styles.leftAlign,
                     styles.underlineText,
                   ]}
@@ -211,7 +210,7 @@ const getStyles = (width: number, height: number) =>
       backgroundColor: "#1B77BE",
       paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
-      marginBottom: height * 0.001,
+      //marginBottom: height * 0.001,
     },
     headerCell1: {
       color: "white",
@@ -229,8 +228,6 @@ const getStyles = (width: number, height: number) =>
       flexDirection: "row",
       paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
-      borderBottomWidth: 1,
-      borderBottomColor: "#fff",
       alignItems: "center",
     },
     dataCell: {
