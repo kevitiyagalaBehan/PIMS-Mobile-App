@@ -93,11 +93,12 @@ export default function InboxList() {
             onRefresh={onRefresh}
             contentContainerStyle={{
               flexGrow: 1,
-              paddingBottom: height * 0.08,
+              paddingBottom: height * 0.075
             }}
             ListEmptyComponent={() => (
               <Text style={styles.emptyText}>No messages available</Text>
             )}
+            showsVerticalScrollIndicator={false}
           />
         )}
       </View>
