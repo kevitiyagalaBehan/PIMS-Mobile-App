@@ -20,6 +20,7 @@ import {
   CashTransactions,
   Messages,
   Comments,
+  InvestmentsResponse,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -737,5 +738,37 @@ export const deleteComment = async (
   } catch (error) {
     console.error("API Error:", error);
     return false;
+  }
+};
+
+export const getInvestments = async (
+  authToken: string,
+  accountId: string
+): Promise<InvestmentsResponse> => {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+
+    const response = await fetch(
+      `${apiBaseUrl}/InvestmentPortfolio/${accountId}/${today}/WithSettings`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch investments: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data: InvestmentsResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching investments:", error);
+    throw error;
   }
 };
