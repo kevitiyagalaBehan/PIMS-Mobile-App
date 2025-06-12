@@ -48,21 +48,11 @@ export type DrawerParamListOther = {
   MainTabs: { authToken: string; accountId: string };
   Details: { authToken: string; accountId: string };
   Transactions: { authToken: string; accountId: string };
-  //PortfolioSummary: { authToken: string; accountId: string };
-  TopTenInvestments: { authToken: string; accountId: string };
-  InvestmentPerformance: { authToken: string; accountId: string };
-  PortfolioBalance: { authToken: string; accountId: string };
-  ContributionCap: { authToken: string; accountId: string };
-  PensionLimit: { authToken: string; accountId: string };
-  EstimatedMemberStatement: { authToken: string; accountId: string };
+  Portfolio: { authToken: string; accountId: string };
 };
 
 export type DrawerParamListFamily = {
   MainTabs: { authToken: string; accountId: string };
-  AccountList: { authToken: string; accountId: string };
-  ConsolidatedAssetAllocation: { authToken: string; accountId: string };
-  TopTenInvestmentsFamily: { authToken: string; accountId: string };
-  ConsolidatedAccounts: { authToken: string; accountId: string };
 };
 
 export type InboxStackParamList = {
@@ -384,3 +374,33 @@ export interface Comments {
   isFirst: boolean;
   userId: string;
 }
+
+export interface Investment {
+  assetCategory: string;
+  assetClass: string;
+  bookCost: number;
+  code: string;
+  description: string;
+  income: number;
+  isDefaultCash: boolean;
+  marketPercentage: number;
+  marketTypeValue: string;
+  marketValue: number;
+  order: number;
+  price: number;
+  quantity: number;
+  yield: number;
+}
+
+export interface Settings {
+  column_BookCost: boolean;
+  column_EstIncome: boolean;
+  column_EstYield: boolean;
+  column_GainLosses: boolean;
+}
+
+export interface InvestmentsResponse {
+  investments: Investment[];
+  settings: Settings;
+}
+
