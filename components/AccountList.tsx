@@ -154,25 +154,29 @@ export default function AccountList({ refreshTrigger }: Props) {
   );
 
   if (loading) {
-      return <Text style={styles.loader}>Loading...</Text>;
-    }
-  
-    if (error) {
-      return <Text style={styles.errorText}>{error}</Text>;
-    }
-  
-    if (!entities || entities.length === 0) {
-      return <Text style={styles.errorText}>No client account details available</Text>;
-    }
-    if (!individuals || individuals.length === 0) {
-      return <Text style={styles.errorText}>No client account details available</Text>;
-    }
+    return <Text style={styles.loader}>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (!entities || entities.length === 0) {
+    return (
+      <Text style={styles.errorText}>No client account details available</Text>
+    );
+  }
+  if (!individuals || individuals.length === 0) {
+    return (
+      <Text style={styles.errorText}>No client account details available</Text>
+    );
+  }
 
   return (
     <View style={styles.container}>
-        <View style={styles.border}>
-          <Text style={styles.bodyText}>Account List</Text>
-
+      <View style={styles.border}>
+        <Text style={styles.bodyText}>Account List</Text>
+        <View style={styles.tableContainer}>
           <View style={styles.tableHeader}>
             <Text style={[styles.headerCell, { flex: 2 }]}>Individual</Text>
             <Text style={[styles.headerCell, { flex: 1.5 }]}>DOB(Age)</Text>
@@ -233,8 +237,9 @@ export default function AccountList({ refreshTrigger }: Props) {
             </View>
           ))}
         </View>
-        {renderIndividualModal()}
-        {renderEntityModal()}
+      </View>
+      {renderIndividualModal()}
+      {renderEntityModal()}
     </View>
   );
 }
@@ -259,6 +264,9 @@ const getStyles = (width: number, height: number) =>
       marginBottom: height * 0.01,
       fontSize: RFPercentage(2.6),
     },
+    tableContainer: {
+      paddingBottom: height * 0.01,
+    },
     tableHeader: {
       flexDirection: "row",
       backgroundColor: "#1B77BE",
@@ -274,6 +282,8 @@ const getStyles = (width: number, height: number) =>
       flexDirection: "row",
       paddingVertical: height * 0.01,
       paddingHorizontal: width * 0.02,
+      borderWidth: 1,
+      borderColor: "#ccc",
     },
     dataCell: {
       fontSize: RFPercentage(2),
@@ -281,8 +291,7 @@ const getStyles = (width: number, height: number) =>
     },
     underlineText: {
       textDecorationLine: "underline",
-      color: "#4A90E2",
-      fontWeight: "bold",
+      color: "#1B77BE",
     },
     errorText: {
       color: "red",
