@@ -89,7 +89,7 @@ export default function DrawerNavigatorOther() {
         options={{
           drawerLabel: "Portfolio",
           drawerIcon: ({ color }) => (
-            <Ionicons name="card" size={30} color={color} />
+            <Ionicons name="bag-check" size={30} color={color} />
           ),
         }}
       />
