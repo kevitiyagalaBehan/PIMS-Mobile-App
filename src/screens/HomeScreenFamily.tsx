@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
-import { useHomeData } from "../../hooks/useHomeDataFamily";
+import { usePortfolioSummary } from "../../hooks/usePortfolioSummaryFamily";
 import {
   AssetAllocationFamily,
   Header,
@@ -24,7 +24,7 @@ export default function HomeScreenFamily() {
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
   const { userData } = useAuth();
   const { authToken = "", accountId = "" } = userData ?? {};
-  const { data, loading, error } = useHomeData(
+  const { data, loading, error } = usePortfolioSummary(
     authToken,
     accountId,
     refreshTrigger

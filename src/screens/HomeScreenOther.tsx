@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
-import { useHomeData } from "../../hooks/useHomeDataOther";
 import {
   PortfolioSummary,
   AssetAllocationOther,
@@ -19,19 +18,10 @@ import {
   EstimatedMemberStatement,
   TopTenInvestments,
 } from "../../components";
-import { useAuth } from "../context/AuthContext";
 
 export default function HomeScreenOther() {
   const { width, height } = useWindowDimensions();
   const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
-  const { userData } = useAuth();
-  const { authToken = "", accountId = "" } = userData ?? {};
-  const { data, loading, error } = useHomeData(
-    authToken,
-    accountId,
-    refreshTrigger
-  );
-
   const styles = getStyles(width, height);
 
   return (
@@ -48,8 +38,14 @@ export default function HomeScreenOther() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.bodySection}>
-          <PortfolioSummary data={data} loading={loading} error={error} />
-          <AssetAllocationOther data={data} loading={loading} error={error} />
+          <PortfolioSummary
+            refreshTrigger={refreshTrigger}
+            refreshing={false}
+          />
+          <AssetAllocationOther
+            refreshTrigger={refreshTrigger}
+            refreshing={false}
+          />
           <PortfolioBalanceSummaryHome
             refreshTrigger={refreshTrigger}
             refreshing={false}
