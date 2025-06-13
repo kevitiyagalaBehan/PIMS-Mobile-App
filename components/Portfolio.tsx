@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   useWindowDimensions,
   TouchableOpacity,
   Modal,
@@ -79,17 +78,20 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
               Code
             </Text>
             <Text style={[styles.cell, styles.headerText, styles.rightAlign]}>
-              Cost ($)
+              Mkt ($)
             </Text>
             <Text style={[styles.cell, styles.headerText, styles.rightAlign]}>
-              Price ($)
+              Mkt (%)
             </Text>
           </View>
 
           {Object.entries(grouped).map(([category, classes], catIndex) => {
-            const categoryBookCost = Object.values(classes)
+            const categoryMarketValue = Object.values(classes)
               .flat()
-              .reduce((sum, inv) => sum + inv.bookCost, 0);
+              .reduce((sum, inv) => sum + inv.marketValue, 0);
+            const categoryMarketPercentage = Object.values(classes)
+              .flat()
+              .reduce((sum, inv) => sum + inv.marketPercentage, 0);
 
             return (
               <React.Fragment key={catIndex}>
@@ -100,17 +102,25 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                   <Text
                     style={[styles.cell, styles.rightAlign, styles.boldText]}
                   >
-                    {categoryBookCost.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
+                    {categoryMarketValue.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
                     })}
                   </Text>
-                  <Text style={[styles.cell, styles.rightAlign]}></Text>
+                  <Text
+                    style={[styles.cell, styles.rightAlign, styles.boldText]}
+                  >
+                    {categoryMarketPercentage.toFixed(2)}
+                  </Text>
                 </View>
 
                 {Object.entries(classes).map(
                   ([className, items], classIndex) => {
-                    const classBookCost = items.reduce(
-                      (sum, inv) => sum + inv.bookCost,
+                    const classMarketValue = items.reduce(
+                      (sum, inv) => sum + inv.marketValue,
+                      0
+                    );
+                    const classMarketPercentage = items.reduce(
+                      (sum, inv) => sum + inv.marketPercentage,
                       0
                     );
 
@@ -142,12 +152,12 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                               </Text>
                             </TouchableOpacity>
                             <Text style={[styles.cell, styles.rightAlign]}>
-                              {inv.bookCost.toLocaleString(undefined, {
-                                minimumFractionDigits: 2,
+                              {inv.marketValue.toLocaleString(undefined, {
+                                maximumFractionDigits: 2,
                               })}
                             </Text>
                             <Text style={[styles.cell, styles.rightAlign]}>
-                              {inv.price.toFixed(2)}
+                              {inv.marketPercentage.toFixed(2)}
                             </Text>
                           </View>
                         ))}
@@ -163,11 +173,19 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                               styles.boldText,
                             ]}
                           >
-                            {classBookCost.toLocaleString(undefined, {
-                              minimumFractionDigits: 2,
+                            {classMarketValue.toLocaleString(undefined, {
+                              maximumFractionDigits: 2,
                             })}
                           </Text>
-                          <Text style={[styles.cell, styles.rightAlign]}></Text>
+                          <Text
+                            style={[
+                              styles.cell,
+                              styles.rightAlign,
+                              styles.boldText,
+                            ]}
+                          >
+                            {classMarketPercentage.toFixed(2)}
+                          </Text>
                         </View>
                       </React.Fragment>
                     );
@@ -182,10 +200,16 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
             </Text>
             <Text style={[styles.cell, styles.rightAlign, styles.boldText]}>
               {data.investments
-                .reduce((sum, inv) => sum + inv.bookCost, 0)
-                .toLocaleString(undefined, { minimumFractionDigits: 1 })}
+                .reduce((sum, inv) => sum + inv.marketValue, 0)
+                .toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}
             </Text>
-            <Text style={[styles.cell, styles.rightAlign]}></Text>
+            <Text style={[styles.cell, styles.rightAlign, styles.boldText]}>
+              {data.investments
+                .reduce((sum, inv) => sum + inv.marketPercentage, 0)
+                .toFixed(2)}
+            </Text>
           </View>
         </View>
         <Modal
@@ -209,23 +233,50 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     <Text style={styles.modalLabel}>Quantity:</Text>
                     <Text style={styles.modalText}>
                       {selectedItem.quantity.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
                       })}
                     </Text>
                   </View>
                   <View style={styles.modalRow}>
-                    <Text style={styles.modalLabel}>Value:</Text>
+                    <Text style={styles.modalLabel}>Cost ($):</Text>
                     <Text style={styles.modalText}>
-                      $
+                      {selectedItem.bookCost.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                      })}
+                    </Text>
+                  </View>
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Price ($):</Text>
+                    <Text style={styles.modalText}>
+                      {selectedItem.bookCost.toFixed(2)}
+                    </Text>
+                  </View>
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Mkt ($):</Text>
+                    <Text style={styles.modalText}>
                       {selectedItem.marketValue.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
                       })}
                     </Text>
                   </View>
                   <View style={styles.modalRow}>
-                    <Text style={styles.modalLabel}>Percentage:</Text>
+                    <Text style={styles.modalLabel}>Mkt (%):</Text>
                     <Text style={styles.modalText}>
-                      {selectedItem.marketPercentage.toFixed(2)}%
+                      {selectedItem.marketPercentage.toFixed(2)}
+                    </Text>
+                  </View>
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Yld ($):</Text>
+                    <Text style={styles.modalText}>
+                      {selectedItem.income.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                      })}
+                    </Text>
+                  </View>
+                  <View style={styles.modalRow}>
+                    <Text style={styles.modalLabel}>Yld (%):</Text>
+                    <Text style={styles.modalText}>
+                      {selectedItem.yield.toFixed(2)}
                     </Text>
                   </View>
                   <TouchableOpacity
