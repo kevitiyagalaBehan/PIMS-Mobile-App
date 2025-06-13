@@ -72,16 +72,16 @@ export default function ESigning({ refreshTrigger }: Props) {
   };
 
   if (loading) {
-      return <Text style={styles.loader}>Loading...</Text>;
-    }
-  
-    if (error) {
-      return <Text style={styles.errorText}>{error}</Text>;
-    }
-  
-    if (!documents || documents.length === 0) {
-      return <Text style={styles.errorText}>No investments data available</Text>;
-    }
+    return <Text style={styles.loader}>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (!documents) {
+    return <Text style={styles.errorText}>No investments data available</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -297,7 +297,6 @@ const getStyles = (width: number, height: number) =>
     },
     tableContainer: {
       flexGrow: 1,
-      paddingBottom: height * 0.01,
     },
     loader: {
       fontWeight: "bold",
@@ -316,7 +315,8 @@ const getStyles = (width: number, height: number) =>
       borderWidth: 1,
       borderColor: "#1B77BE",
       borderRadius: 6,
-      paddingHorizontal: width * 0.02,
+      paddingHorizontal: height * 0.01,
+      paddingBottom: height * 0.01,
     },
     bodyText: {
       //fontWeight: "bold",
@@ -360,6 +360,8 @@ const getStyles = (width: number, height: number) =>
       paddingVertical: height * 0.007,
       paddingHorizontal: width * 0.02,
       alignItems: "center",
+      borderWidth: 1,
+      borderColor: "#ccc",
     },
     dataCell: {
       fontSize: RFPercentage(2),
@@ -402,7 +404,7 @@ const getStyles = (width: number, height: number) =>
       padding: width * 0.05,
     },
     modalTitle: {
-      fontSize: RFPercentage(2.6),
+      fontSize: RFPercentage(2.5),
       fontWeight: "bold",
       color: "#4A90E2",
       marginBottom: height * 0.02,
