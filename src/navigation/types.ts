@@ -404,3 +404,22 @@ export interface InvestmentsResponse {
   settings: Settings;
 }
 
+export interface Relationships {
+  id: string;
+  masterAccountId: string;
+  relationId: string;
+  relationship: string;
+}
+
+export interface RelationshipResponse {
+  accountCode: string;
+  accountId: string;
+  accountName: string;
+  accountSource: string;
+  accountType: string | null;
+  email: string;
+  emailRecipientType: string | null;
+  id: string;
+  mobile: string | null;
+  relationships: Relationships[];
+}
