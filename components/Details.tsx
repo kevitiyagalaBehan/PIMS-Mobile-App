@@ -2,13 +2,20 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   useWindowDimensions,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../src/context/AuthContext";
-import { getClientAccountDetails } from "../src/utils/pimsApi";
-import { ClientAccountDetails, Props } from "../src/navigation/types";
+import {
+  getClientAccountDetails,
+  getRelationships,
+} from "../src/utils/pimsApi";
+import {
+  ClientAccountDetails,
+  Props,
+  RelationshipResponse,
+} from "../src/navigation/types";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 export default function Details({ refreshTrigger }: Props) {
@@ -16,6 +23,12 @@ export default function Details({ refreshTrigger }: Props) {
   const { width, height } = useWindowDimensions();
   const [loading, setLoading] = useState(true);
   const [details, setDetails] = useState<ClientAccountDetails[] | null>(null);
+  const [relationships, setRelationships] = useState<
+    RelationshipResponse[] | null
+  >(null);
+  const [selectedTab, setSelectedTab] = useState<
+    "accountDetails" | "relationships"
+  >("accountDetails");
   const [error, setError] = useState<string | null>(null);
   const styles = getStyles(width, height);
 
@@ -35,6 +48,30 @@ export default function Details({ refreshTrigger }: Props) {
         setDetails(details);
       } catch (err) {
         setError("Failed to load account details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userData?.authToken, userData?.accountId, refreshTrigger]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userData?.authToken || !userData?.accountId) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const relationships = await getRelationships(
+          userData.authToken,
+          userData.accountId
+        );
+        setRelationships(relationships);
+      } catch (err) {
+        setError("Failed to load relationships");
       } finally {
         setLoading(false);
       }
@@ -87,17 +124,83 @@ export default function Details({ refreshTrigger }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.border}>
-        <Text style={styles.bodyText}>Account Details</Text>
-        {rows.map((item, index) => (
-          <View key={index} style={styles.row}>
-            <View style={styles.labelCell}>
-              <Text style={styles.labelText}>{item.label}</Text>
-            </View>
-            <View style={styles.valueCell}>
-              <Text style={styles.valueText}>{item.value}</Text>
-            </View>
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[
+              styles.tab,
+              selectedTab === "accountDetails" && styles.activeTab,
+            ]}
+            onPress={() => setSelectedTab("accountDetails")}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                selectedTab === "accountDetails" && styles.activeTabText,
+              ]}
+            >
+              Account Details
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.tab,
+              selectedTab === "relationships" && styles.activeTab,
+            ]}
+            onPress={() => setSelectedTab("relationships")}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                selectedTab === "relationships" && styles.activeTabText,
+              ]}
+            >
+              Relationships
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {selectedTab === "accountDetails" && (
+          <View>
+            {rows.map((item, index) => (
+              <View key={index} style={styles.row}>
+                <View style={styles.labelCell}>
+                  <Text style={styles.labelText}>{item.label}</Text>
+                </View>
+                <View style={styles.valueCell}>
+                  <Text style={styles.valueText}>{item.value}</Text>
+                </View>
+              </View>
+            ))}
           </View>
-        ))}
+        )}
+
+        {selectedTab === "relationships" && (
+          <View>
+            {relationships && relationships.length > 0 ? (
+              relationships.map((relGroup, i) => (
+                <View key={i} style={styles.row}>
+                  <View style={styles.labelCell}>
+                    <Text style={styles.labelText}>{relGroup.accountName}</Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.valueCell,
+                      { backgroundColor: i % 2 === 0 ? "#eee" : "#fff" },
+                    ]}
+                  >
+                    <Text style={styles.valueText}>
+                      {relGroup.relationships
+                        .map((r) => r.relationship)
+                        .join(", ")}
+                    </Text>
+                  </View>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.valueText}>No relationships available</Text>
+            )}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -107,7 +210,7 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: height * 0.02,
+      marginVertical: height * 0.02,
       borderRadius: 6,
       backgroundColor: "#fff",
     },
@@ -115,18 +218,11 @@ const getStyles = (width: number, height: number) =>
       borderWidth: 1,
       borderColor: "#1B77BE",
       borderRadius: 6,
-      paddingHorizontal: width * 0.02,
-      paddingBottom: height * 0.01,
-    },
-    bodyText: {
-      //fontWeight: "bold",
-      color: "#1B77BE",
-      marginBottom: height * 0.01,
-      fontSize: RFPercentage(2.6),
+      padding: width * 0.02,
     },
     row: {
       flexDirection: "row",
-      borderWidth: 0.5,
+      borderWidth: 1,
       borderColor: "#ccc",
     },
     labelCell: {
@@ -149,6 +245,26 @@ const getStyles = (width: number, height: number) =>
     valueText: {
       color: "#000",
       fontSize: RFPercentage(2),
+    },
+    tabContainer: {
+      flexDirection: "row",
+    },
+    tab: {
+      flex: 1,
+      padding: 12,
+      backgroundColor: "#fff",
+      alignItems: "center",
+    },
+    activeTab: {
+      backgroundColor: "#1B77BE",
+    },
+    tabText: {
+      fontSize: RFPercentage(2),
+      fontWeight: "bold",
+      color: "#1B77BE",
+    },
+    activeTabText: {
+      color: "#fff",
     },
     errorText: {
       color: "red",
