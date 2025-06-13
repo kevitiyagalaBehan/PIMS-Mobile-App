@@ -2,6 +2,10 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
+import {
+  getFocusedRouteNameFromRoute,
+  RouteProp,
+} from "@react-navigation/native";
 import HomeScreenOther from "../screens/HomeScreenOther";
 import ESigningScreen from "../screens/ESigningScreen";
 import { BottomTabParamListOther } from "./types";
@@ -37,12 +41,24 @@ export default function BottomTabOther() {
       <Tab.Screen
         name="Inbox"
         component={InboxStackNavigator}
-        options={{
-          headerShown: false,
-          tabBarLabel: "Inbox",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbox-ellipses" size={size} color={color} />
-          ),
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "InboxList";
+
+          return {
+            headerShown: false,
+            tabBarLabel: "Inbox",
+            tabBarStyle:
+              routeName === "InboxDetail"
+                ? { display: "none" }
+                : { height: height * 0.08 },
+            tabBarLabelStyle: {
+              fontSize: RFPercentage(1.4),
+              fontWeight: "bold",
+            },
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="chatbox-ellipses" size={size} color={color} />
+            ),
+          };
         }}
       />
       <Tab.Screen
