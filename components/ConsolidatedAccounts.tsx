@@ -271,6 +271,8 @@ const getStyles = (width: number, height: number) =>
       paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
       alignItems: "center",
+      borderWidth: 1,
+      borderColor: "#ccc",
     },
     dataCell: {
       fontSize: RFPercentage(2),
@@ -305,7 +307,7 @@ const getStyles = (width: number, height: number) =>
       padding: width * 0.05,
     },
     modalTitle: {
-      fontSize: RFPercentage(2),
+      fontSize: RFPercentage(2.5),
       fontWeight: "bold",
       color: "#4A90E2",
       marginBottom: height * 0.02,
