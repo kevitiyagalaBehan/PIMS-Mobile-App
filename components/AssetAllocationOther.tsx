@@ -2,19 +2,41 @@ import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import React, { useState, useEffect } from "react";
 import { PieChart } from "react-native-chart-kit";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { ChartData, PortfolioData } from "../src/navigation/types";
+import { ChartData, PortfolioData, Props } from "../src/navigation/types";
+import { getAssetAllocationSummaryOther } from "../src/utils/pimsApi";
+import { useAuth } from "../src/context/AuthContext";
 
-export default function AssetAllocationOther({
-  data,
-  loading,
-  error,
-}: {
-  data: PortfolioData | null;
-  loading: boolean;
-  error: string | null;
-}) {
+export default function AssetAllocationOther({ refreshTrigger }: Props) {
+  const { userData } = useAuth();
+  const [data, setData] = useState<PortfolioData | null>(null);
   const { width, height } = useWindowDimensions();
+  const styles = getStyles(width, height);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [chartData, setChartData] = useState<ChartData[]>([]);
+
+  useEffect(() => {
+      const fetchData = async () => {
+        if (!userData?.authToken || !userData?.accountId) {
+          setLoading(false);
+          return;
+        }
+        setLoading(true);
+        try {
+          const data = await getAssetAllocationSummaryOther(
+            userData.authToken,
+            userData.accountId
+          );
+          setData(data);
+        } catch (err) {
+          setError("Failed to load investment details");
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
   useEffect(() => {
     if (!data) return;
@@ -45,14 +67,8 @@ export default function AssetAllocationOther({
     return colorMap[assetClass] || "#999";
   };
 
-  const styles = getStyles(width, height);
-
   if (loading) {
     return <Text style={styles.loader}>Loading...</Text>;
-  }
-
-  if (error) {
-    return <Text style={styles.errorText}>{error}</Text>;
   }
 
   if (!data || error) {
