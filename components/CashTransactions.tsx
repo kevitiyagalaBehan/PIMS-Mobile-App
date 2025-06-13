@@ -155,6 +155,7 @@ export default function Transactions() {
                 flexGrow: 1,
                 paddingBottom: height * 0.5,
               }}
+              showsVerticalScrollIndicator={false}
             />
           ) : (
             <Text style={styles.noData}>No transactions available</Text>
@@ -286,8 +287,8 @@ const getStyles = (width: number, height: number) =>
       flexDirection: "row",
       paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
-      borderBottomWidth: 1,
-      borderBottomColor: "#fff",
+      borderWidth: 1,
+      borderColor: "#ccc",
       alignItems: "center",
     },
     dataCell: {
