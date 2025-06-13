@@ -21,6 +21,7 @@ import {
   Messages,
   Comments,
   InvestmentsResponse,
+  RelationshipResponse,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -769,6 +770,34 @@ export const getInvestments = async (
     return data;
   } catch (error) {
     console.error("Error fetching investments:", error);
+    throw error;
+  }
+};
+
+export const getRelationships = async (
+  authToken: string,
+  accountId: string
+): Promise<RelationshipResponse[]> => {
+  try {
+    const response = await fetch(`${apiBaseUrl}/Relationships/${accountId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch relationships: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data: RelationshipResponse[] = await response.json();
+    //console.log("Data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching relationships:", error);
     throw error;
   }
 };
