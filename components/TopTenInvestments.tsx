@@ -59,10 +59,6 @@ export default function TopTenInvestments({ refreshTrigger }: Props) {
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
-  if (error) {
-    return <Text style={styles.errorText}>{error}</Text>;
-  }
-
   if (!investments || investments.length === 0) {
     return <Text style={styles.errorText}>No investments data available</Text>;
   }
@@ -229,6 +225,8 @@ const getStyles = (width: number, height: number) =>
       paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
       alignItems: "center",
+      borderWidth: 1,
+      borderColor: "#ccc",
     },
     dataCell: {
       fontSize: RFPercentage(2),
@@ -246,9 +244,6 @@ const getStyles = (width: number, height: number) =>
     },
     rightAlign: {
       textAlign: "right",
-    },
-    boldText: {
-      fontWeight: "bold",
     },
     modalContainer: {
       flex: 1,

@@ -94,7 +94,6 @@ export default function TopTenInvestmentsFamily({ refreshTrigger }: Props) {
                 <Text
                   style={[
                     styles.dataCell,
-                    styles.boldText,
                     styles.leftAlign,
                     styles.underlineText,
                   ]}
@@ -221,8 +220,8 @@ const getStyles = (width: number, height: number) =>
       flexDirection: "row",
       paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
-      borderBottomWidth: 1,
-      borderBottomColor: "#fff",
+      borderWidth: 1,
+      borderColor: "#ccc",
       alignItems: "center",
     },
     dataCell: {

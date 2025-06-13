@@ -34,7 +34,6 @@ export default function PensionLimitSummary({ refreshTrigger }: Props) {
           setError("Failed to load pension limit summary");
         }
       } catch (err) {
-        console.error("Error fetching pension limit summary:", err);
         setError("Something went wrong while fetching pension limit summary");
       } finally {
         setLoading(false);
@@ -50,15 +49,16 @@ export default function PensionLimitSummary({ refreshTrigger }: Props) {
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
-  if (error) {
-    return <Text style={styles.errorText}>{error}</Text>;
-  }
-
   if (!pensionLimitSummary || error) {
     return <Text style={styles.errorText}>No pension data available</Text>;
   }
 
   const { financialYear, members } = pensionLimitSummary;
+
+  if (!members || members.length === 0) {
+    return null;
+  }
+
   const formatShortFinancialYear = (fy: string) => {
     const [start, end] = fy.split("/");
     return `${start.slice(-2)}/${end.slice(-2)}`;
@@ -209,8 +209,8 @@ const getStyles = (width: number, height: number) =>
       flexDirection: "row",
       paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
-      borderBottomWidth: 1,
-      borderBottomColor: "#ccc",
+      borderWidth: 1,
+      borderColor: "#ccc",
       alignItems: "center",
       backgroundColor: "#fff",
     },
