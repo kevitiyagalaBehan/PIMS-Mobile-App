@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
@@ -364,7 +363,7 @@ const getStyles = (width: number, height: number) =>
       //flexWrap: "wrap",
     },
     label: {
-fontSize: RFPercentage(2),
+      fontSize: RFPercentage(2),
     },
     leftItem: {
       height: height * 0.045,
