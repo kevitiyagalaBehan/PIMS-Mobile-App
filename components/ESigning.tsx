@@ -7,47 +7,56 @@ import {
   Modal,
   Linking,
   useWindowDimensions,
+  FlatList,
 } from "react-native";
 import { getEsignDocuments } from "../src/utils/pimsApi";
-import { EsignDocument, Props } from "../src/navigation/types";
+import { EsignDocument } from "../src/navigation/types";
 import { useAuth } from "../src/context/AuthContext";
+import { useESign } from "../src/context/ESignContext";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { useRefreshTrigger } from "../hooks/useRefreshTrigger";
 import Constants from "expo-constants";
 
 const eSigningBaseUrl = Constants.expoConfig?.extra?.eSigningBaseUrl as string;
 
-export default function ESigning({ refreshTrigger }: Props) {
+export default function ESigning() {
   const { userData } = useAuth();
   const [documents, setDocuments] = useState<EsignDocument[]>([]);
   const [selectedTab, setSelectedTab] = useState<"toSign" | "signed">("toSign");
   const [selectedDocument, setSelectedDocument] =
     useState<EsignDocument | null>(null);
+  const [isScrollable, setIsScrollable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!userData?.authToken || !userData?.accountId) {
-        setLoading(false);
-        return;
-      }
-      setLoading(true);
+  const fetchData = async () => {
+    if (!userData?.authToken || !userData?.accountId) {
+      setLoading(false);
+      return;
+    }
 
-      try {
-        const data = await getEsignDocuments(
-          userData.authToken,
-          userData.accountId
-        );
-        setDocuments(data || []);
-      } catch (err) {
-        setError("Failed to load documents");
-        setDocuments([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+
+    try {
+      const data = await getEsignDocuments(
+        userData.authToken,
+        userData.accountId
+      );
+      setDocuments(data || []);
+    } catch (err) {
+      setError("Failed to load documents");
+      setDocuments([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const { refreshTrigger, refreshing, onRefresh } =
+    useRefreshTrigger(fetchData);
+
+  useEffect(() => {
     fetchData();
   }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
@@ -127,90 +136,105 @@ export default function ESigning({ refreshTrigger }: Props) {
           </View>
 
           {filteredDocs.length > 0 ? (
-            filteredDocs.map((item, index) => {
-              const hasSignable = item.signatories.some(
-                (s) => s.esigningDetailId
-              );
-              const firstValidId = item.signatories.find(
-                (s) => s.esigningDetailId
-              )?.esigningDetailId;
-              const documentToOpen = item.documents?.[0]?.documentPath;
+            <FlatList
+              data={filteredDocs}
+              keyExtractor={(item, index) => `${item.subject}-${index}`}
+              renderItem={({ item, index }) => {
+                const hasSignable = item.signatories.some(
+                  (s) => s.esigningDetailId
+                );
+                const firstValidId = item.signatories.find(
+                  (s) => s.esigningDetailId
+                )?.esigningDetailId;
+                const documentToOpen = item.documents?.[0]?.documentPath;
 
-              return (
-                <View
-                  key={index}
-                  style={[
-                    styles.dataRow,
-                    { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
-                  ]}
-                >
-                  <TouchableOpacity
-                    style={{ flex: 1.3 }}
-                    onPress={() => setSelectedDocument(item)}
+                return (
+                  <View
+                    style={[
+                      styles.dataRow,
+                      { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
+                    ]}
                   >
-                    <Text
-                      style={[
-                        styles.dataCell,
-                        styles.boldText,
-                        styles.underlineText,
-                      ]}
+                    <TouchableOpacity
+                      style={{ flex: 1.3 }}
+                      onPress={() => setSelectedDocument(item)}
                     >
-                      {item.subject}
-                    </Text>
-                  </TouchableOpacity>
+                      <Text
+                        style={[
+                          styles.dataCell,
+                          styles.underlineText,
+                        ]}
+                      >
+                        {item.subject}
+                      </Text>
+                    </TouchableOpacity>
 
-                  <View style={{ flex: 1.5 }}>
-                    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                      {item.signatories.map((s, i) => {
-                        let color = "#D41515";
-                        if (s.esigningStatus === "Signed") color = "#48C738";
-                        else if (s.esigningStatus === "Viewed")
-                          color = "#CAD415";
+                    <View style={{ flex: 1.5 }}>
+                      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                        {item.signatories.map((s, i) => {
+                          let color = "#D41515";
+                          if (s.esigningStatus === "Signed") color = "#48C738";
+                          else if (s.esigningStatus === "Viewed")
+                            color = "#CAD415";
 
-                        return (
-                          <Text
-                            key={i}
-                            style={[
-                              styles.dataCell,
-                              styles.boldText,
-                              { color },
-                            ]}
-                          >
-                            {s.signatoryName}
-                            {i < item.signatories.length - 1 ? ", " : ""}
-                          </Text>
-                        );
-                      })}
+                          return (
+                            <Text
+                              key={i}
+                              style={[
+                                styles.dataCell,
+                                styles.boldText,
+                                { color },
+                              ]}
+                            >
+                              {s.signatoryName}
+                              {i < item.signatories.length - 1 ? ", " : ""}
+                            </Text>
+                          );
+                        })}
+                      </View>
                     </View>
-                  </View>
 
-                  <View style={{ flex: 1, alignItems: "center" }}>
-                    {selectedTab === "toSign" &&
-                      hasSignable &&
-                      firstValidId && (
+                    <View style={{ flex: 1, alignItems: "center" }}>
+                      {selectedTab === "toSign" &&
+                        hasSignable &&
+                        firstValidId && (
+                          <TouchableOpacity
+                            style={styles.signBtn}
+                            onPress={() => handleSign(firstValidId)}
+                          >
+                            <Text style={styles.signBtnText}>Sign</Text>
+                          </TouchableOpacity>
+                        )}
+                      {selectedTab === "signed" && documentToOpen && (
                         <TouchableOpacity
                           style={styles.signBtn}
-                          onPress={() => handleSign(firstValidId)}
+                          onPress={() =>
+                            Linking.openURL(
+                              `${eSigningBaseUrl}/${documentToOpen}`
+                            )
+                          }
                         >
-                          <Text style={styles.signBtnText}>Sign</Text>
+                          <Text style={styles.signBtnText}>Open</Text>
                         </TouchableOpacity>
                       )}
-                    {selectedTab === "signed" && documentToOpen && (
-                      <TouchableOpacity
-                        style={styles.signBtn}
-                        onPress={() =>
-                          Linking.openURL(
-                            `${eSigningBaseUrl}/${documentToOpen}`
-                          )
-                        }
-                      >
-                        <Text style={styles.signBtnText}>Open</Text>
-                      </TouchableOpacity>
-                    )}
+                    </View>
                   </View>
-                </View>
-              );
-            })
+                );
+              }}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              onContentSizeChange={(_, contentHeight) => {
+                setIsScrollable(contentHeight > height);
+              }}
+              contentContainerStyle={{
+                flexGrow: 1,
+                paddingBottom: isScrollable ? height * 0.09 : 0,
+              }}
+              ListEmptyComponent={() => (
+                <Text style={styles.noData}>No messages available</Text>
+              )}
+              showsVerticalScrollIndicator={false}
+            />
           ) : (
             <Text style={styles.noData}>No documents available</Text>
           )}
@@ -296,7 +320,7 @@ const getStyles = (width: number, height: number) =>
       borderRadius: 6,
     },
     tableContainer: {
-      flexGrow: 1,
+      //flexGrow: 1,
     },
     loader: {
       fontWeight: "bold",
