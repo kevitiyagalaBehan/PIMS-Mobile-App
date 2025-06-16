@@ -103,7 +103,8 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     style={[styles.cell, styles.rightAlign, styles.boldText]}
                   >
                     {categoryMarketValue.toLocaleString(undefined, {
-                      maximumFractionDigits: 2,
+                      minimumFractionDigits: 2,
+  maximumFractionDigits: 2
                     })}
                   </Text>
                   <Text
@@ -153,7 +154,8 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                             </TouchableOpacity>
                             <Text style={[styles.cell, styles.rightAlign]}>
                               {inv.marketValue.toLocaleString(undefined, {
-                                maximumFractionDigits: 2,
+                                minimumFractionDigits: 2,
+  maximumFractionDigits: 2
                               })}
                             </Text>
                             <Text style={[styles.cell, styles.rightAlign]}>
@@ -174,7 +176,8 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                             ]}
                           >
                             {classMarketValue.toLocaleString(undefined, {
-                              maximumFractionDigits: 2,
+                              minimumFractionDigits: 2,
+  maximumFractionDigits: 2
                             })}
                           </Text>
                           <Text
@@ -202,7 +205,8 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
               {data.investments
                 .reduce((sum, inv) => sum + inv.marketValue, 0)
                 .toLocaleString(undefined, {
-                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
                 })}
             </Text>
             <Text style={[styles.cell, styles.rightAlign, styles.boldText]}>
@@ -233,7 +237,8 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     <Text style={styles.modalLabel}>Quantity:</Text>
                     <Text style={styles.modalText}>
                       {selectedItem.quantity.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2,
+  maximumFractionDigits: 2
                       })}
                     </Text>
                   </View>
@@ -241,7 +246,8 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     <Text style={styles.modalLabel}>Cost ($):</Text>
                     <Text style={styles.modalText}>
                       {selectedItem.bookCost.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2,
+  maximumFractionDigits: 2
                       })}
                     </Text>
                   </View>
@@ -255,7 +261,8 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     <Text style={styles.modalLabel}>Mkt ($):</Text>
                     <Text style={styles.modalText}>
                       {selectedItem.marketValue.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2,
+  maximumFractionDigits: 2
                       })}
                     </Text>
                   </View>
@@ -269,7 +276,8 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     <Text style={styles.modalLabel}>Yld ($):</Text>
                     <Text style={styles.modalText}>
                       {selectedItem.income.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2,
+  maximumFractionDigits: 2
                       })}
                     </Text>
                   </View>
