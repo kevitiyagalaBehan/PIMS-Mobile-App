@@ -8,11 +8,15 @@ import {
   useWindowDimensions,
 } from "react-native";
 import React, { useState, useEffect } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Platform } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getCashTransactions } from "../src/utils/pimsApi";
 import { CashTransactions } from "../src/navigation/types";
 import { useRefreshTrigger } from "../hooks/useRefreshTrigger";
+import { SelectList } from "react-native-dropdown-select-list";
 
 export default function Transactions() {
   const { userData } = useAuth();
@@ -20,11 +24,24 @@ export default function Transactions() {
   const [transactions, setTransactions] = useState<CashTransactions[] | null>(
     null
   );
+  const [startDate, setStartDate] = useState(() => {
+    const today = new Date();
+    const oneMonthAgo = new Date(today);
+    oneMonthAgo.setMonth(today.getMonth() - 1);
+    return oneMonthAgo;
+  });
+  const [endDate, setEndDate] = useState(new Date());
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<CashTransactions | null>(
     null
   );
+  const [holdingDescriptions, setHoldingDescriptions] = useState<
+    { key: string; value: string }[]
+  >([]);
+  const [selectedHolding, setSelectedHolding] = useState<string>("");
   const [modalVisible, setModalVisible] = useState(false);
 
   const fetchData = async () => {
@@ -35,22 +52,26 @@ export default function Transactions() {
 
     setLoading(true);
     try {
+      const formatDate = (date: Date) => date.toISOString().split("T")[0];
       const data = await getCashTransactions(
         userData.authToken,
-        userData.accountId
+        userData.accountId,
+        formatDate(startDate),
+        formatDate(endDate)
       );
 
-      const classificationOptions = Array.from(
-        new Set(transactions?.map((t) => t.classification))
-      );
-      const cashAccountOptions = Array.from(
-        new Set(transactions?.map((t) => t.holdingDescription))
-      );
+      if (data) {
+        setTransactions(data);
 
-      //console.log("Classifications:", classificationOptions);
-      //console.log("Description:", cashAccountOptions);
+        const uniqueHoldings = Array.from(
+          new Set(data.map((item) => item.holdingDescription))
+        ).map((desc) => ({
+          key: desc,
+          value: desc,
+        }));
 
-      setTransactions(data);
+        setHoldingDescriptions([{ key: "", value: "All" }, ...uniqueHoldings]);
+      }
     } catch (err) {
       setError("Failed to load transaction details");
     } finally {
@@ -69,6 +90,10 @@ export default function Transactions() {
     setSelectedItem(item);
     setModalVisible(true);
   };
+
+  const filteredTransactions = selectedHolding
+    ? transactions?.filter((t) => t.holdingDescription === selectedHolding)
+    : transactions;
 
   const styles = getStyles(width, height);
 
@@ -89,17 +114,86 @@ export default function Transactions() {
       <View style={styles.border}>
         <Text style={styles.bodyText}>Cash Transactions</Text>
 
+        <View style={styles.filterContainer}>
+          <Text style={styles.label}>From:</Text>
+          <View style={styles.leftItem}>
+            <TouchableOpacity
+              style={styles.datePickerButton}
+              onPress={() => setShowStartPicker(true)}
+            >
+              <Text style={styles.dateText}>
+                {startDate.toLocaleDateString()}
+              </Text>
+              <Ionicons name="calendar" size={20} color="#1B77BE" />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.label}>To:</Text>
+          <View style={styles.rightItem}>
+            <TouchableOpacity
+              style={styles.datePickerButton}
+              onPress={() => setShowStartPicker(true)}
+            >
+              <Text style={styles.dateText}>
+                {endDate.toLocaleDateString()}
+              </Text>
+              <Ionicons name="calendar" size={20} color="#1B77BE" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {showStartPicker && (
+          <DateTimePicker
+            value={startDate}
+            mode="date"
+            display="default"
+            onChange={(event, selectedDate) => {
+              setShowStartPicker(false);
+              if (event.type === "set" && selectedDate) {
+                setStartDate(selectedDate);
+              }
+            }}
+          />
+        )}
+
+        {showEndPicker && (
+          <DateTimePicker
+            value={endDate}
+            mode="date"
+            display="default"
+            onChange={(event, selectedDate) => {
+              setShowEndPicker(false);
+              if (event.type === "set" && selectedDate) {
+                setEndDate(selectedDate);
+              }
+            }}
+          />
+        )}
+
+        <SelectList
+          setSelected={setSelectedHolding}
+          data={holdingDescriptions}
+          save="key"
+          placeholder="All"
+          //boxStyles={styles.dropDownBox}
+          //dropdownStyles={styles.dropDownList}
+          dropdownItemStyles={styles.dropdownItem}
+        />
+
+        <TouchableOpacity style={styles.applyButton} onPress={fetchData}>
+          <Text style={styles.applyButtonText}>Filter</Text>
+        </TouchableOpacity>
+
         <View style={styles.tableContainer}>
           <View style={styles.tableHeader}>
             <Text style={[styles.headerCell1, { flex: 1.5 }]}>
               Date Description
             </Text>
-            <Text style={[styles.headerCell2, { flex: 1 }]}>Amount $</Text>
-            <Text style={[styles.headerCell2, { flex: 1 }]}>Balance $</Text>
+            <Text style={[styles.headerCell2, { flex: 1 }]}>Deposit ($)</Text>
+            <Text style={[styles.headerCell2, { flex: 1 }]}>Balance ($)</Text>
           </View>
           {transactions.length > 0 ? (
             <FlatList
-              data={transactions}
+              data={filteredTransactions}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item, index }) => (
                 <View
@@ -123,7 +217,13 @@ export default function Transactions() {
                           }
                         )}
                       </Text>
-                      <Text style={[styles.dataCell, styles.leftAlign]}>
+                      <Text
+                        style={[
+                          styles.dataCell,
+                          styles.leftAlign,
+                          styles.underlineText,
+                        ]}
+                      >
                         {item.transactionDescription?.includes(
                           "Closing Balance"
                         )
@@ -139,9 +239,11 @@ export default function Transactions() {
                     style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
                     numberOfLines={1}
                   >
-                    {item.credit != null ? item.credit.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                    }) : ""}
+                    {item.credit != null
+                      ? item.credit.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                        })
+                      : ""}
                   </Text>
                   <Text
                     style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
@@ -157,7 +259,7 @@ export default function Transactions() {
               onRefresh={onRefresh}
               contentContainerStyle={{
                 flexGrow: 1,
-                paddingBottom: height * 0.5,
+                paddingBottom: height * 1.4,
               }}
               showsVerticalScrollIndicator={false}
             />
@@ -253,8 +355,59 @@ const getStyles = (width: number, height: number) =>
       marginBottom: height * 0.005,
       fontSize: RFPercentage(2.6),
     },
+    filterContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: height * 0.01,
+      gap: 10,
+      //flexWrap: "wrap",
+    },
+    label: {
+fontSize: RFPercentage(2),
+    },
+    leftItem: {
+      height: height * 0.045,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    rightItem: {
+      height: height * 0.045,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    dropdownItem: {
+      paddingHorizontal: width * 0.06,
+    },
+    datePickerButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "#f0f0f0",
+      borderRadius: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 10,
+      flex: 1,
+    },
+    dateText: {
+      fontSize: RFPercentage(2),
+      color: "#1B77BE",
+      marginRight: width * 0.02,
+    },
+    applyButton: {
+      backgroundColor: "#1B77BE",
+      paddingVertical: 10,
+      marginVertical: height * 0.01,
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    applyButtonText: {
+      color: "white",
+      fontWeight: "bold",
+      fontSize: RFPercentage(2),
+    },
+
     tableContainer: {
-      paddingBottom: height * 0.01,
+      //paddingVertical: height * 0.01,
     },
     loader: {
       fontWeight: "bold",
