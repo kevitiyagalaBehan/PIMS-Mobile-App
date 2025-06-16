@@ -3,6 +3,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
+import { ESignProvider } from "./src/context/ESignContext";
 import LoginScreen from "./src/screens/LoginScreen";
 import DrawerNavigatorOther from "./src/navigation/DrawerNavigatorOther";
 import DrawerNavigatorFamily from "./src/navigation/DrawerNavigatorFamily";
@@ -51,7 +52,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <AppNavigator />
+        <ESignProvider>
+          <AppNavigator />
+        </ESignProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );
