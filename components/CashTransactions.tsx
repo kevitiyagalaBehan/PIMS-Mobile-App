@@ -139,13 +139,17 @@ export default function Transactions() {
                     style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
                     numberOfLines={1}
                   >
-                    {item.debit != null ? item.debit.toLocaleString() : ""}
+                    {item.credit != null ? item.credit.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    }) : ""}
                   </Text>
                   <Text
                     style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
                     numberOfLines={1}
                   >
-                    {item.balance.toLocaleString()}
+                    {item.balance.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
                   </Text>
                 </View>
               )}
