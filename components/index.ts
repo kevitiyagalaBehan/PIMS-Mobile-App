@@ -19,4 +19,5 @@ export { default as Drawer } from "./Drawer";
 export { default as ESigning } from "./ESigning";
 export { default as CashTransactions } from "./CashTransactions";
 export { default as Portfolio } from "./Portfolio";
+export { default as InboxList } from "./InboxList";
 
