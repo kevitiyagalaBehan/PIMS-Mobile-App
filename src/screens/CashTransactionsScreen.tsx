@@ -3,7 +3,7 @@ import { StyleSheet, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HeaderWithMenu, CashTransactions } from "../../components";
 
-export default function TopTenInvestmentsScreen() {
+export default function CashTransactionsScreen() {
   const { width, height } = useWindowDimensions();
   const styles = getStyles(width);
 
