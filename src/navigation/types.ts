@@ -49,6 +49,7 @@ export type DrawerParamListOther = {
   Details: { authToken: string; accountId: string };
   Transactions: { authToken: string; accountId: string };
   Portfolio: { authToken: string; accountId: string };
+  Document: { authToken: string; accountId: string };
 };
 
 export type DrawerParamListFamily = {
