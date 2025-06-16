@@ -79,11 +79,7 @@ export default function EstimatedMemberStatement({ refreshTrigger }: Props) {
       <View style={styles.border}>
         <Text style={styles.bodyText}>
           Estimated Member Statement As At{" "}
-          {new Date().toLocaleDateString("en-AU", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
+          {new Date().toLocaleDateString("en-AU")}
         </Text>
 
         <View style={styles.tableContainer}>
