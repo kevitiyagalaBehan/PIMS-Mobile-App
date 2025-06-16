@@ -1,12 +1,10 @@
 import React from "react";
-import { StyleSheet, View, Text, useWindowDimensions, ScrollView, RefreshControl } from "react-native";
+import { StyleSheet, View, Text, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ESigning } from "../../components";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 
 export default function ESigningScreen() {
-  const { refreshTrigger, refreshing, onRefresh } = useRefreshTrigger();
   const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
@@ -15,18 +13,9 @@ export default function ESigningScreen() {
       <View style={styles.header}>
         <Text style={styles.headerText}>Signing</Text>
       </View>
-      <ScrollView
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-            >
-              <View style={styles.bodySection}>
-                <ESigning
-                  refreshTrigger={refreshTrigger}
-                  refreshing={refreshing}
-                />
-              </View>
-            </ScrollView>
+        <View style={styles.bodySection}>
+          <ESigning />
+        </View>
     </SafeAreaView>
   );
 }
