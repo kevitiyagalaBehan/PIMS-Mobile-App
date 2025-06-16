@@ -16,7 +16,7 @@
   "include": [
     "src/**/*",
     "node_modules/@types/**/*"
-, "components/ESigning.tsx"  ],
+, "components/ESigning.tsx", "components/InboxList.tsx"  ],
   "exclude": [
     "node_modules",
     "babel.config.ts",
