@@ -594,7 +594,9 @@ export const getEsignDocuments = async (
 
 export const getCashTransactions = async (
   authToken: string,
-  accountId: string
+  accountId: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<CashTransactions[] | null> => {
   try {
     const today = new Date();
@@ -603,11 +605,11 @@ export const getCashTransactions = async (
 
     const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
-    const startDate = formatDate(lastMonth);
-    const endDate = formatDate(today);
+    const start = startDate ?? formatDate(lastMonth);
+    const end = endDate ?? formatDate(today);
 
     const response = await fetch(
-      `${apiBaseUrl}/CashTransactionsV2/${accountId}/${startDate}/${endDate}`,
+      `${apiBaseUrl}/CashTransactionsV2/${accountId}/${start}/${end}`,
       {
         method: "GET",
         headers: {
