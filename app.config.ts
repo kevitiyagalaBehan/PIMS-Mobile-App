@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "PIMS",
     slug: "PIMS",
-    version: "1.0.7",
+    version: "1.0.8",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -13,7 +13,7 @@ export default {
       supportsTablet: true,
     },
     android: {
-      versionCode: 25,
+      versionCode: 26,
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
@@ -40,6 +40,7 @@ export default {
     ],
     extra: {
       apiBaseUrl: process.env.API_BASE_URL,
+      aasDocPath: process.env.AAS_DOC_PATH,
       appEnv: process.env.APP_ENV,
       eSigningBaseUrl: process.env.E_SIGNING_BASE_URL,
       eas: {
