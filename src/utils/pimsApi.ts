@@ -22,12 +22,14 @@ import {
   Comments,
   InvestmentsResponse,
   RelationshipResponse,
+  Documents,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
 const apiBaseUrl = Constants.expoConfig?.extra?.apiBaseUrl as string;
 const appEnv = Constants.expoConfig?.extra?.appEnv as string;
 const projectId = Constants.expoConfig?.extra?.eas?.projectId as string;
+const aasDocPath = Constants.expoConfig?.extra?.eas?.aasDocPath as string;
 
 //console.log("API:", apiBaseUrl);
 //console.log("ENV:", appEnv);
@@ -801,5 +803,37 @@ export const getRelationships = async (
   } catch (error) {
     console.error("Error fetching relationships:", error);
     throw error;
+  }
+};
+
+export const getAASDocuments = async (
+  authToken: string,
+): Promise<Documents[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/ClientDocuments/AASDocumentList/${aasDocPath}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) {
+      throw new Error("Expected array response");
+    }
+
+    return data as Documents[];
+  } catch (error) {
+    console.error("Fetch failed:", error);
+    return null;
   }
 };
