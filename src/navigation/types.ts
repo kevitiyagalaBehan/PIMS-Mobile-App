@@ -424,3 +424,10 @@ export interface RelationshipResponse {
   mobile: string | null;
   relationships: Relationships[];
 }
+
+export interface Documents {
+  id: string;
+  name: string;
+  fullPath: string;
+  lastModified: string;
+}
