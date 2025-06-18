@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 
 export default {
   expo: {
@@ -20,34 +20,32 @@ export default {
       },
       statusBar: {
         backgroundColor: "#ffffff",
-        barStyle: "dark-content"
+        barStyle: "dark-content",
       },
       package: "com.pims_app.PIMS",
     },
     web: {
       favicon: "./assets/adaptive-icon.png",
     },
-    plugins: ["expo-asset",
+    plugins: [
+      "expo-asset",
       [
         "expo-splash-screen",
         {
           backgroundColor: "#ffffff",
           image: "./assets/splash-icon.png",
           imageWidth: 200,
-          resizeMode: "contain"
-        }
-      ]
+          resizeMode: "contain",
+        },
+      ],
     ],
     extra: {
       apiBaseUrl: process.env.API_BASE_URL,
-      aasDocPath: process.env.AAS_DOC_PATH,
+      docBaseUrl: process.env.DOC_BASE_URL,
       appEnv: process.env.APP_ENV,
-      eSigningBaseUrl: process.env.E_SIGNING_BASE_URL,
       eas: {
-        projectId: "3a492d15-b6a8-427d-afb2-a5dbcba5c041"
-      }
+        projectId: "3a492d15-b6a8-427d-afb2-a5dbcba5c041",
+      },
     },
   },
 };
-
-
