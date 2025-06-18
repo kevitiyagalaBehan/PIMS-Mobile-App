@@ -12,12 +12,11 @@ import {
 import { getEsignDocuments } from "../src/utils/pimsApi";
 import { EsignDocument } from "../src/navigation/types";
 import { useAuth } from "../src/context/AuthContext";
-import { useESign } from "../src/context/ESignContext";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useRefreshTrigger } from "../hooks/useRefreshTrigger";
 import Constants from "expo-constants";
 
-const eSigningBaseUrl = Constants.expoConfig?.extra?.eSigningBaseUrl as string;
+const docBaseUrl = Constants.expoConfig?.extra?.docBaseUrl as string;
 
 export default function ESigning() {
   const { userData } = useAuth();
@@ -76,7 +75,7 @@ export default function ESigning() {
 
   const handleSign = (esigningDetailId: string) => {
     Linking.openURL(
-      `${eSigningBaseUrl}/ESigning/EmbeddedSigning.aspx?id=${esigningDetailId}`
+      `${docBaseUrl}/ESigning/EmbeddedSigning.aspx?id=${esigningDetailId}`
     );
   };
 
@@ -210,7 +209,7 @@ export default function ESigning() {
                           style={styles.signBtn}
                           onPress={() =>
                             Linking.openURL(
-                              `${eSigningBaseUrl}/${documentToOpen}`
+                              `${docBaseUrl}/${documentToOpen}`
                             )
                           }
                         >
@@ -228,7 +227,7 @@ export default function ESigning() {
               }}
               contentContainerStyle={{
                 flexGrow: 1,
-                paddingBottom: isScrollable ? height * 0.09 : 0,
+                paddingBottom: isScrollable ? height * 0.36 : 0,
               }}
               ListEmptyComponent={() => (
                 <Text style={styles.noData}>No messages available</Text>
