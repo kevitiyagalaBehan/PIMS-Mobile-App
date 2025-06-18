@@ -21,7 +21,8 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 export default function Details({ refreshTrigger }: Props) {
   const { userData } = useAuth();
   const { width, height } = useWindowDimensions();
-  const [loading, setLoading] = useState(true);
+  const [detailsLoading, setDetailsLoading] = useState(true);
+  const [relationshipsLoading, setRelationshipsLoading] = useState(true);
   const [details, setDetails] = useState<ClientAccountDetails[] | null>(null);
   const [relationships, setRelationships] = useState<
     RelationshipResponse[] | null
@@ -33,54 +34,54 @@ export default function Details({ refreshTrigger }: Props) {
   const styles = getStyles(width, height);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDetails = async () => {
       if (!userData?.authToken || !userData?.accountId) {
-        setLoading(false);
+        setDetailsLoading(false);
         return;
       }
 
-      setLoading(true);
+      setDetailsLoading(true);
       try {
-        const details = await getClientAccountDetails(
+        const data = await getClientAccountDetails(
           userData.authToken,
           userData.accountId
         );
-        setDetails(details);
-      } catch (err) {
+        setDetails(data);
+      } catch {
         setError("Failed to load account details");
       } finally {
-        setLoading(false);
+        setDetailsLoading(false);
       }
     };
 
-    fetchData();
+    fetchDetails();
   }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchRelationships = async () => {
       if (!userData?.authToken || !userData?.accountId) {
-        setLoading(false);
+        setRelationshipsLoading(false);
         return;
       }
 
-      setLoading(true);
+      setRelationshipsLoading(true);
       try {
-        const relationships = await getRelationships(
+        const data = await getRelationships(
           userData.authToken,
           userData.accountId
         );
-        setRelationships(relationships);
-      } catch (err) {
+        setRelationships(data);
+      } catch {
         setError("Failed to load relationships");
       } finally {
-        setLoading(false);
+        setRelationshipsLoading(false);
       }
     };
 
-    fetchData();
+    fetchRelationships();
   }, [userData?.authToken, userData?.accountId, refreshTrigger]);
 
-  if (loading) {
+  if (detailsLoading || relationshipsLoading) {
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
@@ -90,6 +91,12 @@ export default function Details({ refreshTrigger }: Props) {
 
   if (!details || details.length === 0) {
     return <Text style={styles.errorText}>No account details available</Text>;
+  }
+
+  if (!relationships || relationships.length === 0) {
+    return (
+      <Text style={styles.errorText}>No relationships data available</Text>
+    );
   }
 
   const account = details[0];
@@ -166,7 +173,12 @@ export default function Details({ refreshTrigger }: Props) {
                 <View style={styles.labelCell}>
                   <Text style={styles.labelText}>{item.label}</Text>
                 </View>
-                <View style={styles.valueCell}>
+                <View
+                  style={[
+                    styles.valueCell,
+                    { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
+                  ]}
+                >
                   <Text style={styles.valueText}>{item.value}</Text>
                 </View>
               </View>

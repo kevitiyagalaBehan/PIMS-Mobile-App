@@ -51,9 +51,13 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
 
   const styles = getStyles(width, height);
 
-  if (loading) return <Text style={styles.message}>Loading...</Text>;
-  if (error) return <Text style={styles.message}>{error}</Text>;
-  if (!data) return <Text style={styles.message}>No data available.</Text>;
+  if (loading) {
+    return <Text style={styles.loader}>Loading...</Text>;
+  }
+
+  if (!data) {
+    return <Text style={styles.errorText}>No portfolio data available</Text>;
+  }
 
   const grouped = data.investments.reduce((acc, inv) => {
     if (!acc[inv.assetCategory]) acc[inv.assetCategory] = {};
@@ -104,7 +108,7 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                   >
                     {categoryMarketValue.toLocaleString(undefined, {
                       minimumFractionDigits: 2,
-  maximumFractionDigits: 2
+                      maximumFractionDigits: 2,
                     })}
                   </Text>
                   <Text
@@ -155,7 +159,7 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                             <Text style={[styles.cell, styles.rightAlign]}>
                               {inv.marketValue.toLocaleString(undefined, {
                                 minimumFractionDigits: 2,
-  maximumFractionDigits: 2
+                                maximumFractionDigits: 2,
                               })}
                             </Text>
                             <Text style={[styles.cell, styles.rightAlign]}>
@@ -177,7 +181,7 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                           >
                             {classMarketValue.toLocaleString(undefined, {
                               minimumFractionDigits: 2,
-  maximumFractionDigits: 2
+                              maximumFractionDigits: 2,
                             })}
                           </Text>
                           <Text
@@ -206,7 +210,7 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                 .reduce((sum, inv) => sum + inv.marketValue, 0)
                 .toLocaleString(undefined, {
                   minimumFractionDigits: 2,
-  maximumFractionDigits: 2
+                  maximumFractionDigits: 2,
                 })}
             </Text>
             <Text style={[styles.cell, styles.rightAlign, styles.boldText]}>
@@ -238,7 +242,7 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     <Text style={styles.modalText}>
                       {selectedItem.quantity.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
-  maximumFractionDigits: 2
+                        maximumFractionDigits: 2,
                       })}
                     </Text>
                   </View>
@@ -247,7 +251,7 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     <Text style={styles.modalText}>
                       {selectedItem.bookCost.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
-  maximumFractionDigits: 2
+                        maximumFractionDigits: 2,
                       })}
                     </Text>
                   </View>
@@ -262,7 +266,7 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     <Text style={styles.modalText}>
                       {selectedItem.marketValue.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
-  maximumFractionDigits: 2
+                        maximumFractionDigits: 2,
                       })}
                     </Text>
                   </View>
@@ -277,7 +281,7 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
                     <Text style={styles.modalText}>
                       {selectedItem.income.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
-  maximumFractionDigits: 2
+                        maximumFractionDigits: 2,
                       })}
                     </Text>
                   </View>
@@ -306,7 +310,7 @@ export default function InvestmentBreakdown({ refreshTrigger }: Props) {
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
-      flex: 1,
+      //flex: 1,
       backgroundColor: "#fff",
       //marginBottom: height * 0.01,
       marginTop: height * 0.02,
@@ -322,8 +326,14 @@ const getStyles = (width: number, height: number) =>
       fontWeight: "bold",
       color: "#1B77BE",
       fontSize: RFPercentage(2.6),
-      marginTop: height * 0.01,
-      marginLeft: height * 0.012,
+      marginTop: height * 0.021,
+      marginLeft: height * 0.01,
+    },
+    errorText: {
+      color: "red",
+      fontSize: RFPercentage(2),
+      textAlign: "center",
+      marginTop: height * 0.3,
     },
     bodyText: {
       //fontWeight: "bold",
@@ -367,18 +377,13 @@ const getStyles = (width: number, height: number) =>
       flex: 1,
       paddingVertical: height * 0.005,
       paddingHorizontal: width * 0.02,
-      fontSize: RFPercentage(1.7),
+      fontSize: RFPercentage(2),
     },
     rightAlign: {
       textAlign: "right",
     },
     boldText: {
       fontWeight: "bold",
-    },
-    message: {
-      textAlign: "center",
-      marginTop: height * 0.2,
-      fontSize: RFPercentage(2),
     },
     modalContainer: {
       flex: 1,

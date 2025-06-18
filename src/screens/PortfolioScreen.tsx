@@ -47,6 +47,5 @@ const getStyles = (width: number) =>
     },
     bodySection: {
       paddingHorizontal: width * 0.02,
-      backgroundColor: "#eee",
     },
   });

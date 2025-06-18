@@ -14,11 +14,8 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import { getAASDocuments, getDocumentViewUrl } from "../src/utils/pimsApi";
 import { Documents } from "../src/navigation/types";
-import Constants from "expo-constants";
 import { Base64 } from "js-base64";
 import { useRefreshTrigger } from "../hooks/useRefreshTrigger";
-
-const apiBaseUrl = Constants.expoConfig?.extra?.apiBaseUrl as string;
 
 export default function Document() {
   const { userData } = useAuth();
@@ -206,7 +203,7 @@ export default function Document() {
 const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
-      marginTop: height * 0.01,
+      marginTop: height * 0.02,
       backgroundColor: "#fff",
       borderRadius: 6,
     },

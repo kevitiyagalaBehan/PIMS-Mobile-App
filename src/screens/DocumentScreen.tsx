@@ -6,7 +6,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Document, HeaderWithMenu } from "../../components";
-import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 
 export default function DocumentScreen() {
   const { width, height } = useWindowDimensions();
