@@ -428,6 +428,8 @@ export interface RelationshipResponse {
 export interface Documents {
   id: string;
   name: string;
+  folder: string;
   fullPath: string;
   lastModified: string;
+  sizeText: string;
 }
