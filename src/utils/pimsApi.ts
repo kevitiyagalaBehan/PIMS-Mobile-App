@@ -27,9 +27,6 @@ import {
 import Constants from "expo-constants";
 
 const apiBaseUrl = Constants.expoConfig?.extra?.apiBaseUrl as string;
-const appEnv = Constants.expoConfig?.extra?.appEnv as string;
-const projectId = Constants.expoConfig?.extra?.eas?.projectId as string;
-const aasDocPath = Constants.expoConfig?.extra?.eas?.aasDocPath as string;
 
 //console.log("API:", apiBaseUrl);
 //console.log("ENV:", appEnv);
@@ -807,11 +804,13 @@ export const getRelationships = async (
 };
 
 export const getAASDocuments = async (
-  authToken: string,
+  authToken: string
 ): Promise<Documents[] | null> => {
   try {
+    //console.log("aasDocPath:", aasDocPath);
+    //console.log("aasDocPath:", aasDocPath);
     const response = await fetch(
-      `${apiBaseUrl}/ClientDocuments/AASDocumentList/${aasDocPath}`,
+      `${apiBaseUrl}/ClientDocuments/AASDocumentList/L0FBUyBDTElFTlRTL0ZvcnRpdXNBZHZpc2luZ19BQ0M3NzIvRmFtaWx5IEdyb3Vwcy9Fc3Rjb3VydF9QZXRlciZKdWxpYS9FbnRpdGllcy9BcmNvdHQ=`,
       {
         method: "GET",
         headers: {
@@ -826,6 +825,7 @@ export const getAASDocuments = async (
     }
 
     const data = await response.json();
+    //console.log("Fetched AAS Documents:", data);
 
     if (!Array.isArray(data)) {
       throw new Error("Expected array response");
@@ -834,6 +834,34 @@ export const getAASDocuments = async (
     return data as Documents[];
   } catch (error) {
     console.error("Fetch failed:", error);
+    return null;
+  }
+};
+
+export const getDocumentViewUrl = async (
+  encodedPath: string,
+  authToken: string
+): Promise<string | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/ClientDocuments/AASDocumentViewPath?Path=${encodedPath}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const url = await response.text();
+    return url;
+  } catch (error) {
+    console.error("Failed to fetch document view URL:", error);
     return null;
   }
 };
