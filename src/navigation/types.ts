@@ -97,8 +97,6 @@ export interface LinkedUsers {
   userId?: string;
 }
 
-//export type AccountType = "Family" | string;
-
 export interface LoginResponse {
   authToken: string;
   accountId: string;
