@@ -133,110 +133,98 @@ export default function ESigning() {
               Action
             </Text>
           </View>
+          <FlatList
+            data={filteredDocs}
+            keyExtractor={(item, index) => `${item.subject}-${index}`}
+            renderItem={({ item, index }) => {
+              const hasSignable = item.signatories.some(
+                (s) => s.esigningDetailId
+              );
+              const firstValidId = item.signatories.find(
+                (s) => s.esigningDetailId
+              )?.esigningDetailId;
+              const documentToOpen = item.documents?.[0]?.documentPath;
 
-          {filteredDocs.length > 0 ? (
-            <FlatList
-              data={filteredDocs}
-              keyExtractor={(item, index) => `${item.subject}-${index}`}
-              renderItem={({ item, index }) => {
-                const hasSignable = item.signatories.some(
-                  (s) => s.esigningDetailId
-                );
-                const firstValidId = item.signatories.find(
-                  (s) => s.esigningDetailId
-                )?.esigningDetailId;
-                const documentToOpen = item.documents?.[0]?.documentPath;
-
-                return (
-                  <View
-                    style={[
-                      styles.dataRow,
-                      { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
-                    ]}
+              return (
+                <View
+                  style={[
+                    styles.dataRow,
+                    { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={{ flex: 1.3 }}
+                    onPress={() => setSelectedDocument(item)}
                   >
-                    <TouchableOpacity
-                      style={{ flex: 1.3 }}
-                      onPress={() => setSelectedDocument(item)}
-                    >
-                      <Text
-                        style={[
-                          styles.dataCell,
-                          styles.underlineText,
-                        ]}
-                      >
-                        {item.subject}
-                      </Text>
-                    </TouchableOpacity>
+                    <Text style={[styles.dataCell, styles.underlineText]}>
+                      {item.subject}
+                    </Text>
+                  </TouchableOpacity>
 
-                    <View style={{ flex: 1.5 }}>
-                      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                        {item.signatories.map((s, i) => {
-                          let color = "#D41515";
-                          if (s.esigningStatus === "Signed") color = "#48C738";
-                          else if (s.esigningStatus === "Viewed")
-                            color = "#CAD415";
+                  <View style={{ flex: 1.5 }}>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                      {item.signatories.map((s, i) => {
+                        let color = "#D41515";
+                        if (s.esigningStatus === "Signed") color = "#48C738";
+                        else if (s.esigningStatus === "Viewed")
+                          color = "#CAD415";
 
-                          return (
-                            <Text
-                              key={i}
-                              style={[
-                                styles.dataCell,
-                                styles.boldText,
-                                { color },
-                              ]}
-                            >
-                              {s.signatoryName}
-                              {i < item.signatories.length - 1 ? ", " : ""}
-                            </Text>
-                          );
-                        })}
-                      </View>
-                    </View>
-
-                    <View style={{ flex: 1, alignItems: "center" }}>
-                      {selectedTab === "toSign" &&
-                        hasSignable &&
-                        firstValidId && (
-                          <TouchableOpacity
-                            style={styles.signBtn}
-                            onPress={() => handleSign(firstValidId)}
+                        return (
+                          <Text
+                            key={i}
+                            style={[
+                              styles.dataCell,
+                              styles.boldText,
+                              { color },
+                            ]}
                           >
-                            <Text style={styles.signBtnText}>Sign</Text>
-                          </TouchableOpacity>
-                        )}
-                      {selectedTab === "signed" && documentToOpen && (
-                        <TouchableOpacity
-                          style={styles.signBtn}
-                          onPress={() =>
-                            Linking.openURL(
-                              `${docBaseUrl}/${documentToOpen}`
-                            )
-                          }
-                        >
-                          <Text style={styles.signBtnText}>Open</Text>
-                        </TouchableOpacity>
-                      )}
+                            {s.signatoryName}
+                            {i < item.signatories.length - 1 ? ", " : ""}
+                          </Text>
+                        );
+                      })}
                     </View>
                   </View>
-                );
-              }}
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              onContentSizeChange={(_, contentHeight) => {
-                setIsScrollable(contentHeight > height);
-              }}
-              contentContainerStyle={{
-                flexGrow: 1,
-                paddingBottom: isScrollable ? height * 0.36 : 0,
-              }}
-              ListEmptyComponent={() => (
-                <Text style={styles.noData}>No messages available</Text>
-              )}
-              showsVerticalScrollIndicator={false}
-            />
-          ) : (
-            <Text style={styles.noData}>No documents available</Text>
-          )}
+
+                  <View style={{ flex: 1, alignItems: "center" }}>
+                    {selectedTab === "toSign" &&
+                      hasSignable &&
+                      firstValidId && (
+                        <TouchableOpacity
+                          style={styles.signBtn}
+                          onPress={() => handleSign(firstValidId)}
+                        >
+                          <Text style={styles.signBtnText}>Sign</Text>
+                        </TouchableOpacity>
+                      )}
+                    {selectedTab === "signed" && documentToOpen && (
+                      <TouchableOpacity
+                        style={styles.signBtn}
+                        onPress={() =>
+                          Linking.openURL(`${docBaseUrl}/${documentToOpen}`)
+                        }
+                      >
+                        <Text style={styles.signBtnText}>Open</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              );
+            }}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            onContentSizeChange={(_, contentHeight) => {
+              setIsScrollable(contentHeight > height);
+            }}
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: isScrollable ? height * 0.36 : 0,
+            }}
+            ListEmptyComponent={() => (
+              <Text style={styles.noData}>No documents available</Text>
+            )}
+            showsVerticalScrollIndicator={false}
+          />
         </View>
 
         <Modal
