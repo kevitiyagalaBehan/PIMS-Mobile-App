@@ -33,6 +33,7 @@ export default function Transactions() {
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isScrollable, setIsScrollable] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<CashTransactions | null>(
     null
@@ -104,7 +105,7 @@ export default function Transactions() {
     return <Text style={styles.errorText}>{error}</Text>;
   }
 
-  if (!transactions || transactions.length === 0) {
+  if (!transactions) {
     return <Text style={styles.errorText}>No transactions data available</Text>;
   }
 
@@ -126,11 +127,12 @@ export default function Transactions() {
               <Ionicons name="calendar" size={20} color="#1B77BE" />
             </TouchableOpacity>
           </View>
+
           <Text style={styles.label}>To:</Text>
           <View style={styles.rightItem}>
             <TouchableOpacity
               style={styles.datePickerButton}
-              onPress={() => setShowStartPicker(true)}
+              onPress={() => setShowEndPicker(true)}
             >
               <Text style={styles.dateText}>
                 {endDate.toLocaleDateString()}
@@ -187,84 +189,89 @@ export default function Transactions() {
             <Text style={[styles.headerCell1, { flex: 1.5 }]}>
               Date Description
             </Text>
-            <Text style={[styles.headerCell2, { flex: 1 }]}>Deposit ($)</Text>
+            <Text style={[styles.headerCell2, { flex: 1 }]}>Amount ($)</Text>
             <Text style={[styles.headerCell2, { flex: 1 }]}>Balance ($)</Text>
           </View>
-          {transactions.length > 0 ? (
-            <FlatList
-              data={filteredTransactions}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item, index }) => (
-                <View
-                  style={[
-                    styles.dataRow,
-                    { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
-                  ]}
+          <FlatList
+            data={filteredTransactions}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+              <View
+                style={[
+                  styles.dataRow,
+                  { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
+                ]}
+              >
+                <TouchableOpacity
+                  onPress={() => handleCodePress(item)}
+                  style={{ flex: 1.5 }}
                 >
-                  <TouchableOpacity
-                    onPress={() => handleCodePress(item)}
-                    style={{ flex: 1.5 }}
-                  >
-                    <View style={{ flexDirection: "column" }}>
-                      <Text style={[styles.dataCell, styles.leftAlign]}>
-                        {new Date(item.transactionDate).toLocaleDateString(
-                          "en-AU",
-                          {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.dataCell,
-                          styles.leftAlign,
-                          styles.underlineText,
-                        ]}
-                      >
-                        {item.transactionDescription?.includes(
-                          "Closing Balance"
-                        )
-                          ? item.transactionDescription
-                              .replace("Closing Balance", "")
-                              .trim()
-                          : item.transactionDescription}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
+                  <View style={{ flexDirection: "column" }}>
+                    <Text style={[styles.dataCell, styles.leftAlign]}>
+                      {new Date(item.transactionDate).toLocaleDateString(
+                        "en-AU",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        }
+                      )}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.dataCell,
+                        styles.leftAlign,
+                        styles.underlineText,
+                      ]}
+                    >
+                      {item.transactionDescription?.includes("Closing Balance")
+                        ? item.transactionDescription
+                            .replace("Closing Balance", "")
+                            .trim()
+                        : item.transactionDescription}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
-                  <Text
-                    style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
-                    numberOfLines={1}
-                  >
-                    {item.credit != null
-                      ? item.credit.toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                        })
-                      : ""}
-                  </Text>
-                  <Text
-                    style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
-                    numberOfLines={1}
-                  >
-                    {item.balance.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                    })}
-                  </Text>
-                </View>
-              )}
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              contentContainerStyle={{
-                flexGrow: 1,
-                paddingBottom: height * 1.4,
-              }}
-              showsVerticalScrollIndicator={false}
-            />
-          ) : (
-            <Text style={styles.noData}>No transactions available</Text>
-          )}
+                <Text
+                  style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
+                  numberOfLines={1}
+                >
+                  {item.credit != null
+                    ? item.credit.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })
+                    : item.debit != null
+                    ? `(${item.debit.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })})`
+                    : ""}
+                </Text>
+
+                <Text
+                  style={[styles.dataCell, styles.rightAlign, { flex: 1 }]}
+                  numberOfLines={1}
+                >
+                  {item.balance.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}
+                </Text>
+              </View>
+            )}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            onContentSizeChange={(_, contentHeight) => {
+              setIsScrollable(contentHeight > height);
+            }}
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: isScrollable ? height * 1.14 : 20,
+            }}
+            ListEmptyComponent={() => (
+              <Text style={styles.noData}>No transactions available</Text>
+            )}
+            showsVerticalScrollIndicator={false}
+          />
         </View>
 
         <Modal
