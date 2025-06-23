@@ -23,6 +23,8 @@ import {
   InvestmentsResponse,
   RelationshipResponse,
   Documents,
+  NotifyRecipient,
+  InboxMessage,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -863,5 +865,54 @@ export const getDocumentViewUrl = async (
   } catch (error) {
     console.error("Failed to fetch document view URL:", error);
     return null;
+  }
+};
+
+export const getNotifyRecipient = async (
+  authToken: string,
+  accountId: string
+): Promise<NotifyRecipient[] | null> => {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/ClientMessage/NotifyRecipients/${accountId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch recipients: ${response.status}`);
+    }
+    const data = await response.json();
+    //console.log("Data:", data);
+    return data as NotifyRecipient[];
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+};
+
+export const sendInboxMessage = async (
+  authToken: string,
+  accountId: string,
+  message: InboxMessage
+): Promise<void> => {
+  const response = await fetch(
+    `${apiBaseUrl}/ClientDocumentUpload/${accountId}/Inbox/Upload`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to send message: ${response.status}`);
   }
 };
