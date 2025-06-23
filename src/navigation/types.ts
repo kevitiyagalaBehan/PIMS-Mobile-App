@@ -433,3 +433,24 @@ export interface Documents {
   lastModified: string;
   sizeText: string;
 }
+
+export interface NotifyRecipient {
+  emailAddress: string;
+  id: string;
+  name: string;
+  ref: string;
+}
+
+export interface Attachment {
+  DisplayName: string;
+  FilePath: string;
+  Id: string;
+}
+
+export interface InboxMessage {
+  Description: string;
+  Message: string;
+  Date: string;
+  UserId: string;
+  Attachments: Attachment[];
+}
