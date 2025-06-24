@@ -25,6 +25,7 @@ import {
   Documents,
   NotifyRecipient,
   InboxMessage,
+  Folders,
 } from "../navigation/types";
 import Constants from "expo-constants";
 
@@ -802,6 +803,41 @@ export const getRelationships = async (
   } catch (error) {
     console.error("Error fetching relationships:", error);
     throw error;
+  }
+};
+
+export const getAASFolders = async (
+  authToken: string
+): Promise<Folders[] | null> => {
+  try {
+    //console.log("aasDocPath:", aasDocPath);
+    //console.log("aasDocPath:", aasDocPath);
+    const response = await fetch(
+      `${apiBaseUrl}/ClientDocuments/AASDocumentList/L0FBUyBDTElFTlRTL0ZvcnRpdXNBZHZpc2luZ19BQ0M3NzIvRmFtaWx5IEdyb3Vwcy9Fc3Rjb3VydF9QZXRlciZKdWxpYS9FbnRpdGllcy9BcmNvdHQ=`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    //console.log("Fetched AAS Documents:", data);
+
+    if (!Array.isArray(data)) {
+      throw new Error("Expected array response");
+    }
+
+    return data as Folders[];
+  } catch (error) {
+    console.error("Fetch failed:", error);
+    return null;
   }
 };
 
