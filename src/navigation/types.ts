@@ -423,6 +423,13 @@ export interface RelationshipResponse {
   relationships: Relationships[];
 }
 
+export interface Folders {
+  name: string;
+  lastModifiedDate: string | null;
+  type: string;
+  fileType: string | null;
+}
+
 export interface Documents {
   id: string;
   name: string;
