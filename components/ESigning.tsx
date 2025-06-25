@@ -218,7 +218,7 @@ export default function ESigning() {
             }}
             contentContainerStyle={{
               flexGrow: 1,
-              paddingBottom: isScrollable ? height * 0.36 : 0,
+              paddingBottom: isScrollable ? height * 0.38 : 0,
             }}
             ListEmptyComponent={() => (
               <Text style={styles.noData}>No documents available</Text>
