@@ -10,9 +10,9 @@ export default function CashTransactionsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithMenu />
-        <View style={styles.bodySection}>
-          <CashTransactions />
-        </View>
+      <View style={styles.bodySection}>
+        <CashTransactions />
+      </View>
     </SafeAreaView>
   );
 }
