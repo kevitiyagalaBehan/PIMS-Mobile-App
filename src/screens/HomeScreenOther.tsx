@@ -6,7 +6,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 import {
   PortfolioSummary,
@@ -25,50 +25,52 @@ export default function HomeScreenOther() {
   const styles = getStyles(width, height);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Header />
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingBottom: height * 0.02,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.bodySection}>
-          <PortfolioSummary
-            refreshTrigger={refreshTrigger}
-            refreshing={false}
-          />
-          <AssetAllocationOther
-            refreshTrigger={refreshTrigger}
-            refreshing={false}
-          />
-          <PortfolioBalanceSummaryHome
-            refreshTrigger={refreshTrigger}
-            refreshing={false}
-          />
-          <TopTenInvestments
-            refreshTrigger={refreshTrigger}
-            refreshing={false}
-          />
-          <ContributionCapSummary
-            refreshTrigger={refreshTrigger}
-            refreshing={false}
-          />
-          <PensionLimitSummary
-            refreshTrigger={refreshTrigger}
-            refreshing={false}
-          />
-          <EstimatedMemberStatement
-            refreshTrigger={refreshTrigger}
-            refreshing={false}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <Header />
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: height * 0.02,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.bodySection}>
+            <PortfolioSummary
+              refreshTrigger={refreshTrigger}
+              refreshing={false}
+            />
+            <AssetAllocationOther
+              refreshTrigger={refreshTrigger}
+              refreshing={false}
+            />
+            <PortfolioBalanceSummaryHome
+              refreshTrigger={refreshTrigger}
+              refreshing={false}
+            />
+            <TopTenInvestments
+              refreshTrigger={refreshTrigger}
+              refreshing={false}
+            />
+            <ContributionCapSummary
+              refreshTrigger={refreshTrigger}
+              refreshing={false}
+            />
+            <PensionLimitSummary
+              refreshTrigger={refreshTrigger}
+              refreshing={false}
+            />
+            <EstimatedMemberStatement
+              refreshTrigger={refreshTrigger}
+              refreshing={false}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

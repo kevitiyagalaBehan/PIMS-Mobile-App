@@ -6,7 +6,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Details, HeaderWithMenu } from "../../components";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 
@@ -17,18 +17,20 @@ export default function TopTenInvestmentsScreen() {
   const styles = getStyles(width);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <HeaderWithMenu />
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View style={styles.bodySection}>
-          <Details refreshTrigger={refreshTrigger} refreshing={refreshing} />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <HeaderWithMenu />
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          <View style={styles.bodySection}>
+            <Details refreshTrigger={refreshTrigger} refreshing={refreshing} />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

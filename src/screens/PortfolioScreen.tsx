@@ -6,7 +6,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { HeaderWithMenu, Portfolio } from "../../components";
 import { useRefreshTrigger } from "../../hooks/useRefreshTrigger";
 
@@ -17,26 +17,28 @@ export default function PortfolioScreen() {
   const styles = getStyles(width);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <HeaderWithMenu />
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingBottom: height * 0.01,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.bodySection}>
-          <Portfolio
-            refreshTrigger={refreshTrigger}
-            refreshing={refreshing}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <HeaderWithMenu />
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: height * 0.01,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.bodySection}>
+            <Portfolio
+              refreshTrigger={refreshTrigger}
+              refreshing={refreshing}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

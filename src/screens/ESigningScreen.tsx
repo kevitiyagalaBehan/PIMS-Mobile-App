@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, Text, useWindowDimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { ESigning } from "../../components";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
@@ -9,14 +9,16 @@ export default function ESigningScreen() {
   const styles = getStyles(width, height);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Signing</Text>
-      </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Signing</Text>
+        </View>
         <View style={styles.bodySection}>
           <ESigning />
         </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

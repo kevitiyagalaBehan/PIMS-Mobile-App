@@ -436,6 +436,7 @@ export interface Documents {
   folder: string;
   fullPath: string;
   lastModified: string;
+  extension: string;
   sizeText: string;
 }
 

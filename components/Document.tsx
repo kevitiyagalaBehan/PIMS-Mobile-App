@@ -129,7 +129,7 @@ export default function Document() {
       const newPath = `${currentPath}/${item.name}`;
       setFolderStack((prev) => [...prev, item.name]);
       updateFolderAndDocuments(newPath);
-    } else if (item.type === "FILE" && item.fileType === "PDF") {
+    } else if (item.type === "FILE") {
       try {
         const filePath = `${currentPath}/${item.name}`;
         const encodedPath = Base64.encode(filePath);
@@ -244,53 +244,79 @@ export default function Document() {
               <FlatList
                 data={folders || []}
                 keyExtractor={(item, index) => `${item.name}-${index}`}
-                renderItem={({ item, index }) => (
-                  <TouchableOpacity
-                    style={[
-                      styles.dataRow,
-                      { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
-                    ]}
-                    onPress={() => handleFolderClick(item)}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        flex: 1,
-                      }}
-                    >
-                      <MaterialIcons
-                        name={
-                          item.type === "FOLDER" ? "folder" : "picture-as-pdf"
-                        }
-                        size={20}
-                        color={item.type === "FOLDER" ? "#FFD700" : "#D32F2F"}
-                        style={{ marginRight: width * 0.02 }}
-                      />
-                      <Text style={[styles.dataCell, styles.leftAlign]}>
-                        {item.name}
-                      </Text>
-                    </View>
+                renderItem={({ item, index }) => {
+                  let iconName = "folder";
+                  let iconColor = "#FFD700";
 
-                    <Text
+                  if (item.type !== "FOLDER") {
+                    switch (item.fileType?.toLowerCase()) {
+                      case "pdf":
+                        iconName = "picture-as-pdf";
+                        iconColor = "#D32F2F";
+                        break;
+                      case "doc":
+                      case "docx":
+                        iconName = "description";
+                        iconColor = "#2A5699";
+                        break;
+                      case "xls":
+                      case "xlsx":
+                        iconName = "grid-on";
+                        iconColor = "#1B8836";
+                        break;
+                      default:
+                        iconName = "insert-drive-file";
+                        iconColor = "#757575";
+                        break;
+                    }
+                  }
+
+                  return (
+                    <TouchableOpacity
                       style={[
-                        styles.dataCell,
-                        { flex: 1, textAlign: "center" },
+                        styles.dataRow,
+                        { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
                       ]}
+                      onPress={() => handleFolderClick(item)}
                     >
-                      {item.lastModifiedDate
-                        ? new Date(item.lastModifiedDate).toLocaleDateString(
-                            "en-AU",
-                            {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            }
-                          )
-                        : ""}
-                    </Text>
-                  </TouchableOpacity>
-                )}
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          flex: 1,
+                        }}
+                      >
+                        <MaterialIcons
+                          name={iconName}
+                          size={20}
+                          color={iconColor}
+                          style={{ marginRight: width * 0.02 }}
+                        />
+                        <Text style={[styles.dataCell, styles.leftAlign]}>
+                          {item.name}
+                        </Text>
+                      </View>
+
+                      <Text
+                        style={[
+                          styles.dataCell,
+                          { flex: 1, textAlign: "center" },
+                        ]}
+                      >
+                        {item.lastModifiedDate
+                          ? new Date(item.lastModifiedDate).toLocaleDateString(
+                              "en-AU",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )
+                          : ""}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }}
                 ListEmptyComponent={() => (
                   <Text style={styles.noData}>No data</Text>
                 )}
@@ -322,82 +348,99 @@ export default function Document() {
               <FlatList
                 data={documents}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item, index }) => (
-                  <View
-                    style={[
-                      styles.dataRow,
-                      { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
-                    ]}
-                  >
-                    <TouchableOpacity
-                      onPress={() => handleCodePress(item)}
-                      style={{ flex: 3.5 }}
+                renderItem={({ item, index }) => {
+                  let iconName = "insert-drive-file";
+                  let iconColor = "#757575";
+
+                  const ext = item.extension?.toLowerCase();
+                  if (ext === ".pdf") {
+                    iconName = "picture-as-pdf";
+                    iconColor = "#D32F2F";
+                  } else if (ext === ".doc" || ext === ".docx") {
+                    iconName = "description";
+                    iconColor = "#2A5699";
+                  } else if (ext === ".xls" || ext === ".xlsx") {
+                    iconName = "grid-on";
+                    iconColor = "#1B8836";
+                  }
+
+                  return (
+                    <View
+                      style={[
+                        styles.dataRow,
+                        { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
+                      ]}
                     >
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          flex: 1,
-                        }}
-                      >
-                        <MaterialIcons
-                          name="picture-as-pdf"
-                          size={20}
-                          color="#D32F2F"
-                          style={{ marginRight: width * 0.02 }}
-                        />
-                        <Text
-                          style={[
-                            styles.dataCell,
-                            styles.leftAlign,
-                            styles.underlineText,
-                          ]}
-                          //numberOfLines={1}
-                        >
-                          {item.name}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                    <View style={{ flex: 1, alignItems: "center" }}>
                       <TouchableOpacity
-                        style={styles.button}
-                        onPress={async () => {
-                          try {
-                            if (!userData?.authToken) {
-                              Alert.alert(
-                                "Error",
-                                "User is not authenticated."
-                              );
-                              return;
-                            }
-
-                            const encodedPath = Base64.encode(item.fullPath);
-                            const docUrl = await getDocumentViewUrl(
-                              encodedPath,
-                              userData.authToken
-                            );
-
-                            if (docUrl) {
-                              Linking.openURL(docUrl);
-                            } else {
-                              Alert.alert(
-                                "Error",
-                                "Unable to retrieve document URL."
-                              );
-                            }
-                          } catch (error) {
-                            Alert.alert(
-                              "Error",
-                              "Failed to open the document."
-                            );
-                          }
-                        }}
+                        onPress={() => handleCodePress(item)}
+                        style={{ flex: 3.5 }}
                       >
-                        <Text style={styles.buttonText}>Open</Text>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "flex-start",
+                            flex: 1,
+                          }}
+                        >
+                          <MaterialIcons
+                            name={iconName}
+                            size={20}
+                            color={iconColor}
+                            style={{ marginRight: width * 0.02 }}
+                          />
+                          <Text
+                            style={[
+                              styles.dataCell,
+                              styles.leftAlign,
+                              styles.underlineText,
+                            ]}
+                          >
+                            {item.name}
+                          </Text>
+                        </View>
                       </TouchableOpacity>
+                      <View style={{ flex: 1, alignItems: "center" }}>
+                        <TouchableOpacity
+                          style={styles.button}
+                          onPress={async () => {
+                            try {
+                              if (!userData?.authToken) {
+                                Alert.alert(
+                                  "Error",
+                                  "User is not authenticated."
+                                );
+                                return;
+                              }
+
+                              const encodedPath = Base64.encode(item.fullPath);
+                              const docUrl = await getDocumentViewUrl(
+                                encodedPath,
+                                userData.authToken
+                              );
+
+                              if (docUrl) {
+                                Linking.openURL(docUrl);
+                              } else {
+                                Alert.alert(
+                                  "Error",
+                                  "Unable to retrieve document URL."
+                                );
+                              }
+                            } catch (error) {
+                              Alert.alert(
+                                "Error",
+                                "Failed to open the document."
+                              );
+                            }
+                          }}
+                        >
+                          <Text style={styles.buttonText}>Open</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                )}
+                  );
+                }}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
                 contentContainerStyle={{

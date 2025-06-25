@@ -182,7 +182,7 @@ export default function InboxList() {
               }}
               contentContainerStyle={{
                 flexGrow: 1,
-                paddingBottom: isScrollable ? height * 0.163 : 0,
+                paddingBottom: isScrollable ? height * 0.2 : 0,
               }}
               ListEmptyComponent={() => (
                 <Text style={styles.noData}>No messages available</Text>

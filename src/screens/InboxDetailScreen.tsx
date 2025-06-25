@@ -18,6 +18,7 @@ import { useAuth } from "../context/AuthContext";
 import { loadComments, sendComment, deleteComment } from "../utils/pimsApi";
 import { Comments } from "../navigation/types";
 import { FontAwesome } from "@expo/vector-icons";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function InboxDetail() {
   const { userData, loggedInUser } = useAuth();
