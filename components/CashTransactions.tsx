@@ -265,7 +265,7 @@ export default function Transactions() {
             }}
             contentContainerStyle={{
               flexGrow: 1,
-              paddingBottom: isScrollable ? height * 1.14 : 20,
+              paddingBottom: isScrollable ? height * 1.16 : 20,
             }}
             ListEmptyComponent={() => (
               <Text style={styles.noData}>No transactions available</Text>
