@@ -402,7 +402,13 @@ export default function Document() {
                           </Text>
                         </View>
                       </TouchableOpacity>
-                      <View style={{ flex: 1, alignItems: "center" }}>
+                      <View
+                        style={{
+                          flex: 1,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
                         <TouchableOpacity
                           style={styles.button}
                           onPress={async () => {
