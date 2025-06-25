@@ -12,14 +12,24 @@ import {
 import { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
-import { getAASDocuments, getDocumentViewUrl } from "../src/utils/pimsApi";
-import { Documents } from "../src/navigation/types";
+import {
+  getAASDocuments,
+  getFolderPath,
+  getDocumentViewUrl,
+  getAASDocumentRoot,
+} from "../src/utils/pimsApi";
+import { Documents, Folders } from "../src/navigation/types";
 import { Base64 } from "js-base64";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useRefreshTrigger } from "../hooks/useRefreshTrigger";
 
 export default function Document() {
   const { userData } = useAuth();
   const { width, height } = useWindowDimensions();
+  const [rootPath, setRootPath] = useState<string>("");
+  const [currentPath, setCurrentPath] = useState<string>("");
+  const [folders, setFolders] = useState<Folders[]>([]);
+  const [folderStack, setFolderStack] = useState<string[]>([]);
   const [documents, setDocuments] = useState<Documents[] | null>(null);
   const [selectedTab, setSelectedTab] = useState<"aasFolders" | "aasDocuments">(
     "aasFolders"
@@ -28,16 +38,36 @@ export default function Document() {
   const [error, setError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<Documents | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(false);
 
-  const fetchData = async () => {
-    if (!userData?.authToken) {
+  const updateFolderAndDocuments = async (path: string) => {
+    setCurrentPath(path);
+    fetchFolders(path);
+  };
+
+  const fetchFolders = async (path: string) => {
+    if (!userData?.authToken) return;
+
+    setLoading(true);
+    try {
+      const folderData = await getFolderPath(path, userData.authToken);
+      setFolders(folderData || []);
+    } catch (err) {
+      setError("Failed to load folders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDocuments = async () => {
+    if (!userData?.authToken || !currentPath) {
       setLoading(false);
       return;
     }
 
     setLoading(true);
     try {
-      const data = await getAASDocuments(userData.authToken);
+      const data = await getAASDocuments(currentPath, userData.authToken);
       setDocuments(data?.slice(0, 20) || []);
     } catch (err) {
       setError("Failed to load documents");
@@ -47,11 +77,32 @@ export default function Document() {
   };
 
   const { refreshTrigger, refreshing, onRefresh } =
-    useRefreshTrigger(fetchData);
+    useRefreshTrigger(fetchDocuments);
 
   useEffect(() => {
-    fetchData();
-  }, [userData?.authToken, refreshTrigger]);
+    const initFolders = async () => {
+      if (!userData?.authToken || !userData?.accountId) return;
+      const root = await getAASDocumentRoot(
+        userData.accountId,
+        userData.authToken
+      );
+      if (root) {
+        setRootPath(root);
+        setFolderStack([]);
+        updateFolderAndDocuments(root);
+      }
+    };
+
+    if (userData?.authToken && userData?.accountId) {
+      initFolders();
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (currentPath) {
+      fetchDocuments();
+    }
+  }, [currentPath, userData?.authToken, refreshTrigger]);
 
   const styles = getStyles(width, height);
 
@@ -59,14 +110,87 @@ export default function Document() {
     return <Text style={styles.loader}>Loading...</Text>;
   }
 
-  if (!documents || documents.length === 0) {
-    return <Text style={styles.errorText}>No documents available</Text>;
+  if (loading) {
+    return <Text style={styles.loader}>Loading...</Text>;
   }
 
   const handleCodePress = (item: Documents) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
+
+  const handleFolderClick = async (item: Folders) => {
+    if (!userData?.authToken) {
+      Alert.alert("Error", "User is not authenticated.");
+      return;
+    }
+
+    if (item.type === "FOLDER") {
+      const newPath = `${currentPath}/${item.name}`;
+      setFolderStack((prev) => [...prev, item.name]);
+      updateFolderAndDocuments(newPath);
+    } else if (item.type === "FILE" && item.fileType === "PDF") {
+      try {
+        const filePath = `${currentPath}/${item.name}`;
+        const encodedPath = Base64.encode(filePath);
+        const docUrl = await getDocumentViewUrl(
+          encodedPath,
+          userData.authToken
+        );
+
+        if (docUrl) {
+          Linking.openURL(docUrl);
+        } else {
+          Alert.alert("Error", "Unable to retrieve document URL.");
+        }
+      } catch (error) {
+        Alert.alert("Error", "Failed to open the document.");
+      }
+    }
+  };
+
+  const handleBreadcrumbClick = async (index: number) => {
+    const newStack = folderStack.slice(0, index + 1);
+    const newPath = `${rootPath}/${newStack.join("/")}`;
+    setFolderStack(newStack);
+    updateFolderAndDocuments(newPath);
+  };
+
+  const renderBreadcrumbs = () => (
+    <View
+      style={{
+        flexDirection: "row",
+        flexWrap: "wrap",
+        marginTop: height * 0.01,
+      }}
+    >
+      <TouchableOpacity
+        onPress={() => {
+          setFolderStack([]);
+          updateFolderAndDocuments(rootPath);
+        }}
+      >
+        <Text style={{ color: "#1B77BE", fontSize: RFPercentage(2) }}>
+          Home
+        </Text>
+      </TouchableOpacity>
+      {folderStack.map((folder, idx) => (
+        <Text key={idx}>
+          {" > "}
+          <Text
+            style={{
+              color: "#1B77BE",
+              textDecorationLine: "underline",
+              fontSize: RFPercentage(2),
+            }}
+            onPress={() => handleBreadcrumbClick(idx)}
+          >
+            {folder}
+          </Text>
+        </Text>
+      ))}
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -107,22 +231,85 @@ export default function Document() {
         </View>
         {selectedTab === "aasFolders" && (
           <View>
-            <View style={styles.tableContainer}>
+            {renderBreadcrumbs()}
+            <View>
               <View style={styles.tableHeader}>
                 <Text style={[styles.headerCell, { flex: 1 }]}>Name</Text>
                 <Text
-                  style={[styles.headerCell, { flex: 1 }]}
+                  style={[styles.headerCell, { flex: 1, textAlign: "center" }]}
                 >
                   Modified Date
                 </Text>
               </View>
+              <FlatList
+                data={folders || []}
+                keyExtractor={(item, index) => `${item.name}-${index}`}
+                renderItem={({ item, index }) => (
+                  <TouchableOpacity
+                    style={[
+                      styles.dataRow,
+                      { backgroundColor: index % 2 === 0 ? "#eee" : "#fff" },
+                    ]}
+                    onPress={() => handleFolderClick(item)}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        flex: 1,
+                      }}
+                    >
+                      <MaterialIcons
+                        name={
+                          item.type === "FOLDER" ? "folder" : "picture-as-pdf"
+                        }
+                        size={20}
+                        color={item.type === "FOLDER" ? "#FFD700" : "#D32F2F"}
+                        style={{ marginRight: width * 0.02 }}
+                      />
+                      <Text style={[styles.dataCell, styles.leftAlign]}>
+                        {item.name}
+                      </Text>
+                    </View>
+
+                    <Text
+                      style={[
+                        styles.dataCell,
+                        { flex: 1, textAlign: "center" },
+                      ]}
+                    >
+                      {item.lastModifiedDate
+                        ? new Date(item.lastModifiedDate).toLocaleDateString(
+                            "en-AU",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )
+                        : ""}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                ListEmptyComponent={() => (
+                  <Text style={styles.noData}>No data</Text>
+                )}
+                showsVerticalScrollIndicator={false}
+                onContentSizeChange={(_, contentHeight) => {
+                  setIsScrollable(contentHeight > height);
+                }}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  paddingBottom: isScrollable ? height * 0.8 : 0,
+                }}
+              />
             </View>
           </View>
         )}
 
         {selectedTab === "aasDocuments" && (
           <View>
-            <View style={styles.tableContainer}>
+            <View>
               <View style={styles.tableHeader}>
                 <Text style={[styles.headerCell, { flex: 3.5 }]}>Name</Text>
                 <Text
@@ -146,16 +333,30 @@ export default function Document() {
                       onPress={() => handleCodePress(item)}
                       style={{ flex: 3.5 }}
                     >
-                      <Text
-                        style={[
-                          styles.dataCell,
-                          styles.leftAlign,
-                          styles.underlineText,
-                        ]}
-                        //numberOfLines={1}
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          flex: 1,
+                        }}
                       >
-                        {item.name}
-                      </Text>
+                        <MaterialIcons
+                          name="picture-as-pdf"
+                          size={20}
+                          color="#D32F2F"
+                          style={{ marginRight: width * 0.02 }}
+                        />
+                        <Text
+                          style={[
+                            styles.dataCell,
+                            styles.leftAlign,
+                            styles.underlineText,
+                          ]}
+                          //numberOfLines={1}
+                        >
+                          {item.name}
+                        </Text>
+                      </View>
                     </TouchableOpacity>
                     <View style={{ flex: 1, alignItems: "center" }}>
                       <TouchableOpacity
@@ -201,11 +402,11 @@ export default function Document() {
                 onRefresh={onRefresh}
                 contentContainerStyle={{
                   flexGrow: 1,
-                  paddingBottom: height * 0.43,
+                  paddingBottom: height * 0.54,
                 }}
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={() => (
-                  <Text style={styles.noData}>No documents available</Text>
+                  <Text style={styles.noData}>No data</Text>
                 )}
               />
             </View>
@@ -302,9 +503,6 @@ const getStyles = (width: number, height: number) =>
       marginBottom: height * 0.005,
       fontSize: RFPercentage(2.6),
     },
-    tableContainer: {
-      paddingBottom: height * 0.01,
-    },
     loader: {
       fontWeight: "bold",
       color: "#1B77BE",
@@ -369,7 +567,7 @@ const getStyles = (width: number, height: number) =>
     },
     noData: {
       textAlign: "center",
-      marginVertical: height * 0.02,
+      marginVertical: height * 0.01,
       color: "#888",
       fontSize: RFPercentage(2),
     },
