@@ -28,6 +28,7 @@ import {
   Folders,
 } from "../navigation/types";
 import Constants from "expo-constants";
+import { Base64 } from "js-base64";
 
 const apiBaseUrl = Constants.expoConfig?.extra?.apiBaseUrl as string;
 
@@ -806,49 +807,65 @@ export const getRelationships = async (
   }
 };
 
-export const getAASFolders = async (
+export const getAASDocumentRoot = async (
+  accountId: string,
   authToken: string
-): Promise<Folders[] | null> => {
+): Promise<string | null> => {
   try {
-    //console.log("aasDocPath:", aasDocPath);
-    //console.log("aasDocPath:", aasDocPath);
-    const response = await fetch(
-      `${apiBaseUrl}/ClientDocuments/AASDocumentList/L0FBUyBDTElFTlRTL0ZvcnRpdXNBZHZpc2luZ19BQ0M3NzIvRmFtaWx5IEdyb3Vwcy9Fc3Rjb3VydF9QZXRlciZKdWxpYS9FbnRpdGllcy9BcmNvdHQ=`,
+    const res = await fetch(
+      `${apiBaseUrl}/ClientDocuments/AASDocumentRoot/${accountId}`,
       {
         method: "GET",
         headers: {
           Authorization: `Bearer ${authToken}`,
-          "Content-Type": "application/json",
         },
       }
     );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+    if (!res.ok) throw new Error("Failed to fetch root path");
 
-    const data = await response.json();
-    //console.log("Fetched AAS Documents:", data);
+    const rootPath = await res.text();
+    return rootPath;
+  } catch (err) {
+    console.error("Error fetching root path:", err);
+    return null;
+  }
+};
 
-    if (!Array.isArray(data)) {
-      throw new Error("Expected array response");
-    }
+export const getFolderPath = async (
+  path: string,
+  authToken: string
+): Promise<Folders[] | null> => {
+  try {
+    const encodedPath = Base64.encode(path);
+    const res = await fetch(
+      `${apiBaseUrl}/ClientDocuments/AASDocuments/${encodedPath}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
 
+    if (!res.ok) throw new Error("Failed to fetch folders");
+
+    const data = await res.json();
     return data as Folders[];
-  } catch (error) {
-    console.error("Fetch failed:", error);
+  } catch (err) {
+    console.error("Error fetching folders by path:", err);
     return null;
   }
 };
 
 export const getAASDocuments = async (
+  path: string,
   authToken: string
 ): Promise<Documents[] | null> => {
   try {
-    //console.log("aasDocPath:", aasDocPath);
-    //console.log("aasDocPath:", aasDocPath);
+    const encodedPath = Base64.encode(path);
     const response = await fetch(
-      `${apiBaseUrl}/ClientDocuments/AASDocumentList/L0FBUyBDTElFTlRTL0ZvcnRpdXNBZHZpc2luZ19BQ0M3NzIvRmFtaWx5IEdyb3Vwcy9Fc3Rjb3VydF9QZXRlciZKdWxpYS9FbnRpdGllcy9BcmNvdHQ=`,
+      `${apiBaseUrl}/ClientDocuments/AASDocumentList/${encodedPath}`,
       {
         method: "GET",
         headers: {
@@ -863,7 +880,6 @@ export const getAASDocuments = async (
     }
 
     const data = await response.json();
-    //console.log("Fetched AAS Documents:", data);
 
     if (!Array.isArray(data)) {
       throw new Error("Expected array response");
