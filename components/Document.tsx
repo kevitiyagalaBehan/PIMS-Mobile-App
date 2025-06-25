@@ -443,9 +443,12 @@ export default function Document() {
                 }}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
+                onContentSizeChange={(_, contentHeight) => {
+                  setIsScrollable(contentHeight > height);
+                }}
                 contentContainerStyle={{
                   flexGrow: 1,
-                  paddingBottom: height * 0.54,
+                  paddingBottom: isScrollable ? height * 0.54 : 0,
                 }}
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={() => (

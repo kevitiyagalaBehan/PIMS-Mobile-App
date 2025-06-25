@@ -848,7 +848,8 @@ export const getFolderPath = async (
       }
     );
 
-    if (!res.ok) throw new Error("Failed to fetch folders");
+    if (!res.ok) return null;
+    //if (!res.ok) throw new Error("Failed to fetch folders");
 
     const data = await res.json();
     return data as Folders[];
