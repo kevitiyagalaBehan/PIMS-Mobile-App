@@ -317,6 +317,8 @@ export default function Document() {
                     </TouchableOpacity>
                   );
                 }}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
                 ListEmptyComponent={() => (
                   <Text style={styles.noData}>No data</Text>
                 )}
