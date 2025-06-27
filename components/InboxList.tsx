@@ -14,18 +14,21 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import Checkbox from "expo-checkbox";
 import { useNavigation } from "@react-navigation/native";
 import {
   InboxMessage,
   InboxStackNavigationProp,
   Messages,
   NotifyRecipient,
+  UserRecipient,
 } from "../src/navigation/types";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useAuth } from "../src/context/AuthContext";
 import {
   getMessages,
   getNotifyRecipient,
+  sendEmailNotification,
   sendInboxMessage,
 } from "../src/utils/pimsApi";
 import { useRefreshTrigger } from "../hooks/useRefreshTrigger";
@@ -35,6 +38,12 @@ export default function InboxList() {
   const navigation = useNavigation<InboxStackNavigationProp<"InboxList">>();
   const [modalVisible, setModalVisible] = useState(false);
   const [recipients, setRecipients] = useState<NotifyRecipient[]>([]);
+  const [allRecipients, setAllRecipients] = useState<UserRecipient[]>([]);
+  const [selectedRecipientIds, setSelectedRecipientIds] = useState<string[]>(
+    []
+  );
+  const [newRecipientName, setNewRecipientName] = useState("");
+  const [newRecipientEmail, setNewRecipientEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [messageBody, setMessageBody] = useState("");
   const [formError, setFormError] = useState<{
@@ -87,7 +96,19 @@ export default function InboxList() {
           userData.authToken,
           userData.accountId
         );
-        if (result) setRecipients(result);
+
+        if (result && result.length > 0) {
+          // Convert NotifyRecipient[] to UserRecipient[]
+          const convertedRecipients: UserRecipient[] = result.map((r) => ({
+            id: r.id,
+            name: r.name,
+            emailAddress: r.emailAddress,
+          }));
+
+          setAllRecipients(convertedRecipients);
+
+          setSelectedRecipientIds(convertedRecipients.map((r) => r.id));
+        }
       } catch (err) {
         console.error("Failed to fetch recipients:", err);
       }
@@ -208,13 +229,70 @@ export default function InboxList() {
                 <Text style={styles.modalTitle}>New Message</Text>
 
                 <Text style={styles.label}>Notify To:</Text>
-                <Text style={styles.recipientText}>
-                  {recipients.length > 0
-                    ? recipients
-                        .map((r) => `${r.name}<${r.emailAddress}>`)
-                        .join(", ")
-                    : "No recipients available"}
-                </Text>
+                {allRecipients.map((recipient) => (
+                  <View key={recipient.id} style={styles.checkboxContainer}>
+                    <Checkbox
+                      style={styles.checkbox}
+                      value={selectedRecipientIds.includes(recipient.id)}
+                      onValueChange={(isChecked) => {
+                        setSelectedRecipientIds((prev) =>
+                          isChecked
+                            ? [...prev, recipient.id]
+                            : prev.filter((id) => id !== recipient.id)
+                        );
+                      }}
+                      color={
+                        selectedRecipientIds.includes(recipient.id)
+                          ? "#1B77BE"
+                          : undefined
+                      }
+                    />
+
+                    <Text style={styles.recipientText}>
+                      {recipient.name} &lt;{recipient.emailAddress}&gt;
+                    </Text>
+                  </View>
+                ))}
+                {allRecipients.length === 0 && (
+                  <Text style={styles.recipientText}>
+                    No recipients available
+                  </Text>
+                )}
+
+                <TextInput
+                  placeholder="Name (optional)"
+                  style={styles.input}
+                  value={newRecipientName}
+                  onChangeText={setNewRecipientName}
+                />
+
+                <TextInput
+                  placeholder="Email"
+                  style={styles.input}
+                  value={newRecipientEmail}
+                  onChangeText={setNewRecipientEmail}
+                />
+
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.addButton]}
+                  onPress={() => {
+                    if (newRecipientEmail.trim()) {
+                      const newId = Date.now().toString();
+                      const newRecipient = {
+                        id: newId,
+                        name: newRecipientName.trim(),
+                        emailAddress: newRecipientEmail.trim(),
+                      };
+
+                      setAllRecipients((prev) => [...prev, newRecipient]);
+                      setSelectedRecipientIds((prev) => [...prev, newId]);
+                      setNewRecipientName("");
+                      setNewRecipientEmail("");
+                    }
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>Add Recipient</Text>
+                </TouchableOpacity>
 
                 <TextInput
                   placeholder="Subject"
@@ -232,7 +310,7 @@ export default function InboxList() {
 
                 <TextInput
                   placeholder="Message"
-                  style={[styles.input, { height: 100 }]}
+                  style={[styles.input, { height: height * 0.1 }]}
                   value={messageBody}
                   onChangeText={(text) => {
                     setMessageBody(text);
@@ -276,6 +354,23 @@ export default function InboxList() {
                         return;
                       }
 
+                      const selectedRecipients = allRecipients.filter((r) =>
+                        selectedRecipientIds.includes(r.id)
+                      );
+
+                      const recipientPayload = selectedRecipients.map((r) => ({
+                        DisplayName: r.name || r.emailAddress,
+                        EmailAddress: r.emailAddress,
+                        Type: "TO",
+                      }));
+
+                      if (recipientPayload.length === 0) {
+                        setFormError({
+                          subject: "Please select at least one recipient.",
+                        });
+                        return;
+                      }
+
                       try {
                         const payload: InboxMessage = {
                           Description: subject.trim(),
@@ -291,11 +386,18 @@ export default function InboxList() {
                           payload
                         );
 
+                        await sendEmailNotification(
+                          userData.authToken,
+                          userData.accountId,
+                          subject.trim(),
+                          messageBody.trim(),
+                          recipientPayload
+                        );
+
                         setSubject("");
                         setMessageBody("");
                         setFormError({});
                         setModalVisible(false);
-
                         fetchData();
                       } catch (error) {
                         console.error("Failed to send message:", error);
@@ -436,16 +538,28 @@ const getStyles = (width: number, height: number) =>
       fontSize: RFPercentage(2),
     },
     recipientText: {
-      marginBottom: 8,
+      //marginBottom: 8,
       fontSize: RFPercentage(2),
-      color: "#333",
+      //color: "#333",
+    },
+    checkboxContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      //marginBottom: 5,
+    },
+    checkbox: {
+      margin: 8,
+    },
+    addButton: {
+      backgroundColor: "#1B77BE",
+      marginBottom: height * 0.02,
     },
     input: {
       borderWidth: 1,
       borderColor: "#ccc",
       borderRadius: 6,
       padding: 12,
-      marginBottom: 12,
+      marginBottom: height * 0.01,
       fontSize: RFPercentage(2),
     },
     modalButtons: {
