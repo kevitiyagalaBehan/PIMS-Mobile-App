@@ -447,6 +447,12 @@ export interface NotifyRecipient {
   ref: string;
 }
 
+export interface UserRecipient {
+  id: string;
+  name: string;
+  emailAddress: string;
+}
+
 export interface Attachment {
   DisplayName: string;
   FilePath: string;
