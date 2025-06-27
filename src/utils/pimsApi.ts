@@ -29,6 +29,7 @@ import {
 } from "../navigation/types";
 import Constants from "expo-constants";
 import { Base64 } from "js-base64";
+import { Buffer } from "buffer";
 
 const apiBaseUrl = Constants.expoConfig?.extra?.apiBaseUrl as string;
 
@@ -968,4 +969,38 @@ export const sendInboxMessage = async (
   if (!response.ok) {
     throw new Error(`Failed to send message: ${response.status}`);
   }
+};
+
+export const sendEmailNotification = async (
+  authToken: string,
+  accountId: string,
+  subject: string,
+  message: string,
+  recipients: { DisplayName: string; EmailAddress: string; Type: string }[]
+) => {
+  const payload = {
+    Subject64Bit: Buffer.from(subject).toString("base64"),
+    Content64Bit: Buffer.from(message).toString("base64"),
+    Recipients: recipients,
+    Attachments: [],
+    SendEnabled: true,
+    Ref: "",
+    RefId: "",
+  };
+
+  const response = await fetch(`${apiBaseUrl}/Emailing/Email/${accountId}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Email send failed: ${errorText}`);
+  }
+
+  return response.json();
 };
