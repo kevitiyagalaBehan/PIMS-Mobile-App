@@ -203,7 +203,7 @@ export default function InboxList() {
               }}
               contentContainerStyle={{
                 flexGrow: 1,
-                paddingBottom: isScrollable ? height * 0.2 : 0,
+                paddingBottom: isScrollable ? height * 0.22 : 0,
               }}
               ListEmptyComponent={() => (
                 <Text style={styles.noData}>No messages available</Text>
@@ -431,7 +431,7 @@ const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginVertical: height * 0.02,
+      marginTop: height * 0.02,
     },
     bodySection: {
       backgroundColor: "#fff",
