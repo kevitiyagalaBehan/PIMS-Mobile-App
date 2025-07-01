@@ -111,7 +111,7 @@ export default function LoginScreen() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <Image
-          source={require("../../assets/pims_logo_v1.png")}
+          source={require("../../assets/aas_logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -235,12 +235,12 @@ const getStyles = (width: number, height: number) =>
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: "#fff",
-      padding: 20,
+      paddingHorizontal: 20,
     },
     logo: {
-      width: width * 1,
-      height: height * 0.1,
-      marginBottom: height * 0.05,
+      width: width * 0.5,
+      height: height * 0.2,
+      //marginBottom: height * 0.05,
     },
     input: {
       width: "100%",
