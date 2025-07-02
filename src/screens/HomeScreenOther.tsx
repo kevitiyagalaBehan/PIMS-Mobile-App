@@ -17,6 +17,7 @@ import {
   PensionLimitSummary,
   EstimatedMemberStatement,
   TopTenInvestments,
+  InvestmentPerformance,
 } from "../../components";
 
 export default function HomeScreenOther() {
@@ -52,6 +53,10 @@ export default function HomeScreenOther() {
               refreshing={false}
             />
             <TopTenInvestments
+              refreshTrigger={refreshTrigger}
+              refreshing={false}
+            />
+            <InvestmentPerformance
               refreshTrigger={refreshTrigger}
               refreshing={false}
             />
