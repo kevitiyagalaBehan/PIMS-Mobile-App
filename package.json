@@ -1,7 +1,7 @@
 {
   "name": "pims",
   "license": "0BSD",
-  "version": "1.0.3",
+  "version": "1.0.13",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
-    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-navigation/bottom-tabs": "^7.3.3",
     "@react-navigation/drawer": "^7.3.2",
@@ -21,7 +21,7 @@
     "base-64": "^1.0.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.5.0",
-    "expo": "^52.0.41",
+    "expo": "~52.0.47",
     "expo-application": "~6.0.2",
     "expo-asset": "^11.0.5",
     "expo-dev-client": "~5.0.20",
@@ -32,7 +32,7 @@
     "js-base64": "^3.7.7",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-native": "0.76.7",
+    "react-native": "0.76.9",
     "react-native-chart-kit": "^6.12.0",
     "react-native-date-picker": "^5.0.13",
     "react-native-dropdown-select-list": "^2.0.5",
@@ -44,7 +44,7 @@
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
     "react-native-select-dropdown": "^4.0.1",
-    "react-native-svg": "^15.8.0",
+    "react-native-svg": "15.8.0",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "~0.19.13",
     "expo-checkbox": "~4.0.1"
@@ -59,6 +59,18 @@
     "@types/react-navigation": "^3.0.8",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "react-native-chart-kit",
+          "react-native-responsive-screen",
+          "react-native-responsive-fontsize"
+        ],
+        "listUnknownPackages": false
+      }
+    }
   },
   "private": true
 }
