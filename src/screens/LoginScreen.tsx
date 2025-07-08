@@ -111,7 +111,7 @@ export default function LoginScreen() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <Image
-          source={require("../../assets/aas_logo.png")}
+          source={require("../../assets/pims_logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />

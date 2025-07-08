@@ -47,7 +47,7 @@ export default function CustomDrawerContent(props: any) {
     <DrawerContentScrollView {...props}>
       <View style={styles.headerContainer}>
         <Image
-          source={require("../../assets/aas_logo.png")}
+          source={require("../../assets/pims_logo.png")}
           style={styles.image}
           resizeMode="contain"
         />
@@ -78,7 +78,7 @@ const getStyles = (width: number, height: number) =>
       borderBottomColor: "#ccc",
     },
     image: {
-      width: width * 1.2,
+      width: width * 1,
       height: height * 0.06,
     },
     userName: {
