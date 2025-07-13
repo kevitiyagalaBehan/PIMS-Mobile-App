@@ -1,7 +1,7 @@
 {
   "name": "pims",
   "license": "0BSD",
-  "version": "1.0.13",
+  "version": "1.0.15",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",

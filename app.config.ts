@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "PIMS",
     slug: "PIMS",
-    version: "1.0.14",
+    version: "1.0.15",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -13,7 +13,7 @@ export default {
       supportsTablet: true,
     },
     android: {
-      versionCode: 32,
+      versionCode: 33,
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
@@ -33,7 +33,7 @@ export default {
         "expo-splash-screen",
         {
           backgroundColor: "#ffffff",
-          image: "./assets/aas_splash_icon.png",
+          image: "./assets/pims_splash_icon.png",
           imageWidth: 200,
           resizeMode: "contain",
         },
